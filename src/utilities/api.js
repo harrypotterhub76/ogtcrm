@@ -143,6 +143,9 @@ export const getLogs = (date) =>
 export const getStatuses = () =>
   axios.get(`http://25.18.88.64:8000/api/status`);
 
+export const getStatusesCRM = () =>
+  axios.get(`http://25.18.88.64:8000/api/status-crm`);
+
 export const addStatus = (dialogInputObject) =>
   axios.post(`http://25.18.88.64:8000/api/status/store`, dialogInputObject);
 
@@ -153,4 +156,13 @@ export const editStatus = (dialogInputObject, id) =>
   axios.put(
     `http://25.18.88.64:8000/api/status/update/${id}`,
     dialogInputObject
+  );
+
+export const editStatusBroker = (dialogInputObject, id) =>
+  axios.put(
+    `http://25.18.88.64:8000/api/status-brokers/update/${id}`,
+    {
+      crm_status: dialogInputObject.crm_status,
+      status_id: dialogInputObject.status_id,
+    }
   );

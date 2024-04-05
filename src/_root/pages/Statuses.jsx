@@ -14,11 +14,15 @@ import {
   deleteStatus,
   addStatus,
   editStatus,
+  getStatusesCRM,
+  editStatusBroker,
 } from "../../utilities/api";
 import { DialogComponent } from "../../components/DialogComponent";
 
 function Statuses() {
   const [statuses, setStatuses] = useState([]);
+  const [statusesCRM, setStatusesCRM] = useState([]);
+  const [selectedStatusCRM, setSelectedStatusCRM] = useState(null);
   const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
   const [isEditDialogVisible, setIsEditDialogVisible] = useState(false);
   const [currentRowData, setCurrentRowData] = useState(null);
@@ -28,10 +32,15 @@ function Statuses() {
   const [loading, setLoading] = useState(true);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
 
-  const [dialogInputObject, setDialogInputObject] = useState({
+  const [addStatusDialogInputObject, setAddStatusDialogInputObject] = useState({
     broker_status: "",
     crm_status: "",
     broker_name: "",
+  });
+
+  const [editStatusDialogInputObject, setEditStatusDialogInputObject] = useState({
+    crm_status: "",
+    status_id: "",
   });
 
   const toast = useRef(null);
@@ -55,14 +64,27 @@ function Statuses() {
     {
       label: "Статус CRM",
       key: "crm_status",
-      type: "text",
+      type: "dropdown",
       placeholder: "Введите статус CRM",
+      options: statusesCRM,
     },
   ];
 
   useEffect(() => {
-    console.log("dialogInputObject", dialogInputObject);
-  }, [dialogInputObject]);
+    console.log("adddialogInputObject", addStatusDialogInputObject);
+    console.log("editdialogInputObject", editStatusDialogInputObject);
+  }, [addStatusDialogInputObject, editStatusDialogInputObject]);
+
+
+  useEffect(() => {
+    if (selectedStatusCRM) {
+      setEditStatusDialogInputObject((prevState) => ({
+        ...prevState,
+        crm_status: selectedStatusCRM.crm_status,
+        status_id: selectedStatusCRM.id,
+      }));
+    }
+  }, [selectedStatusCRM]);
 
   useEffect(() => {
     renderStatuses();
@@ -81,6 +103,15 @@ function Statuses() {
       .catch((error) => {
         console.log(error);
         showToast("error", "Ошибка при загрузке статусов");
+      });
+    getStatusesCRM()
+      .then((response) => {
+        setStatusesCRM(response.data);
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+        showToast("error", "Ошибка при загрузке статусов CRM");
       });
   };
 
@@ -102,7 +133,7 @@ function Statuses() {
       message: "Вы точно хотите удалить статус?",
       icon: "pi pi-exclamation-triangle",
       defaultFocus: "accept",
-      accept: deleteSelectedStatuse,
+      accept: deleteSelectedStatus,
       rejectDeletion,
     });
   };
@@ -111,7 +142,7 @@ function Statuses() {
     showToast("info", "Удаление статуса отменено");
   };
 
-  const deleteSelectedStatuse = () => {
+  const deleteSelectedStatus = () => {
     if (currentRowData) {
       deleteStatus(currentRowData.id)
         .then(function () {
@@ -125,12 +156,12 @@ function Statuses() {
     }
   };
 
-  const addNewStatuse = () => {
-    addStatus(dialogInputObject)
+  const addNewStatus = () => {
+    addStatus(addStatusDialogInputObject)
       .then(function () {
         showToast("success", "Статус успешно добавлен");
         setIsAddDialogVisible(false);
-        setDialogInputObject({});
+        setAddStatusDialogInputObject({});
         renderStatuses();
       })
       .catch(function (error) {
@@ -139,27 +170,42 @@ function Statuses() {
       });
   };
 
-  const handleEdit = (event, status) => {
-    setCurrentRowData(status.id);
+  const handleEdit = (event, rowData) => {
+    setCurrentRowData(rowData);
     setIsEditDialogVisible(true);
-    setDialogInputObject({
-      broker_name: status.broker_name,
-      broker_status: status.broker_status,
-      crm_status: status.crm_status
+    // setEditStatusDialogInputObject({
+    //   broker_name: rowData.broker_name,
+    //   broker_status: rowData.broker_status,
+    //   crm_status: rowData.crm_status,
+    // });
+    setEditStatusDialogInputObject({
+      crm_status: rowData.crm_status,
+      status_id: rowData.id,
+      broker_status: rowData.broker_status
     });
   };
 
-  const editCurrentStatuse = () => {
-    editStatus(dialogInputObject, currentRowData)
-      .then(function (response) {
-        showToast("success", "Статус успешно изменён");
-        setIsEditDialogVisible(false);
-        setDialogInputObject({});
-        renderStatuses();
-      })
-      .catch(function (error) {
-        showToast("error", "Ошибка редактирования Статуса");
-      });
+  const editCurrentStatus = () => {
+    // editStatus(addStatusDialogInputObject, currentRowData)
+    //   .then(function (response) {
+    //     showToast("success", "Статус успешно изменён");
+    //     setIsEditDialogVisible(false);
+    //     setAddStatusDialogInputObject({});
+    //     renderStatuses();
+    //   })
+    //   .catch(function (error) {
+    //     showToast("error", "Ошибка редактирования Статуса");
+    //   });
+    editStatusBroker(editStatusDialogInputObject, currentRowData.id)
+    .then(function (response) {
+      showToast("success", "Статус успешно изменён");
+      setIsEditDialogVisible(false);
+      setEditStatusDialogInputObject({});
+      renderStatuses();
+    })
+    .catch(function (error) {
+      showToast("error", "Ошибка редактирования Статуса");
+    });
   };
 
   const renderHeader = () => {
@@ -210,7 +256,7 @@ function Statuses() {
                 ref={acceptBtnRef}
                 label="Да"
                 onClick={() => {
-                  deleteSelectedStatuse();
+                  deleteSelectedStatus();
                   hide();
                 }}
                 className="p-button-sm p-button-outlined p-button-danger"
@@ -241,20 +287,22 @@ function Statuses() {
           isDialogVisible={isAddDialogVisible}
           setIsDialogVisible={setIsAddDialogVisible}
           header="Добавить статус"
-          dialogInputObject={dialogInputObject}
-          setDialogInputObject={setDialogInputObject}
+          dialogInputObject={addStatusDialogInputObject}
+          setDialogInputObject={setAddStatusDialogInputObject}
           inputs={inputs}
-          handleAdd={addNewStatuse}
+          handleAdd={addNewStatus}
         />
         <DialogComponent
           type="edit"
           isDialogVisible={isEditDialogVisible}
           setIsDialogVisible={setIsEditDialogVisible}
           header="Редактировать статус"
-          dialogInputObject={dialogInputObject}
-          setDialogInputObject={setDialogInputObject}
+          dialogInputObject={editStatusDialogInputObject}
+          setDialogInputObject={setEditStatusDialogInputObject}
           inputs={inputs}
-          handleEdit={editCurrentStatuse}
+          handleEdit={editCurrentStatus}
+          isStatusesDropdown={true}
+          setSelectedStatusCRM={setSelectedStatusCRM}
         />
       </div>
 

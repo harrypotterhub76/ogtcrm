@@ -21,7 +21,9 @@ export const DialogComponent = ({
   formatCalendarDate,
   formatCalendarTime,
   isUserIDDropdown,
-  setSelectedUser
+  setSelectedUser,
+  isStatusesDropdown,
+  setSelectedStatusCRM,
 }) => {
   const handleDialogInputChange = (field, value) => {
     setDialogInputObject((prevState) => ({
@@ -106,10 +108,16 @@ export const DialogComponent = ({
                       onChange={(e) => {
                         isUserIDDropdown
                           ? setSelectedUser(e.value)
+                          : isStatusesDropdown
+                          ? setSelectedStatusCRM(e.value)
                           : handleDialogInputChange(input.key, e.target.value);
                       }}
                       options={input.options}
-                      {...(isUserIDDropdown ? { optionLabel: "name" } : {})}
+                      {...(isUserIDDropdown
+                        ? { optionLabel: "name" }
+                        : isStatusesDropdown
+                        ? { optionLabel: "crm_status" }
+                        : {})}
                       placeholder={input.placeholder}
                       className="w-full"
                       disabled={isLeadDialogDisabled}
