@@ -17,6 +17,7 @@ import { confirmPopup } from "primereact/confirmpopup";
 import { DialogComponent } from "../../components/DialogComponent";
 
 function Spends() {
+  // Стейты
   const [selectedUser, setSelectedUser] = useState(null);
   const [spends, setSpends] = useState(null);
   const [selectedSpendID, setSelectedSpendID] = useState(null);
@@ -33,9 +34,9 @@ function Spends() {
     date: "",
     user_id: "",
   });
-
   const toast = useRef(null);
 
+  // Функция на рендер тоста
   const showToast = (severity, text) => {
     toast.current.show({
       severity: severity,
@@ -43,6 +44,12 @@ function Spends() {
       life: 2000,
     });
   };
+
+  // useEffect'ы для рендера, вывода логов
+  useEffect(() => {
+    getUsersArray();
+    renderSpends();
+  }, []);
 
   useEffect(() => {
     if (selectedUser) {
@@ -52,17 +59,17 @@ function Spends() {
         user_id: selectedUser.id,
       }));
     }
-    console.log("selectedUser", selectedUser);
   }, [selectedUser]);
 
   useEffect(() => {
+    console.log("_________________________________________")
     console.log("dialogInputObject: ", dialogInputObject);
-  }, [dialogInputObject]);
-
-  useEffect(() => {
     console.log("users: ", users);
-  }, [users]);
+    console.log("selectedUser: ", selectedUser);
+    console.log("_________________________________________")
+  }, [dialogInputObject, users, selectedUser]);
 
+  // Инпуты для DialogComponent
   const addDialogInputs = [
     {
       label: "Имя",
@@ -107,28 +114,24 @@ function Spends() {
     },
   ];
 
-  useEffect(() => {
-    getUsers().then((response) => {
-      setUsers(response.data.map((obj) => getUpdatedUsers(obj)));
-    });
-    console.log(users);
-    renderSpends();
-  }, []);
-
-  const getUpdatedUsers = (obj) => {
-    return { id: obj.id, name: obj.name };
-  };
-
+  // Функции подтягиваний данных с бека
   const renderSpends = () => {
     getSpends().then(function (response) {
       setSpends(response.data);
-      console.log(response.data);
     });
   };
 
+  const getUsersArray = () => {
+    getUsers().then((response) => {
+      setUsers(response.data.map((obj) => getUpdatedUsersObject(obj)));
+    });
+  };
+
+  // Обработчики для actionButtonsTemplate
   const handleEditActionClick = (rowData) => {
     const userObject = users.find((obj) => obj.name === rowData.name);
-    // setSelectedUser(userObject)
+    console.log("userObject: ", userObject)
+    setSelectedUser(userObject)
     // setDialogInputObject({
     //   name: rowData.name,
     //   summary: rowData.summary,
@@ -140,9 +143,10 @@ function Spends() {
 
   const handleDeleteActionClick = (e, rowData) => {
     showConfirmDeletePopUp(e);
-    setSelectedSpendID(rowData.id)
+    setSelectedSpendID(rowData.id);
   };
 
+  // Функция для управления плажкой на удаление данных из DataTable
   const handleConfirmPopUpButtonClick = (option, hide) => {
     option === "delete"
       ? handleDeleteSpend(selectedSpendID)
@@ -151,23 +155,7 @@ function Spends() {
     setSelectedSpendID(null);
   };
 
-  const actionButtonsTemplate = (rowData) => {
-    return (
-      <div className="flex gap-3">
-        <Button
-          icon="pi pi-pencil"
-          severity="success"
-          onClick={(e) => handleEditActionClick(rowData)}
-        />
-        <Button
-          icon="pi pi-trash"
-          severity="danger"
-          onClick={(e) => handleDeleteActionClick(e, rowData)}
-        />
-      </div>
-    );
-  };
-
+  // Сеттер фильтра глобального поиска
   const onGlobalFilterChange = (e) => {
     const value = e.target.value;
     let _filters = { ...filters };
@@ -178,23 +166,9 @@ function Spends() {
     setGlobalFilterValue(value);
   };
 
-  const headerTemplate = () => {
-    return (
-      <div className="flex justify-content-end">
-        <span className="p-input-icon-left">
-          <i className="pi pi-search" />
-          <InputText
-            value={globalFilterValue}
-            onChange={onGlobalFilterChange}
-            placeholder="Поиск"
-          />
-        </span>
-      </div>
-    );
-  };
-
+  // Обработчики взаимодействия фронта с беком
   const handleAddSpend = ({ name, summary, date, user_id }) => {
-    if (name !== "" && summary !== "" && date !== "" & user_id !== "") {
+    if (name !== "" && summary !== "" && (date !== "") & (user_id !== "")) {
       addSpend(dialogInputObject)
         .then(function (response) {
           setIsAddDialogVisible(false);
@@ -243,14 +217,18 @@ function Spends() {
       });
   };
 
+  // Функция для сброса состояния DialogInputObject
   const clearDialogInputObject = () => {
     setDialogInputObject({
       name: "",
       summary: "",
       date: "",
+      user_id: "",
     });
+    setSelectedUser(null)
   };
 
+  // Рендер плажки на удаление данных из DataTable
   const showConfirmDeletePopUp = (e) => {
     confirmPopup({
       group: "headless",
@@ -262,39 +240,9 @@ function Spends() {
     });
   };
 
-  const popUpContentTemplate = ({
-    message,
-    acceptBtnRef,
-    rejectBtnRef,
-    hide,
-  }) => {
-    return (
-      <div className="border-round p-3">
-        <span>{message}</span>
-        <div className="flex align-items-center gap-2 mt-3">
-          <Button
-            ref={acceptBtnRef}
-            outlined
-            label="Да"
-            severity="danger"
-            onClick={() => {
-              handleConfirmPopUpButtonClick("delete", hide);
-            }}
-            className="p-button-sm p-button-outlined p-button-danger"
-          ></Button>
-          <Button
-            ref={rejectBtnRef}
-            label="Отменить"
-            outlined
-            severity="success"
-            onClick={() => {
-              handleConfirmPopUpButtonClick("reject", hide);
-            }}
-            className="p-button-sm p-button-text"
-          />
-        </div>
-      </div>
-    );
+  // Вспомогательные функции
+  const getUpdatedUsersObject = (obj) => {
+    return { id: obj.id, name: obj.name };
   };
 
   const formatCalendarDate = (timestamp, option) => {
@@ -313,6 +261,74 @@ function Spends() {
         return formattedDate;
       }
     }
+  };
+
+  // Шаблоны для DataTable
+  const headerTemplate = () => {
+    return (
+      <div className="flex justify-content-end">
+        <span className="p-input-icon-left">
+          <i className="pi pi-search" />
+          <InputText
+            value={globalFilterValue}
+            onChange={onGlobalFilterChange}
+            placeholder="Поиск"
+          />
+        </span>
+      </div>
+    );
+  };
+
+  const actionButtonsTemplate = (rowData) => {
+    return (
+      <div className="flex gap-3">
+        <Button
+          icon="pi pi-pencil"
+          severity="success"
+          onClick={(e) => handleEditActionClick(rowData)}
+        />
+        <Button
+          icon="pi pi-trash"
+          severity="danger"
+          onClick={(e) => handleDeleteActionClick(e, rowData)}
+        />
+      </div>
+    );
+  };
+
+  const popUpContentTemplate = ({
+    message,
+    acceptBtnRef,
+    rejectBtnRef,
+    hide,
+  }) => {
+    return (
+      <div className="border-round p-3">
+        <span>{message}</span>
+        <div className="flex align-items-center gap-2 mt-3">
+          <Button
+            ref={rejectBtnRef}
+            label="Отменить"
+            outlined
+            severity="success"
+            onClick={() => {
+              handleConfirmPopUpButtonClick("reject", hide);
+            }}
+            className="p-button-sm p-button-outlined p-button-text"
+          />
+          <Button
+            ref={acceptBtnRef}
+            outlined
+            label="Удалить"
+            severity="danger"
+            onClick={() => {
+              handleConfirmPopUpButtonClick("delete", hide);
+            }}
+            className="p-button-sm p-button-outlined p-button-danger"
+          ></Button>
+        </div>
+      </div>
+    );
   };
 
   const dateTemplate = (rowData) => {
@@ -339,6 +355,7 @@ function Spends() {
         formatCalendarDate={formatCalendarDate}
         setSelectedUser={setSelectedUser}
         isUserIDDropdown={true}
+        clearDialogInputObject={clearDialogInputObject}
       />
 
       <DialogComponent
@@ -351,6 +368,7 @@ function Spends() {
         inputs={editDialogInputs}
         handleEdit={handleEditSpend}
         formatCalendarDate={formatCalendarDate}
+        clearDialogInputObject={clearDialogInputObject}
       />
 
       <div className="flex flex-column align-items-center justify-content-center">

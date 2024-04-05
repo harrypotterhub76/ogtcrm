@@ -16,6 +16,7 @@ export const DialogComponent = ({
   inputs,
   dialogInputObject,
   setDialogInputObject,
+  clearDialogInputObject,
   handleAdd,
   handleEdit,
   formatCalendarDate,
@@ -41,7 +42,8 @@ export const DialogComponent = ({
       draggable={false}
       onHide={() => {
         setIsDialogVisible(false);
-        setDialogInputObject({});
+        // setDialogInputObject({});
+        clearDialogInputObject()
       }}
       className={`w-full ${
         !type.includes("lead") ? "max-w-25rem" : ""
@@ -110,7 +112,7 @@ export const DialogComponent = ({
                           ? setSelectedUser(e.value)
                           : isStatusesDropdown
                           ? setSelectedStatusCRM(e.value)
-                          : handleDialogInputChange(input.key, e.target.value);
+                          : handleDialogInputChange(input.key, e.value);
                       }}
                       options={input.options}
                       {...(isUserIDDropdown
