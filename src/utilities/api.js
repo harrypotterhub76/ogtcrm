@@ -159,10 +159,13 @@ export const editStatus = (dialogInputObject, id) =>
   );
 
 export const editStatusBroker = (dialogInputObject, id) =>
-  axios.put(
-    `http://25.18.88.64:8000/api/status-brokers/update/${id}`,
-    {
-      crm_status: dialogInputObject.crm_status,
-      status_id: dialogInputObject.status_id,
-    }
-  );
+  axios.put(`http://25.18.88.64:8000/api/status-brokers/update/${id}`, {
+    crm_status: dialogInputObject.crm_status,
+    status_id: dialogInputObject.status_id,
+  });
+
+export const getLeadsForChart = () =>
+  axios.get(`http://25.18.88.64:8000/api/leads-chart`);
+
+export const getStats = () =>
+  axios.get(`http://25.18.88.64:8000/api/leads-stats`);
