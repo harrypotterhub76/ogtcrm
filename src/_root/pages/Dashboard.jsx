@@ -72,6 +72,7 @@ function Dashboard() {
     renderOffers();
     renderStats();
     renderLeads();
+    console.log('test');
   }, []);
 
   useEffect(() => {
