@@ -199,6 +199,15 @@ function Domains() {
       });
   };
 
+   // Функция для сброса состояния DialogInputObject
+   const clearDialogInputObject = () => {
+    setDialogInputObject({
+      name: "",
+      user: {},
+      user_id: "",
+    });
+  };
+
   const renderHeader = () => {
     return (
       <div className="flex justify-content-end">
@@ -305,6 +314,7 @@ function Domains() {
           handleAdd={addNewDomain}
           isUserIDDropdown={true}
           setSelectedUser={setSelectedUser}
+          clearDialogInputObject={clearDialogInputObject}
         />
         <DialogComponent
           type="edit"
@@ -317,6 +327,7 @@ function Domains() {
           isUserIDDropdown={true}
           handleEdit={editCurrentDomain}
           setSelectedUser={setSelectedUser}
+          clearDialogInputObject={clearDialogInputObject}
         />
       </div>
 

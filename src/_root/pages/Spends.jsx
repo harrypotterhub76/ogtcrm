@@ -62,11 +62,11 @@ function Spends() {
   }, [selectedUser]);
 
   useEffect(() => {
-    console.log("_________________________________________")
+    console.log("_________________________________________");
     console.log("dialogInputObject: ", dialogInputObject);
     console.log("users: ", users);
     console.log("selectedUser: ", selectedUser);
-    console.log("_________________________________________")
+    console.log("_________________________________________");
   }, [dialogInputObject, users, selectedUser]);
 
   // Инпуты для DialogComponent
@@ -130,14 +130,13 @@ function Spends() {
   // Обработчики для actionButtonsTemplate
   const handleEditActionClick = (rowData) => {
     const userObject = users.find((obj) => obj.name === rowData.name);
-    console.log("userObject: ", userObject)
-    setSelectedUser(userObject)
-    // setDialogInputObject({
-    //   name: rowData.name,
-    //   summary: rowData.summary,
-    //   date: rowData.date,
-    //   user_id: userObject.id,
-    // });
+    console.log("userObject: ", userObject);
+    setSelectedUser(userObject);
+    setDialogInputObject({
+      summary: rowData.summary,
+      date: rowData.date,
+    });
+    setSelectedSpendID(rowData.id);
     setIsEditDialogVisible(true);
   };
 
@@ -225,7 +224,8 @@ function Spends() {
       date: "",
       user_id: "",
     });
-    setSelectedUser(null)
+    setSelectedUser(null);
+    setSelectedSpendID(null);
   };
 
   // Рендер плажки на удаление данных из DataTable
@@ -353,9 +353,8 @@ function Spends() {
         inputs={addDialogInputs}
         handleAdd={handleAddSpend}
         formatCalendarDate={formatCalendarDate}
-        setSelectedUser={setSelectedUser}
-        isUserIDDropdown={true}
         clearDialogInputObject={clearDialogInputObject}
+        setSelectedUser={setSelectedUser}
       />
 
       <DialogComponent
@@ -369,6 +368,7 @@ function Spends() {
         handleEdit={handleEditSpend}
         formatCalendarDate={formatCalendarDate}
         clearDialogInputObject={clearDialogInputObject}
+        setSelectedUser={setSelectedUser}
       />
 
       <div className="flex flex-column align-items-center justify-content-center">

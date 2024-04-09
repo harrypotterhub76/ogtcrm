@@ -10,8 +10,8 @@ export const DialogComponent = ({
   type,
   isDialogVisible,
   setIsDialogVisible,
-  isLeadDialogDisabled,
-  setIsLeadDialogDisabled,
+  leadDialogType,
+  setLeadDialogType,
   header,
   inputs,
   dialogInputObject,
@@ -21,10 +21,9 @@ export const DialogComponent = ({
   handleEdit,
   formatCalendarDate,
   formatCalendarTime,
-  isUserIDDropdown,
-  setSelectedUser,
   isStatusesDropdown,
   setSelectedStatusCRM,
+  setSelectedUser,
 }) => {
   const handleDialogInputChange = (field, value) => {
     setDialogInputObject((prevState) => ({
@@ -42,8 +41,7 @@ export const DialogComponent = ({
       draggable={false}
       onHide={() => {
         setIsDialogVisible(false);
-        // setDialogInputObject({});
-        clearDialogInputObject()
+        clearDialogInputObject();
       }}
       className={`w-full ${
         !type.includes("lead") ? "max-w-25rem" : ""
@@ -56,12 +54,18 @@ export const DialogComponent = ({
             <div className="p-dialog-header-icons flex gap-3">
               {type === "lead" ? (
                 <Button
-                  icon={isLeadDialogDisabled ? "pi pi-pencil" : "pi pi-check"}
+                  icon={
+                    leadDialogType === "post-lead"
+                      ? "pi pi-pencil"
+                      : "pi pi-check"
+                  }
                   text
                   severity="success"
-                  onClick={() => {
-                    setIsLeadDialogDisabled((prevState) => !prevState);
-                  }}
+                  onClick={() =>
+                    setLeadDialogType(
+                      leadDialogType === "post-lead" ? "edit-lead" : "post-lead"
+                    )
+                  }
                 />
               ) : (
                 ""
@@ -102,27 +106,31 @@ export const DialogComponent = ({
                       }
                       style={{ width: "100%" }}
                       placeholder={input.placeholder}
-                      disabled={isLeadDialogDisabled || input.disabled}
+                      disabled={
+                        leadDialogType === "post-lead" || input.disabled
+                      }
                     />
                   ) : input.type === "dropdown" ? (
                     <Dropdown
                       value={dialogInputObject[input.key]}
                       onChange={(e) => {
-                        isUserIDDropdown
+                        setSelectedUser
                           ? setSelectedUser(e.value)
                           : isStatusesDropdown
                           ? setSelectedStatusCRM(e.value)
                           : handleDialogInputChange(input.key, e.value);
                       }}
                       options={input.options}
-                      {...(isUserIDDropdown
+                      {...(setSelectedUser
                         ? { optionLabel: "name" }
                         : isStatusesDropdown
                         ? { optionLabel: "crm_status" }
                         : {})}
                       placeholder={input.placeholder}
                       className="w-full"
-                      disabled={isLeadDialogDisabled}
+                      disabled={
+                        leadDialogType === "post-lead" || input.disabled
+                      }
                     />
                   ) : input.type === "calendar" ? (
                     <Calendar
@@ -154,7 +162,9 @@ export const DialogComponent = ({
                         ? { timeOnly: true }
                         : { dateFormat: "dd-mm-yy" })}
                       placeholder={input.placeholder}
-                      disabled={isLeadDialogDisabled}
+                      disabled={
+                        leadDialogType === "post-lead" || input.disabled
+                      }
                     />
                   ) : input.type === "multiselect" ? (
                     <MultiSelect
@@ -187,14 +197,16 @@ export const DialogComponent = ({
                   type.includes("add")
                     ? "Добавить"
                     : type === "edit" ||
-                      (type === "lead" && !isLeadDialogDisabled)
+                      (type === "lead" && leadDialogType === "edit-lead")
                     ? "Редактировать"
                     : "Отправить"
                 }
                 onClick={() =>
-                  type.includes("add") || type.includes("lead")
+                  type.includes("add") || leadDialogType === "post-lead"
                     ? handleAdd(dialogInputObject)
-                    : handleEdit(dialogInputObject)
+                    : type.includes("edit") || leadDialogType === "edit-lead"
+                    ? handleEdit(dialogInputObject)
+                    : null
                 }
                 className="w-full"
               />

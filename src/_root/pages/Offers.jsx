@@ -22,8 +22,18 @@ import { Chip } from "primereact/chip";
 import { InputSwitch } from "primereact/inputswitch";
 
 function Offers() {
+  const [offers, setOffers] = useState([]);
+  const [funnels, setFunnels] = useState([]);
+  const [geos, setGeos] = useState([]);
+  const [source, setSource] = useState([]);
+  const [activityChecked, setActivityChecked] = useState([]);
+  const [selectedOfferID, setSelectedOfferID] = useState(null);
   const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
   const [isEditDialogVisible, setIsEditDialogVisible] = useState(false);
+  const [globalFilterValue, setGlobalFilterValue] = useState("");
+  const [filters, setFilters] = useState({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  });
   const [dialogInputObject, setDialogInputObject] = useState({
     name: "",
     cap: "",
@@ -32,35 +42,6 @@ function Offers() {
     offer_start: "",
     offer_end: "",
     source: [],
-  });
-
-  const reducer = (state, action) => {
-    switch (action.type) {
-      case "SET_PROPERTY":
-        return {
-          ...state,
-          [action.property]: action.payload,
-        };
-      case "UPDATE_ACTIVITY_CHECKED":
-        return {
-          ...state,
-          activityChecked: state.activityChecked.map((item) =>
-            item.id === action.id ? { ...item, active: action.value } : item
-          ),
-        };
-    }
-  };
-  const [state, dispatch] = useReducer(reducer, {
-    offers: null,
-    selectedOfferID: null,
-    funnels: [],
-    geos: [],
-    activityChecked: [],
-    source: [],
-    globalFilterValue: "",
-    filters: {
-      global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    },
   });
 
   const toast = useRef(null);
@@ -83,14 +64,14 @@ function Offers() {
       key: "funnels",
       type: "multiselect",
       placeholder: "Выберите воронки",
-      options: state.funnels,
+      options: funnels,
     },
     {
       label: "Гео",
       key: "geo",
       type: "multiselect",
       placeholder: "Выберите гео",
-      options: state.geos,
+      options: geos,
     },
     {
       label: "Начало капы",
@@ -109,7 +90,7 @@ function Offers() {
       key: "source",
       type: "multiselect",
       placeholder: "Выберите источники",
-      options: state.source,
+      options: source,
     },
   ];
 
@@ -131,14 +112,14 @@ function Offers() {
       key: "funnels",
       type: "multiselect",
       placeholder: "Выберите воронки",
-      options: state.funnels,
+      options: funnels,
     },
     {
       label: "Гео",
       key: "geo",
       type: "multiselect",
       placeholder: "Выберите гео",
-      options: state.geos,
+      options: geos,
     },
     {
       label: "Начало капы",
@@ -157,7 +138,7 @@ function Offers() {
       key: "source",
       type: "multiselect",
       placeholder: "Выберите источники",
-      options: state.source,
+      options: source,
     },
   ];
 
@@ -165,35 +146,20 @@ function Offers() {
     console.log("dialogInputObject: ", dialogInputObject);
   }, [dialogInputObject]);
 
-  useEffect(() => {
-    console.log("state: ", state);
-  }, [state]);
 
   useEffect(() => {
     renderOffers();
     getFunnels().then((response) => {
       const updatedFunnels = response.data.map(({ name }) => name);
-      dispatch({
-        type: "SET_PROPERTY",
-        property: "funnels",
-        payload: updatedFunnels,
-      });
+      setFunnels(updatedFunnels);
     });
     getCountries().then((response) => {
       const updatedGeos = response.data.map(({ iso }) => iso);
-      dispatch({
-        type: "SET_PROPERTY",
-        property: "geos",
-        payload: updatedGeos,
-      });
+      setGeos(updatedGeos);
     });
     getSources().then((response) => {
       const updatedSources = response.data.map(({ name }) => name);
-      dispatch({
-        type: "SET_PROPERTY",
-        property: "source",
-        payload: updatedSources,
-      });
+      setSource(updatedSources);
     });
   }, []);
 
@@ -207,7 +173,7 @@ function Offers() {
         });
       });
 
-      const updatedOffersData = response.data.map((obj) => {
+      const updatedOffers = response.data.map((obj) => {
         if (obj.hasOwnProperty("offer_start")) {
           obj.offer_start = obj.offer_start.slice(0, -3);
         }
@@ -217,16 +183,8 @@ function Offers() {
 
         return obj;
       });
-      dispatch({
-        type: "SET_PROPERTY",
-        property: "offers",
-        payload: updatedOffersData,
-      });
-      dispatch({
-        type: "SET_PROPERTY",
-        property: "activityChecked",
-        payload: offerActiveArray,
-      });
+      setOffers(updatedOffers);
+      setActivityChecked(offerActiveArray)
     });
   };
 
@@ -242,32 +200,20 @@ function Offers() {
     });
 
     setIsEditDialogVisible(true);
-    dispatch({
-      type: "SET_PROPERTY",
-      property: "selectedOfferID",
-      payload: rowData.id,
-    });
+    setSelectedOfferID(rowData.id);
   };
 
   const handleDeleteActionClick = (e, rowData) => {
     showConfirmDeletePopUp(e);
-    dispatch({
-      type: "SET_PROPERTY",
-      property: "selectedOfferID",
-      payload: rowData.id,
-    });
+    setSelectedOfferID(rowData.id);
   };
 
   const handleConfirmPopUpButtonClick = (option, hide) => {
     option === "delete"
-      ? handleDeleteOffer(state.selectedOfferID)
+      ? handleDeleteOffer(selectedOfferID)
       : showToast("info", "Удаление оффера отменено"),
       hide();
-    dispatch({
-      type: "SET_PROPERTY",
-      property: "selectedOfferID",
-      payload: null,
-    });
+    setSelectedOfferID(null);
   };
 
   const formatCalendarTime = (timestamp, option) => {
@@ -293,15 +239,11 @@ function Offers() {
 
   const onGlobalFilterChange = (e) => {
     const value = e.target.value;
-    let _filters = { ...state.filters };
+    let _filters = { ...filters };
     _filters["global"].value = value;
 
-    dispatch({ type: "SET_PROPERTY", property: "filters", payload: _filters });
-    dispatch({
-      type: "SET_PROPERTY",
-      property: "globalFilterValue",
-      payload: value,
-    });
+    setFilters(_filters);
+    setGlobalFilterValue(value);
   };
 
   const showToast = (severity, text) => {
@@ -363,7 +305,7 @@ function Offers() {
         offer_end !== "",
       source !== "")
     ) {
-      editOffer(dialogInputObject, state.selectedOfferID)
+      editOffer(dialogInputObject, selectedOfferID)
         .then(function (response) {
           showToast("success", response.data.message);
           setIsEditDialogVisible(false);
@@ -379,7 +321,7 @@ function Offers() {
   };
 
   const handleDeleteOffer = () => {
-    deleteOffer(state.selectedOfferID)
+    deleteOffer(selectedOfferID)
       .then(function (response) {
         console.log(response);
         showToast("success", response.data.message);
@@ -399,6 +341,19 @@ function Offers() {
       icon: "pi pi-info-circle",
       defaultFocus: "reject",
       acceptClassName: "p-button-danger",
+    });
+  };
+
+  // Функция для сброса состояния DialogInputObject
+  const clearDialogInputObject = () => {
+    setDialogInputObject({
+      name: "",
+      cap: "",
+      funnels: [],
+      geo: [],
+      offer_start: "",
+      offer_end: "",
+      source: [],
     });
   };
 
@@ -425,7 +380,7 @@ function Offers() {
         <span className="p-input-icon-left">
           <i className="pi pi-search" />
           <InputText
-            value={state.globalFilterValue}
+            value={globalFilterValue}
             onChange={onGlobalFilterChange}
             placeholder="Поиск"
           />
@@ -500,7 +455,7 @@ function Offers() {
   };
 
   const activityTemplate = (rowData) => {
-    const item = state.activityChecked.find((el) => el.id === rowData.id);
+    const item = activityChecked.find((el) => el.id === rowData.id);
 
     return (
       <InputSwitch
@@ -513,13 +468,11 @@ function Offers() {
 
   const handleToggleActivity = (id, value) => {
     const transformedActive = value ? 1 : 0;
+    const updatedActivityChecked = activityChecked.map((item) =>
+      item.id === id ? { ...item, active: value } : item
+    );
     handleEditActivity(id, transformedActive);
-    dispatch({
-      type: "UPDATE_ACTIVITY_CHECKED",
-      property: "activityChecked",
-      id,
-      value,
-    });
+    setActivityChecked(updatedActivityChecked);
   };
 
   const handleEditActivity = (id, active) => {
@@ -549,6 +502,7 @@ function Offers() {
         inputs={addDialogInputs}
         handleAdd={handleAddOffer}
         formatCalendarTime={formatCalendarTime}
+        clearDialogInputObject={clearDialogInputObject}
       />
 
       <DialogComponent
@@ -561,6 +515,7 @@ function Offers() {
         inputs={editDialogInputs}
         handleEdit={handleEditOffer}
         formatCalendarTime={formatCalendarTime}
+        clearDialogInputObject={clearDialogInputObject}
       />
 
       <div className="flex flex-column align-items-center justify-content-center">
@@ -576,7 +531,7 @@ function Offers() {
           />
         </div>
         <DataTable
-          value={state.offers}
+          value={offers}
           paginator
           header={headerTemplate}
           rows={10}
@@ -584,7 +539,7 @@ function Offers() {
           showGridlines
           rowsPerPageOptions={[5, 10, 25, 50]}
           paginatorPosition="top"
-          filters={state.filters}
+          filters={filters}
           style={{ width: "90%" }}
         >
           <Column field="id" header="ID"></Column>

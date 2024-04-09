@@ -15,11 +15,10 @@ import { getSources, deleteSource, addSource } from "../../utilities/api";
 function Sources() {
   const [sources, setSources] = useState([]);
   const [popupCreateVisible, setPopupCreateVisible] = useState(false);
-  const [sourceName, setSourceName] = useState({ name: "" });
+  const [dialogInputObject, setDialogInputObject] = useState({ name: "" });
   const [currentRowData, setCurrentRowData] = useState(null);
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
   });
   const [loading, setLoading] = useState(true);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
@@ -102,16 +101,16 @@ function Sources() {
   };
 
   const addNewSource = () => {
-    addSource(sourceName.name)
+    addSource(dialogInputObject.name)
       .then(function (response) {
         showToast("success", "Добавление источника успешно");
         setPopupCreateVisible(false);
-        setSourceName({ name: "" });
+        setDialogInputObject({ name: "" });
         renderSources();
       })
       .catch(function (error) {
         showToast("error", "Ошибка при добавлении источника");
-        setSourceName({ name: "" });
+        setDialogInputObject({ name: "" });
       });
   };
 
@@ -123,11 +122,18 @@ function Sources() {
           <InputText
             value={globalFilterValue}
             onChange={onGlobalFilterChange}
-            placeholder="Keyword Search"
+            placeholder="Поиск"
           />
         </span>
       </div>
     );
+  };
+
+  // Функция для сброса состояния DialogInputObject
+  const clearDialogInputObject = () => {
+    setDialogInputObject({
+      name: "",
+    });
   };
 
   const actionBodyTemplate = (rowData) => {
@@ -186,10 +192,11 @@ function Sources() {
           isDialogVisible={popupCreateVisible}
           setIsDialogVisible={setPopupCreateVisible}
           header={"Добавить источник"}
-          dialogInputObject={sourceName}
-          setDialogInputObject={setSourceName}
+          dialogInputObject={dialogInputObject}
+          setDialogInputObject={setDialogInputObject}
           inputs={inputs}
           handleAdd={addNewSource}
+          clearDialogInputObject={clearDialogInputObject}
         />
       </div>
 
@@ -206,7 +213,6 @@ function Sources() {
           dataKey="id"
           filters={filters}
           loading={loading}
-          globalFilterFields={["name"]}
           header={renderHeader()}
           emptyMessage="Источник не найден."
         >

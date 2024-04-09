@@ -242,6 +242,17 @@ function Users() {
       reject: showRejectToast,
     });
   };
+  // Функция для сброса состояния DialogInputObject
+  const clearDialogInputObject = () => {
+    setDialogInputObject({
+      name: "",
+      email: "",
+      password: "",
+      role: "",
+    });
+    setSelectedUserID(null);
+  };
+
 
   const popUpContent = ({ message, acceptBtnRef, rejectBtnRef, hide }) => {
     return (
@@ -287,6 +298,7 @@ function Users() {
         setDialogInputObject={setDialogInputObject}
         inputs={addDialogInputs}
         handleAdd={handleAddUser}
+        clearDialogInputObject={clearDialogInputObject}
       />
 
       <DialogComponent
@@ -298,6 +310,7 @@ function Users() {
         setDialogInputObject={setDialogInputObject}
         inputs={editDialogInputs}
         handleEdit={handleEditUser}
+        clearDialogInputObject={clearDialogInputObject}
       />
 
       <div className="flex flex-column align-items-center justify-content-center">

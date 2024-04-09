@@ -14,11 +14,10 @@ import { DialogComponent } from "../../components/DialogComponent";
 function Funnels() {
   const [funnels, setFunnels] = useState([]);
   const [popupCreateVisible, setPopupCreateVisible] = useState(false);
-  const [funnelName, setFunnelName] = useState({ name: "" });
+  const [dialogInputObject, setDialogInputObject] = useState({ name: "" });
   const [currentRowData, setCurrentRowData] = useState(null);
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
   });
   const [loading, setLoading] = useState(true);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
@@ -46,7 +45,6 @@ function Funnels() {
   useEffect(() => {
     renderFunnels();
   }, []);
-
 
   const renderFunnels = () => {
     getFunnels()
@@ -96,22 +94,22 @@ function Funnels() {
         })
         .catch(function (error) {
           console.log(error);
-          showToast('error',"Ошибка удаления воронки");
+          showToast("error", "Ошибка удаления воронки");
         });
     }
   };
 
   const addNewFunnel = () => {
-    addFunnel(funnelName.name)
+    addFunnel(dialogInputObject.name)
       .then(function (response) {
         showToast("success", "Воронка создана успешно");
         setPopupCreateVisible(false);
-        setFunnelName({ name: "" });
+        setDialogInputObject({ name: "" });
         renderFunnels();
       })
       .catch(function (error) {
-        showToast('error',"Ошибка создания воронки");
-        setFunnelName({ name: "" });
+        showToast("error", "Ошибка создания воронки");
+        setDialogInputObject({ name: "" });
       });
   };
 
@@ -128,6 +126,13 @@ function Funnels() {
         </span>
       </div>
     );
+  };
+
+  // Функция для сброса состояния DialogInputObject
+  const clearDialogInputObject = () => {
+    setDialogInputObject({
+      name: "",
+    });
   };
 
   const actionBodyTemplate = (rowData) => {
@@ -186,10 +191,11 @@ function Funnels() {
           isDialogVisible={popupCreateVisible}
           setIsDialogVisible={setPopupCreateVisible}
           header={"Добавить воронку"}
-          dialogInputObject={funnelName}
-          setDialogInputObject={setFunnelName}
+          dialogInputObject={dialogInputObject}
+          setDialogInputObject={setDialogInputObject}
           inputs={inputs}
           handleAdd={addNewFunnel}
+          clearDialogInputObject={clearDialogInputObject}
         />
       </div>
 

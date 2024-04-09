@@ -67,9 +67,10 @@ export const deleteSpend = (id) =>
 
 export const editSpend = (dialogInputObject, id) =>
   axios.put(`http://25.18.88.64:8000/api/spends/update/${id}`, {
-    name: dialogInputObject.name,
+    name: dialogInputObject.name.name,
     summary: dialogInputObject.summary,
     date: dialogInputObject.date,
+    user_id: dialogInputObject.user_id,
   });
 
 export const getOffers = () => axios.get(`http://25.18.88.64:8000/api/offers`);
@@ -129,6 +130,12 @@ export const postLead = (dialogInputObject) =>
 
 export const addLead = (dialogInputObject) =>
   axios.post(`http://25.18.88.64:8000/api/leads/store`, dialogInputObject);
+
+export const editLead = (dialogInputObject, id) =>
+  axios.put(
+    `http://25.18.88.64:8000/api/leads/update/${id}`,
+    dialogInputObject
+  );
 
 export const deleteLead = (id) =>
   axios.delete(`http://25.18.88.64:8000/api/leads/${id}`);
