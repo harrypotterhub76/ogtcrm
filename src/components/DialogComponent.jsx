@@ -32,7 +32,6 @@ export const DialogComponent = ({
     }));
     console.log(field, value);
   };
-
   return (
     <Dialog
       header={header}
@@ -182,7 +181,7 @@ export const DialogComponent = ({
                     <InputSwitch
                       checked={Boolean(dialogInputObject[input.key])}
                       onChange={(e) => {
-                        handleDialogInputChange(input.key, e.value);
+                        handleDialogInputChange(input.key, Number(e.value));
                       }}
                     />
                   ) : (
