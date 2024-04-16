@@ -41,14 +41,14 @@ export const deleteDomain = (id) =>
 export const addDomain = (dialogInputObject) =>
   axios.post(`http://25.18.88.64:8000/api/domains/store`, {
     domain: dialogInputObject.name,
-    name: dialogInputObject.user.name,
+    name: dialogInputObject.user,
     user_id: dialogInputObject.user_id,
   });
 
 export const editDomain = (dialogInputObject, id) =>
   axios.put(`http://25.18.88.64:8000/api/domains/update/${id}`, {
     domain: dialogInputObject.name,
-    name: dialogInputObject.user.name,
+    name: dialogInputObject.user,
     user_id: dialogInputObject.user_id,
   });
 
@@ -152,6 +152,12 @@ export const getStatuses = () =>
 
 export const getStatusesCRM = () =>
   axios.get(`http://25.18.88.64:8000/api/status-crm`);
+
+  export const editStatusCRMValidity = (id, is_valid) =>
+  axios.put(`http://25.18.88.64:8000/api/status-crm/validity`, {
+    id,
+    is_valid,
+  });
 
 export const addStatus = (dialogInputObject) =>
   axios.post(`http://25.18.88.64:8000/api/status/store`, dialogInputObject);

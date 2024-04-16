@@ -20,10 +20,12 @@ import { DialogComponent } from "../../components/DialogComponent";
 
 function Domains() {
   const [domains, setDomains] = useState([]);
+  const [domainsOptions, setDomainsOptions] = useState([]);
   const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
   const [isEditDialogVisible, setIsEditDialogVisible] = useState(false);
   const [users, setUsers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [usersOptions, setUsersOptions] = useState([]);
+  const [selectedUser, setSelectedUser] = useState("");
   const [currentRowData, setCurrentRowData] = useState(null);
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -32,11 +34,11 @@ function Domains() {
   const [loading, setLoading] = useState(true);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
 
-  const [dialogInputObject, setDialogInputObject] = useState({
-    name: "",
-    user: {},
-    user_id: "",
-  });
+  const dialogInputObjectInitialState = { name: "", user: "", user_id: "" };
+
+  const [dialogInputObject, setDialogInputObject] = useState(
+    dialogInputObjectInitialState
+  );
 
   const toast = useRef(null);
 
@@ -45,10 +47,10 @@ function Domains() {
       setDialogInputObject((prevState) => ({
         ...prevState,
         user: selectedUser,
-        user_id: selectedUser.id,
+        user_id: getSelectedUserID(selectedUser),
       }));
     }
-    console.log("selectedUser", selectedUser)
+    console.log("selectedUser", selectedUser);
   }, [selectedUser]);
 
   const showToast = (severity, text) => {
@@ -59,7 +61,26 @@ function Domains() {
     });
   };
 
-  const inputs = [
+  const editDomainInputs = [
+    {
+      label: "Название",
+      key: "name",
+      type: "dropdown",
+      placeholder: "Введите название домена",
+      options: domainsOptions,
+      disabled: true,
+    },
+    {
+      label: "Пользователь",
+      key: "user",
+      type: "dropdown",
+      placeholder: "Выберите пользователя",
+      options: usersOptions,
+      setDropdownValue: true,
+    },
+  ];
+
+  const addDomainInputs = [
     {
       label: "Название",
       key: "name",
@@ -71,27 +92,25 @@ function Domains() {
       key: "user",
       type: "dropdown",
       placeholder: "Выберите пользователя",
-      options: users,
+      options: usersOptions,
+      setDropdownValue: true,
     },
   ];
 
   useEffect(() => {
     console.log("dialogInputObject", dialogInputObject);
-  }, [dialogInputObject]);
-
-  useEffect(() => {
     console.log("users", users);
-  }, [users]);
-
-  useEffect(() => {
     console.log("selectedUser", selectedUser);
-  }, [selectedUser]);
+    console.log("usersArray", usersOptions);
+    console.log("domains", domainsOptions);
+  }, [dialogInputObject, users, selectedUser, usersOptions, domainsOptions]);
 
   useEffect(() => {
     renderDomains();
     getUsers()
       .then((response) => {
         setUsers(response.data.map((obj) => getUpdatedUsers(obj)));
+        setUsersOptions(response.data.map(({ name }) => name));
       })
       .catch((error) => {
         console.log(error);
@@ -106,11 +125,8 @@ function Domains() {
   const renderDomains = () => {
     getDomains()
       .then((response) => {
-        const renamedData = response.data.map((item) => ({
-          ...item,
-          name: item.name,
-        }));
-        setDomains(renamedData);
+        setDomains(response.data);
+        setDomainsOptions(response.data.map(({ domain }) => domain));
         setLoading(false);
       })
       .catch((error) => {
@@ -163,49 +179,48 @@ function Domains() {
   const addNewDomain = () => {
     addDomain(dialogInputObject)
       .then(function (response) {
-        showToast("success", "Домен успешно добавлен");
+        showToast("success", response.data.message);
         setIsAddDialogVisible(false);
         setDialogInputObject({});
         renderDomains();
       })
       .catch(function (error) {
         console.log(error);
-        showToast("error", "Ошибка добавления домена");
+        showToast("error", error.response.data.message);
       });
   };
 
   const handleEdit = (rowData) => {
-    const userObject = users.find((obj) => obj.name === rowData.name);
     setCurrentRowData(rowData.id);
     setIsEditDialogVisible(true);
-    setSelectedUser(userObject)
+    setSelectedUser(rowData.name);
     setDialogInputObject({
       name: rowData.domain,
-      user: userObject,
-      user_id: userObject.id,
     });
   };
 
   const editCurrentDomain = () => {
     editDomain(dialogInputObject, currentRowData)
       .then(function (response) {
-        showToast("success", "Домен успешно изменён");
+        showToast("success", response.data.message);
         setIsEditDialogVisible(false);
-        setDialogInputObject({});
+        clearDialogInputObject();
         renderDomains();
       })
       .catch(function (error) {
-        showToast("error", "Ошибка редактирования домена");
+        showToast("error", response.data.message);
       });
   };
 
-   // Функция для сброса состояния DialogInputObject
-   const clearDialogInputObject = () => {
-    setDialogInputObject({
-      name: "",
-      user: {},
-      user_id: "",
-    });
+  // Функция для сброса состояния DialogInputObject
+  const clearDialogInputObject = () => {
+    setDialogInputObject(dialogInputObjectInitialState);
+    setSelectedUser("");
+  };
+
+  const getSelectedUserID = (name) => {
+    const filteredArray = users.filter((obj) => obj.name === name);
+    return filteredArray[0].id;
   };
 
   const renderHeader = () => {
@@ -310,11 +325,10 @@ function Domains() {
           header="Добавить домен"
           dialogInputObject={dialogInputObject}
           setDialogInputObject={setDialogInputObject}
-          inputs={inputs}
+          inputs={addDomainInputs}
           handleAdd={addNewDomain}
-          isUserIDDropdown={true}
-          setSelectedUser={setSelectedUser}
           clearDialogInputObject={clearDialogInputObject}
+          setDropdownValue={setSelectedUser}
         />
         <DialogComponent
           type="edit"
@@ -323,11 +337,10 @@ function Domains() {
           header="Редактировать домен"
           dialogInputObject={dialogInputObject}
           setDialogInputObject={setDialogInputObject}
-          inputs={inputs}
-          isUserIDDropdown={true}
+          inputs={editDomainInputs}
           handleEdit={editCurrentDomain}
-          setSelectedUser={setSelectedUser}
           clearDialogInputObject={clearDialogInputObject}
+          setDropdownValue={setSelectedUser}
         />
       </div>
 

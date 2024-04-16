@@ -89,12 +89,12 @@ function Funnels() {
     if (currentRowData) {
       deleteFunnel(currentRowData.id)
         .then(function (response) {
-          showToast("success", "Воронка успешно удалена");
+          showToast("success", response.data.message);
           renderFunnels();
         })
         .catch(function (error) {
           console.log(error);
-          showToast("error", "Ошибка удаления воронки");
+          showToast("error", error.response.data.message);
         });
     }
   };
@@ -102,13 +102,13 @@ function Funnels() {
   const addNewFunnel = () => {
     addFunnel(dialogInputObject.name)
       .then(function (response) {
-        showToast("success", "Воронка создана успешно");
+        showToast("success", response.data.message);
         setPopupCreateVisible(false);
         setDialogInputObject({ name: "" });
         renderFunnels();
       })
       .catch(function (error) {
-        showToast("error", "Ошибка создания воронки");
+        showToast("error", error.response.data.message);
         setDialogInputObject({ name: "" });
       });
   };

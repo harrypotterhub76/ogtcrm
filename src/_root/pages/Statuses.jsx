@@ -16,53 +16,46 @@ import {
   editStatus,
   getStatusesCRM,
   editStatusBroker,
+  editStatusCRMValidity,
 } from "../../utilities/api";
 import { DialogComponent } from "../../components/DialogComponent";
+import { InputSwitch } from "primereact/inputswitch";
 
 function Statuses() {
+  const [visibleTable, setVisibleTable] = useState("broker-statuses");
   const [statuses, setStatuses] = useState([]);
   const [statusesCRM, setStatusesCRM] = useState([]);
-  const [selectedStatusCRM, setSelectedStatusCRM] = useState(null);
+  const [statusesCRMOptions, setStatusesCRMOptions] = useState([]);
+  const [selectedStatusCRM, setSelectedStatusCRM] = useState("");
   const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
-
-  const [selectedCRMStatus, setSelectedCRMStatus] = useState(null);
-
   const [isEditDialogVisible, setIsEditDialogVisible] = useState(false);
   const [currentRowData, setCurrentRowData] = useState(null);
+  const [validityChecked, setValidityChecked] = useState([]);
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
   const [loading, setLoading] = useState(true);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
 
-  const [addStatusDialogInputObject, setAddStatusDialogInputObject] = useState({
+  const addStatusDialogInputObjectInitialState = {
     crm_status: "",
     is_valid: 0,
-  });
+  };
+  const editStatusDialogInputObjectInitialState = {
+    broker_name: "",
+    broker_status: "",
+    crm_status: {},
+    status_id: "",
+  };
+
+  const [addStatusDialogInputObject, setAddStatusDialogInputObject] = useState(
+    addStatusDialogInputObjectInitialState
+  );
 
   const [editStatusDialogInputObject, setEditStatusDialogInputObject] =
-    useState({
-      crm_status: "",
-      status_id: "",
-    });
+    useState(editStatusDialogInputObjectInitialState);
 
   const toast = useRef(null);
-
-  useEffect(() => {
-    if (selectedCRMStatus) {
-      setEditStatusDialogInputObject((prevState) => ({
-        ...prevState,
-        user: selectedCRMStatus,
-        user_id: selectedCRMStatus.id,
-      }));
-    }
-    console.log("selectedCRMStatus", selectedCRMStatus)
-  }, [selectedCRMStatus]);
-
-  useEffect(() => {
-    console.log("selectedCRMStatus", selectedCRMStatus);
-  }, [selectedCRMStatus]);
-
 
   const showToast = (severity, text) => {
     toast.current.show({
@@ -71,17 +64,6 @@ function Statuses() {
       life: 2000,
     });
   };
-
-  // useEffect(() => {
-  //   if (selectedStatusCRM) {
-  //     setEditStatusDialogInputObject((prevState) => ({
-  //       ...prevState,
-  //       crm_status: selectedStatusCRM,
-  //       id: selectedStatusCRM.id,
-  //     }));
-  //   }
-  //   console.log("selectedUser", selectedStatusCRM)
-  // }, [selectedStatusCRM]);
 
   const inputsEdit = [
     {
@@ -96,7 +78,8 @@ function Statuses() {
       key: "crm_status",
       type: "dropdown",
       placeholder: "Введите статус CRM",
-      options: statusesCRM,
+      options: statusesCRMOptions,
+      setDropdownValue: true,
     },
   ];
 
@@ -104,30 +87,39 @@ function Statuses() {
     {
       label: "Статус CRM",
       key: "crm_status",
-      // type: "dropdown",
       type: "text",
       placeholder: "Введите статус CRM",
-      // options: statusesCRM,
     },
     {
       label: "Валидность статуса",
       key: "is_valid",
       type: "switch",
       placeholder: "Введите статус CRM",
-    }
+    },
   ];
 
   useEffect(() => {
-    console.log("adddialogInputObject", addStatusDialogInputObject);
-    console.log("editdialogInputObject", editStatusDialogInputObject);
-  }, [addStatusDialogInputObject, editStatusDialogInputObject]);
+    console.log("addDialogInputObject", addStatusDialogInputObject);
+    console.log("editDialogInputObject", editStatusDialogInputObject);
+    console.log("statusesCRM: ", statusesCRM);
+    console.log("selectedStatusCRM: ", selectedStatusCRM);
+    console.log("statusesCRMOptions: ", statusesCRMOptions);
+    console.log("validityChecked: ", validityChecked);
+  }, [
+    addStatusDialogInputObject,
+    editStatusDialogInputObject,
+    statusesCRM,
+    selectedStatusCRM,
+    statusesCRMOptions,
+    validityChecked,
+  ]);
 
   useEffect(() => {
     if (selectedStatusCRM) {
       setEditStatusDialogInputObject((prevState) => ({
         ...prevState,
-        crm_status: selectedStatusCRM.crm_status,
-        status_id: selectedStatusCRM.id,
+        crm_status: selectedStatusCRM,
+        status_id: getSelectedStatusCRMID(selectedStatusCRM),
       }));
     }
   }, [selectedStatusCRM]);
@@ -152,13 +144,35 @@ function Statuses() {
       });
     getStatusesCRM()
       .then((response) => {
+        const validityArray = [];
+        response.data.forEach((obj) => {
+          validityArray.push({
+            id: obj.id,
+            is_valid: obj.is_valid === 1,
+          });
+        });
+        const updatedStatusesCRMOptions = response.data.map(
+          ({ crm_status }) => crm_status
+        );
         setStatusesCRM(response.data);
-        console.log(response);
+        setStatusesCRMOptions(updatedStatusesCRMOptions);
+        setValidityChecked(validityArray);
       })
       .catch((error) => {
         console.log(error);
         showToast("error", "Ошибка при загрузке статусов CRM");
       });
+  };
+
+  const getUpdatedStatusesCRMOptions = (obj) => {
+    return { id: obj.id, crm_status: obj.crm_status };
+  };
+
+  const getSelectedStatusCRMID = (status) => {
+    const filteredArray = statusesCRM.filter(
+      (obj) => obj.crm_status === status
+    );
+    return filteredArray[0].id;
   };
 
   const onGlobalFilterChange = (e) => {
@@ -203,7 +217,6 @@ function Statuses() {
   };
 
   const addNewStatus = () => {
-    console.log(addStatusDialogInputObject);
     addStatus(addStatusDialogInputObject)
       .then(function () {
         showToast("success", "Статус успешно добавлен");
@@ -218,38 +231,15 @@ function Statuses() {
   };
 
   const handleEdit = (event, rowData) => {
-    console.log(statusesCRM);
-    console.log(statuses);
-    console.log(rowData);
-    const userObject = statuses.find((obj) => obj.crm_status === rowData.crm_status);
-console.log(userObject);
     setCurrentRowData(rowData);
     setIsEditDialogVisible(true);
-    setSelectedCRMStatus(userObject)
-
-    // setEditStatusDialogInputObject({
-    //   broker_name: rowData.broker_name,
-    //   broker_status: rowData.broker_status,
-    //   crm_status: rowData.crm_status,
-    // });
+    setSelectedStatusCRM(rowData.crm_status);
     setEditStatusDialogInputObject({
-      crm_status: userObject,
-      status_id: rowData.id,
       broker_status: rowData.broker_status,
     });
   };
 
   const editCurrentStatus = () => {
-    // editStatus(addStatusDialogInputObject, currentRowData)
-    //   .then(function (response) {
-    //     showToast("success", "Статус успешно изменён");
-    //     setIsEditDialogVisible(false);
-    //     setAddStatusDialogInputObject({});
-    //     renderStatuses();
-    //   })
-    //   .catch(function (error) {
-    //     showToast("error", "Ошибка редактирования Статуса");
-    //   });
     editStatusBroker(editStatusDialogInputObject, currentRowData.id)
       .then(function (response) {
         showToast("success", "Статус успешно изменён");
@@ -258,8 +248,35 @@ console.log(userObject);
         renderStatuses();
       })
       .catch(function (error) {
-        showToast("error", "Ошибка редактирования Статуса");
+        showToast("error", "Ошибка редактирования статуса");
       });
+  };
+
+  const handleEditStatusCRMValidity = (id, value) => {
+    editStatusCRMValidity(id, value)
+      .then((response) => {
+        showToast("success", response.data.message);
+        console.log(response);
+      })
+      .catch((err) => {
+        showToast("error", response.data.message);
+        console.log(err);
+      });
+  };
+
+  // Функция для сброса состояния DialogInputObject
+  const clearDialogInputObject = () => {
+    setAddStatusDialogInputObject(addStatusDialogInputObjectInitialState);
+    setEditStatusDialogInputObject(editStatusDialogInputObjectInitialState);
+  };
+
+  const handleToggleStatusCRMValidity = (id, value) => {
+    const transformedIsValid = value ? 1 : 0;
+    const updatedValidityChecked = validityChecked.map((item) =>
+      item.id === id ? { ...item, is_valid: value } : item
+    );
+    handleEditStatusCRMValidity(id, transformedIsValid);
+    setValidityChecked(updatedValidityChecked);
   };
 
   const renderHeader = () => {
@@ -277,8 +294,7 @@ console.log(userObject);
     );
   };
 
-  const actionBodyTemplate = (rowData) => {
-    console.log(rowData);
+  const statusesActionBodyTemplate = (rowData) => {
     return (
       <div className="flex gap-3">
         <Button
@@ -287,13 +303,31 @@ console.log(userObject);
           aria-label="Search"
           onClick={(e) => handleEdit(e, rowData)}
         />
+      </div>
+    );
+  };
 
+  const statusesCRMActionBodyTemplate = (rowData) => {
+    return (
+      <div className="flex gap-3">
         <Button
           onClick={(e) => confirmDeleteStatus(e, rowData)}
           icon="pi pi-trash"
           className="p-button-danger"
         />
       </div>
+    );
+  };
+
+  const validityTemplate = (rowData) => {
+    const item = validityChecked.find((el) => el.id === rowData.id);
+
+    return (
+      <InputSwitch
+        key={item.id}
+        checked={item.is_valid}
+        onChange={(e) => handleToggleStatusCRMValidity(item.id, e.value)}
+      />
     );
   };
 
@@ -332,6 +366,21 @@ console.log(userObject);
       <div className="flex justify-content-between items-center mb-6">
         <h2 className="m-0">Статусы</h2>
         <Button
+          label={
+            visibleTable === "broker-statuses"
+              ? "Статусы CRM"
+              : "Статусы брокеров"
+          }
+          icon="pi pi-arrow-right-arrow-left"
+          onClick={() =>
+            setVisibleTable((prevState) =>
+              prevState === "broker-statuses"
+                ? "crm-statuses"
+                : "broker-statuses"
+            )
+          }
+        />
+        <Button
           label="Создать"
           icon="pi pi-plus"
           onClick={setIsAddDialogVisible}
@@ -345,6 +394,7 @@ console.log(userObject);
           setDialogInputObject={setAddStatusDialogInputObject}
           inputs={inputsAdd}
           handleAdd={addNewStatus}
+          clearDialogInputObject={clearDialogInputObject}
         />
         <DialogComponent
           type="edit"
@@ -355,39 +405,70 @@ console.log(userObject);
           setDialogInputObject={setEditStatusDialogInputObject}
           inputs={inputsEdit}
           handleEdit={editCurrentStatus}
-          isStatusesDropdown={true}
-          setSelectedStatusCRM={setSelectedStatusCRM}
-          setSelectedCRMStatus={setSelectedCRMStatus}
+          setDropdownValue={setSelectedStatusCRM}
+          clearDialogInputObject={clearDialogInputObject}
         />
       </div>
 
       <div style={{ maxWidth: "60rem", margin: "0 auto" }}>
-        <DataTable
-          value={statuses}
-          paginator
-          rows={20}
-          rowsPerPageOptions={[20, 50, 100]}
-          stripedRows
-          showGridlines
-          tableStyle={{ minWidth: "50rem" }}
-          paginatorPosition="both"
-          dataKey="id"
-          filters={filters}
-          loading={loading}
-          header={renderHeader()}
-          emptyMessage="Статус не найден."
-        >
-          <Column field="id" header="ID" style={{ width: "20%" }}></Column>
-          <Column field="broker_status" header="Статус брокера"></Column>
-          <Column field="crm_status" header="Статус CRM"></Column>
-          <Column field="broker_name" header="Брокер"></Column>
-          <Column
-            field="category"
-            header="Действие"
-            body={actionBodyTemplate}
-            style={{ width: "20%" }}
-          ></Column>
-        </DataTable>
+        {visibleTable === "broker-statuses" ? (
+          <DataTable
+            value={statuses}
+            paginator
+            rows={20}
+            rowsPerPageOptions={[20, 50, 100]}
+            stripedRows
+            showGridlines
+            tableStyle={{ minWidth: "50rem" }}
+            paginatorPosition="both"
+            dataKey="id"
+            filters={filters}
+            loading={loading}
+            header={renderHeader()}
+            emptyMessage="Статус не найден."
+          >
+            <Column field="id" header="ID" style={{ width: "20%" }}></Column>
+            <Column field="broker_status" header="Статус брокера"></Column>
+            <Column field="crm_status" header="Статус CRM"></Column>
+            <Column field="broker_name" header="Брокер"></Column>
+            <Column
+              field="category"
+              header="Действие"
+              body={statusesActionBodyTemplate}
+              style={{ width: "20%" }}
+            ></Column>
+          </DataTable>
+        ) : (
+          <DataTable
+            value={statusesCRM}
+            paginator
+            rows={20}
+            rowsPerPageOptions={[20, 50, 100]}
+            stripedRows
+            showGridlines
+            tableStyle={{ minWidth: "50rem" }}
+            paginatorPosition="both"
+            dataKey="id"
+            filters={filters}
+            loading={loading}
+            header={renderHeader()}
+            emptyMessage="Статус не найден."
+          >
+            <Column field="id" header="ID" style={{ width: "20%" }}></Column>
+            <Column field="crm_status" header="Статус CRM"></Column>
+            <Column
+              field="is_valid"
+              header="Валидность"
+              body={validityTemplate}
+            ></Column>
+            <Column
+              field="category"
+              header="Действие"
+              body={statusesCRMActionBodyTemplate}
+              style={{ width: "20%" }}
+            ></Column>
+          </DataTable>
+        )}
       </div>
     </div>
   );
