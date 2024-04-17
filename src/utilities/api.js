@@ -145,7 +145,8 @@ export const getLeadStatus = () => {
 };
 
 export const getLogs = (date) =>
-  axios.get(`http://25.18.88.64:8000/api/logs/${date}`);
+  axios.post(`http://25.18.88.64:8000/api/logs`, { created_at: date }
+  );
 
 export const getStatuses = () =>
   axios.get(`http://25.18.88.64:8000/api/status`);
@@ -153,7 +154,7 @@ export const getStatuses = () =>
 export const getStatusesCRM = () =>
   axios.get(`http://25.18.88.64:8000/api/status-crm`);
 
-  export const editStatusCRMValidity = (id, is_valid) =>
+export const editStatusCRMValidity = (id, is_valid) =>
   axios.put(`http://25.18.88.64:8000/api/status-crm/validity`, {
     id,
     is_valid,
