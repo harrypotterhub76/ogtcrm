@@ -22,10 +22,11 @@ import { Chip } from "primereact/chip";
 import { InputSwitch } from "primereact/inputswitch";
 
 function Offers() {
+  // Стейты
   const [offers, setOffers] = useState([]);
-  const [funnels, setFunnels] = useState([]);
-  const [geos, setGeos] = useState([]);
-  const [source, setSource] = useState([]);
+  const [funnelsOptions, setFunnelsOptions] = useState([]);
+  const [geosOptions, setGeosOptions] = useState([]);
+  const [sourceOptions, setSourceOptions] = useState([]);
   const [activityChecked, setActivityChecked] = useState([]);
   const [selectedOfferID, setSelectedOfferID] = useState(null);
   const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
@@ -46,6 +47,37 @@ function Offers() {
 
   const toast = useRef(null);
 
+  // Функция на рендер тоста
+  const showToast = (severity, text) => {
+    toast.current.show({
+      severity: severity,
+      detail: text,
+      life: 2000,
+    });
+  };
+
+  // useEffect'ы для рендера, вывода логов
+  useEffect(() => {
+    console.log("dialogInputObject: ", dialogInputObject);
+  }, [dialogInputObject]);
+
+  useEffect(() => {
+    renderOffers();
+    getFunnels().then((response) => {
+      const updatedFunnels = response.data.map(({ name }) => name);
+      setFunnelsOptions(updatedFunnels);
+    });
+    getCountries().then((response) => {
+      const updatedGeos = response.data.map(({ iso }) => iso);
+      setGeosOptions(updatedGeos);
+    });
+    getSources().then((response) => {
+      const updatedSources = response.data.map(({ name }) => name);
+      setSourceOptions(updatedSources);
+    });
+  }, []);
+
+  // Инпуты для DialogComponent
   const addDialogInputs = [
     {
       label: "Оффер",
@@ -64,14 +96,14 @@ function Offers() {
       key: "funnels",
       type: "multiselect",
       placeholder: "Выберите воронки",
-      options: funnels,
+      options: funnelsOptions,
     },
     {
       label: "Гео",
       key: "geo",
       type: "multiselect",
       placeholder: "Выберите гео",
-      options: geos,
+      options: geosOptions,
     },
     {
       label: "Начало капы",
@@ -90,7 +122,7 @@ function Offers() {
       key: "source",
       type: "multiselect",
       placeholder: "Выберите источники",
-      options: source,
+      options: sourceOptions,
     },
   ];
 
@@ -112,14 +144,14 @@ function Offers() {
       key: "funnels",
       type: "multiselect",
       placeholder: "Выберите воронки",
-      options: funnels,
+      options: funnelsOptions,
     },
     {
       label: "Гео",
       key: "geo",
       type: "multiselect",
       placeholder: "Выберите гео",
-      options: geos,
+      options: geosOptions,
     },
     {
       label: "Начало капы",
@@ -138,31 +170,11 @@ function Offers() {
       key: "source",
       type: "multiselect",
       placeholder: "Выберите источники",
-      options: source,
+      options: sourceOptions,
     },
   ];
 
-  useEffect(() => {
-    console.log("dialogInputObject: ", dialogInputObject);
-  }, [dialogInputObject]);
-
-
-  useEffect(() => {
-    renderOffers();
-    getFunnels().then((response) => {
-      const updatedFunnels = response.data.map(({ name }) => name);
-      setFunnels(updatedFunnels);
-    });
-    getCountries().then((response) => {
-      const updatedGeos = response.data.map(({ iso }) => iso);
-      setGeos(updatedGeos);
-    });
-    getSources().then((response) => {
-      const updatedSources = response.data.map(({ name }) => name);
-      setSource(updatedSources);
-    });
-  }, []);
-
+  // Функции подтягиваний данных с бека
   const renderOffers = () => {
     getOffers().then(function (response) {
       const offerActiveArray = [];
@@ -184,10 +196,11 @@ function Offers() {
         return obj;
       });
       setOffers(updatedOffers);
-      setActivityChecked(offerActiveArray)
+      setActivityChecked(offerActiveArray);
     });
   };
 
+  // Обработчики для actionButtonsTemplate
   const handleEditActionClick = (rowData) => {
     setDialogInputObject({
       name: rowData.name,
@@ -208,6 +221,7 @@ function Offers() {
     setSelectedOfferID(rowData.id);
   };
 
+  // Функция для управления плажкой на удаление данных из DataTable
   const handleConfirmPopUpButtonClick = (option, hide) => {
     option === "delete"
       ? handleDeleteOffer(selectedOfferID)
@@ -216,27 +230,7 @@ function Offers() {
     setSelectedOfferID(null);
   };
 
-  const formatCalendarTime = (timestamp, option) => {
-    if (timestamp) {
-      if (option === "to string") {
-        const hours = timestamp.getHours().toString().padStart(2, "0");
-        const minutes = timestamp.getMinutes().toString().padStart(2, "0");
-
-        const formattedTime = `${hours}:${minutes}`;
-        return formattedTime;
-      } else if (option === "to Date") {
-        let formattedTime = new Date();
-
-        let [hours, minutes] = timestamp.split(":");
-
-        formattedTime.setHours(parseInt(hours, 10));
-        formattedTime.setMinutes(parseInt(minutes, 10));
-        return formattedTime;
-      }
-    }
-    return;
-  };
-
+  // Сеттер фильтра глобального поиска
   const onGlobalFilterChange = (e) => {
     const value = e.target.value;
     let _filters = { ...filters };
@@ -246,14 +240,7 @@ function Offers() {
     setGlobalFilterValue(value);
   };
 
-  const showToast = (severity, text) => {
-    toast.current.show({
-      severity: severity,
-      detail: text,
-      life: 2000,
-    });
-  };
-
+  // Обработчики взаимодействия фронта с беком
   const handleAddOffer = ({
     name,
     cap,
@@ -333,15 +320,16 @@ function Offers() {
       });
   };
 
-  const showConfirmDeletePopUp = (e) => {
-    confirmPopup({
-      group: "headless",
-      target: e.currentTarget,
-      message: "Вы точно хотите удалить оффер?",
-      icon: "pi pi-info-circle",
-      defaultFocus: "reject",
-      acceptClassName: "p-button-danger",
-    });
+  const handleEditActivity = (id, active) => {
+    editActivity(id, active)
+      .then((response) => {
+        showToast("success", response.data.message);
+        console.log(response);
+      })
+      .catch((err) => {
+        showToast("error", response.data.message);
+        console.log(err);
+      });
   };
 
   // Функция для сброса состояния DialogInputObject
@@ -357,6 +345,50 @@ function Offers() {
     });
   };
 
+  // Рендер плажки на удаление данных из DataTable
+  const showConfirmDeletePopUp = (e) => {
+    confirmPopup({
+      group: "headless",
+      target: e.currentTarget,
+      message: "Вы точно хотите удалить оффер?",
+      icon: "pi pi-info-circle",
+      defaultFocus: "reject",
+      acceptClassName: "p-button-danger",
+    });
+  };
+
+  // Вспомогательные функции
+  const formatCalendarTime = (timestamp, option) => {
+    if (timestamp) {
+      if (option === "to string") {
+        const hours = timestamp.getHours().toString().padStart(2, "0");
+        const minutes = timestamp.getMinutes().toString().padStart(2, "0");
+
+        const formattedTime = `${hours}:${minutes}`;
+        return formattedTime;
+      } else if (option === "to Date") {
+        let formattedTime = new Date();
+
+        let [hours, minutes] = timestamp.split(":");
+
+        formattedTime.setHours(parseInt(hours, 10));
+        formattedTime.setMinutes(parseInt(minutes, 10));
+        return formattedTime;
+      }
+    }
+    return;
+  };
+
+  const handleToggleActivity = (id, value) => {
+    const transformedActive = value ? 1 : 0;
+    const updatedActivityChecked = activityChecked.map((item) =>
+      item.id === id ? { ...item, active: value } : item
+    );
+    handleEditActivity(id, transformedActive);
+    setActivityChecked(updatedActivityChecked);
+  };
+
+  // Шаблоны для DataTable
   const actionButtonsTemplate = (rowData) => {
     return (
       <div className="flex gap-3">
@@ -466,34 +498,13 @@ function Offers() {
     );
   };
 
-  const handleToggleActivity = (id, value) => {
-    const transformedActive = value ? 1 : 0;
-    const updatedActivityChecked = activityChecked.map((item) =>
-      item.id === id ? { ...item, active: value } : item
-    );
-    handleEditActivity(id, transformedActive);
-    setActivityChecked(updatedActivityChecked);
-  };
-
-  const handleEditActivity = (id, active) => {
-    editActivity(id, active)
-      .then((response) => {
-        showToast("success", response.data.message);
-        console.log(response);
-      })
-      .catch((err) => {
-        showToast("error", response.data.message);
-        console.log(err);
-      });
-  };
-
   return (
     <>
       <Toast ref={toast} />
       <ConfirmPopup group="headless" content={popUpContentTemplate} />
 
       <DialogComponent
-        type="add"
+        type="add offer"
         isDialogVisible={isAddDialogVisible}
         setIsDialogVisible={setIsAddDialogVisible}
         header="Добавить оффер"

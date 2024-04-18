@@ -7,27 +7,65 @@ import { Toast } from "primereact/toast";
 import { InputText } from "primereact/inputtext";
 import {
   addLead,
-  deleteOffer,
+  editLead,
   getCountries,
+  getDuplicateLeads,
   getFunnels,
-  getLeads,
+  getOffers,
+  getStatusesCRM,
   getUsers,
   postLead,
 } from "../../utilities/api";
-import { statuses } from "../../utilities/statuses";
+import { deleteLead } from "../../utilities/api";
 import { ConfirmPopup } from "primereact/confirmpopup";
 import { confirmPopup } from "primereact/confirmpopup";
 import { Dialog } from "primereact/dialog";
 import { DialogComponent } from "../../components/DialogComponent";
 
-function Duplicates() {
-  const [isLeadDialogVisible, setIsLeadDialogVisible] = useState(false);
-  const [isLeadDialogDisabled, setIsLeadDialogDisabled] = useState(true);
-  const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
-  const [funnels, setFunnels] = useState([]);
+function Leads() {
+  // Стейты
+  const [duplicateLeads, setDuplicateLeads] = useState([]);
+  const [funnels, setFunnels] = useState({});
+  const [offers, setOffers] = useState([]);
   const [users, setUsers] = useState([]);
-  const [geos, setGeos] = useState([]);
-  const [dialogInputObject, setDialogInputObject] = useState({
+
+  const [offersOptions, setOffersOptions] = useState([]);
+  const [funnelsOptions, setFunnelsOptions] = useState([]);
+  const [usersOptions, setUsersOptions] = useState([]);
+  const [geosOptions, setGeosOptions] = useState([]);
+  const [statusesCRMOptions, setStatusesCRMOptions] = useState([]);
+
+  const [selectedOfferDialog, setSelectedOfferDialog] = useState(null);
+  const [selectedFunnelDialog, setSelectedFunnelDialog] = useState(null);
+  const [selectedUserDialog, setSelectedUserDialog] = useState(null);
+  const [selectedURLParams, setSelectedURLParams] = useState([]);
+  const [selectedStatuses, setSelectedStatuses] = useState([]);
+  const [selectedLeadID, setSelectedLeadID] = useState(null);
+
+  const [isLeadDialogVisible, setIsLeadDialogVisible] = useState(false);
+  const [leadDialogType, setLeadDialogType] = useState("post-lead");
+  const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
+  const [isParameterDialogVisible, setIsParameterDialogVisible] =
+    useState(false);
+  const [isStatusDialogVisible, setIsStatusDialogVisible] = useState(false);
+
+  const [filters, setFilters] = useState({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  });
+  const [globalFilterValue, setGlobalFilterValue] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  const addLeadDialogInitialState = {
+    full_name: "",
+    domain: "",
+    email: "",
+    funnel: "",
+    phone: "",
+    ip: "",
+    geo: [],
+    url_params: "",
+  };
+  const postLeadDialogInitialState = {
     full_name: "",
     domain: "",
     email: "",
@@ -40,25 +78,86 @@ function Duplicates() {
     geo: [],
     created_at: "",
     url_params: "",
-  });
-  const reducer = (state, action) => {
-    switch (action.type) {
-      case "SET_PROPERTY":
-        return {
-          ...state,
-          [action.property]: action.payload,
-        };
-    }
   };
-  const [state, dispatch] = useReducer(reducer, {
-    leads: [],
-    isParameterDialogVisible: false,
-    isLeadDialogVisible: false,
-    selectedLeadID: null,
-    selectedURLParams: [],
-  });
+  const [postLeadDialogInputObject, setPostLeadDialogInputObject] = useState(
+    postLeadDialogInitialState
+  );
 
-  const leadDialogInputs = [
+  const [addLeadDialogInputObject, setAddLeadDialogInputObject] = useState(
+    addLeadDialogInitialState
+  );
+
+  const toast = useRef(null);
+
+  // Функция на рендер тоста
+  const showToast = (severity, text) => {
+    toast.current.show({
+      severity: severity,
+      detail: text,
+      life: 2000,
+    });
+  };
+
+  // useEffect'ы для рендера, вывода логов
+  useEffect(() => {
+    console.log("addLeadDialogInputObject: ", addLeadDialogInputObject);
+    console.log("postLeadDialogInputObject: ", postLeadDialogInputObject);
+    console.log("leadDialogType: ", leadDialogType);
+    console.log("statusesOptions: ", statusesCRMOptions);
+    console.log("funnels: ", funnels);
+  }, [
+    addLeadDialogInputObject,
+    postLeadDialogInputObject,
+    leadDialogType,
+    statusesCRMOptions,
+    funnels,
+  ]);
+
+  useEffect(() => {
+    if (selectedFunnelDialog) {
+      setPostLeadDialogInputObject((prevState) => ({
+        ...prevState,
+        funnel: selectedFunnelDialog,
+        funnel_id: getSelectedFunnelID(selectedFunnelDialog),
+      }));
+    }
+    console.log("selectedFunnelDialog", selectedFunnelDialog);
+  }, [selectedFunnelDialog]);
+
+  useEffect(() => {
+    if (selectedOfferDialog) {
+      setPostLeadDialogInputObject((prevState) => ({
+        ...prevState,
+        offer: selectedOfferDialog,
+        offer_id: getSelectedOfferID(selectedOfferDialog),
+      }));
+    }
+    console.log("selectedOfferDialog", selectedOfferDialog);
+  }, [selectedOfferDialog]);
+
+  useEffect(() => {
+    if (selectedUserDialog) {
+      setPostLeadDialogInputObject((prevState) => ({
+        ...prevState,
+        user: selectedUserDialog,
+        user_id: getSelectedUserID(selectedUserDialog),
+      }));
+    }
+    console.log("selectedFunnelDialog", selectedUserDialog);
+  }, [selectedUserDialog]);
+
+  useEffect(() => {
+    renderDuplicateLeads();
+    getCountriesData();
+    getFunnelsData();
+    getOffersData();
+    getStatusesCRMData();
+    getUsersData();
+    setLoading(false)
+  }, []);
+
+  // Инпуты для DialogComponent
+  const postLeadDialogInputs = [
     {
       label: "Имя",
       key: "full_name",
@@ -66,10 +165,10 @@ function Duplicates() {
       placeholder: "Имя",
     },
     {
-      label: "URL",
+      label: "Домен",
       key: "domain",
       type: "text",
-      placeholder: "URL",
+      placeholder: "Домен",
     },
     {
       label: "Email",
@@ -82,13 +181,22 @@ function Duplicates() {
       key: "funnel",
       type: "dropdown",
       placeholder: "Воронка",
-      options: funnels,
+      options: funnelsOptions,
+      setDropdownValue: setSelectedFunnelDialog,
     },
     {
       label: "Телефон",
       key: "phone",
       type: "text",
       placeholder: "Телефон",
+    },
+    {
+      label: "Оффер",
+      key: "offer",
+      type: "dropdown",
+      placeholder: "Оффер",
+      options: offersOptions,
+      setDropdownValue: setSelectedOfferDialog,
     },
     {
       label: "IP",
@@ -101,21 +209,22 @@ function Duplicates() {
       key: "status",
       type: "dropdown",
       placeholder: "Статус",
-      options: statuses,
+      options: statusesCRMOptions,
     },
     {
       label: "Пользователь",
       key: "user",
       type: "dropdown",
       placeholder: "Пользователь",
-      options: users,
+      options: usersOptions,
+      setDropdownValue: setSelectedUserDialog,
     },
     {
       label: "Гео",
       key: "geo",
       type: "dropdown",
       placeholder: "Гео",
-      options: geos,
+      options: geosOptions,
     },
     {
       label: "Дата создания",
@@ -131,87 +240,263 @@ function Duplicates() {
     },
   ];
 
-  const toast = useRef(null);
+  const addLeadDialogInputs = [
+    {
+      label: "Имя",
+      key: "full_name",
+      type: "text",
+      placeholder: "Имя",
+    },
+    {
+      label: "Домен",
+      key: "domain",
+      type: "text",
+      placeholder: "Домен",
+    },
+    {
+      label: "Email",
+      key: "email",
+      type: "text",
+      placeholder: "Email",
+    },
+    {
+      label: "Воронка",
+      key: "funnel",
+      type: "dropdown",
+      placeholder: "Воронка",
+      options: funnelsOptions,
+    },
+    {
+      label: "Телефон",
+      key: "phone",
+      type: "text",
+      placeholder: "Телефон",
+    },
+    {
+      label: "IP",
+      key: "ip",
+      type: "text",
+      placeholder: "IP",
+    },
+    {
+      label: "Гео",
+      key: "geo",
+      type: "dropdown",
+      placeholder: "Гео",
+      options: geosOptions,
+    },
+    {
+      label: "Параметры",
+      key: "url_params",
+      type: "text",
+      placeholder: "Параметры",
+    },
+  ];
 
-  useEffect(() => {
-    console.log("dialogInputObject: ", dialogInputObject);
-  }, [dialogInputObject]);
+  // Функции подтягиваний данных с бека
+  const renderDuplicateLeads = () => {
+    getDuplicateLeads().then(function (response) {
+      setDuplicateLeads(response.data);
+    });
+  };
 
-  useEffect(() => {
-    console.log("state: ", state);
-  }, [state]);
-
-  useEffect(() => {
-    renderLeads();
+  const getOffersData = () => {
+    getOffers().then((response) => {
+      const updatedOffers = response.data.map(({ name }) => name);
+      setOffers(response.data);
+      setOffersOptions(updatedOffers);
+    });
+  };
+  const getFunnelsData = () => {
     getFunnels().then((response) => {
       const updatedFunnels = response.data.map(({ name }) => name);
-      setFunnels(updatedFunnels);
+      setFunnels(response.data);
+      setFunnelsOptions(updatedFunnels);
     });
+  };
+
+  const getCountriesData = () => {
     getCountries().then((response) => {
       const updatedGeos = response.data.map(({ iso }) => iso);
-      setGeos(updatedGeos);
+      setGeosOptions(updatedGeos);
     });
-    getUsers().then((response) => {
-      setUsers(response.data.map((obj) => obj.name));
-    });
-  }, []);
+  };
 
-  const renderLeads = () => {
-    getLeads().then(function (response) {
-        console.log(response.data);
-      const filteredObjects = response.data.filter((object) => {
-        console.log(object.status);
-        const lastStatus = object.status.substr(0, -1)
-        console.log(lastStatus);
-        // return lastStatus === "System duplicate";
-      });
-      dispatch({
-        type: "SET_PROPERTY",
-        property: "leads",
-        payload: filteredObjects,
-      });
-      console.log(filteredObjects);
-      console.log(response);
+  const getUsersData = () => {
+    getUsers().then((response) => {
+      setUsers(response.data);
+      setUsersOptions(response.data.map(({ name }) => name));
+    });
+  };
+
+  const getStatusesCRMData = () => {
+    getStatusesCRM().then((response) => {
+      const updatedStatusesCRM = response.data.map(
+        ({ crm_status }) => crm_status
+      );
+      setStatusesCRMOptions(updatedStatusesCRM);
+    });
+  };
+
+  // Обработчики кликов по данным таблицы
+  const handlePhoneClick = (rowData) => {
+    const parsedStatusArray = JSON.parse(rowData.status);
+    const newestStatusObject = parsedStatusArray[parsedStatusArray.length - 1];
+    setIsLeadDialogVisible(true);
+    setSelectedLeadID(rowData.id);
+    setSelectedFunnelDialog(rowData.funnel);
+    setSelectedOfferDialog(rowData.offer);
+    setSelectedUserDialog(rowData.user);
+    setPostLeadDialogInputObject({
+      id: rowData.id,
+      full_name: rowData.full_name,
+      domain: rowData.domain,
+      email: rowData.email,
+      phone: rowData.phone,
+      ip: rowData.ip,
+      status: newestStatusObject.status,
+      geo: rowData.geo,
+      created_at: formatTimestampForCalendar(rowData.created_at),
+      url_params: rowData.url_params,
     });
   };
 
   const handleDeleteActionClick = (e, rowData) => {
     showConfirmDeletePopUp(e);
-    dispatch({ type: "SET_SELECTED_OFFER_ID", payload: rowData.id });
+    setSelectedLeadID(rowData.id);
   };
 
+  const handleURLParameterClick = (rowData, selectedURLParamsArray) => {
+    setIsParameterDialogVisible(true);
+    setSelectedLeadID(rowData.id);
+    setSelectedURLParams(selectedURLParamsArray);
+  };
+
+  const handleStatusClick = (rowData, parsedArray) => {
+    setIsStatusDialogVisible(true);
+    setSelectedLeadID(rowData.id);
+    setSelectedStatuses(parsedArray);
+  };
+
+  // Функция для управления плажкой на удаление данных из DataTable
   const handleConfirmPopUpButtonClick = (option, hide) => {
     option === "delete"
-      ? handleDeleteOffer(state.selectedOfferID)
-      : showToast("info", "Удаление оффера отменено"),
+      ? handleDeleteLead(selectedLeadID)
+      : showToast("info", "Удаление лида отменено"),
       hide();
-    dispatch({ type: "SET_SELECTED_OFFER_ID", payload: null });
+    setSelectedLeadID(null);
   };
 
+  // Сеттер фильтра глобального поиска
+  const onGlobalFilterChange = (e) => {
+    const value = e.target.value;
+    let _filters = { ...filters };
+    _filters["global"].value = value;
+
+    setFilters(_filters);
+    setGlobalFilterValue(value);
+  };
+
+  // Обработчики взаимодействия фронта с беком
   const handleAddLead = () => {
-    addLead(dialogInputObject)
-      .then(function (response) {
-        setIsLeadDialogVisible(false);
-        showToast("success", response.data.message);
-        renderLeads();
-      })
-      .catch(function (error) {
-        console.log(error);
-        showToast("error", response.data.message);
-      });
+    console.log(isAllFieldsFilled(addLeadDialogInputObject));
+    if (isAllFieldsFilled(addLeadDialogInputObject)) {
+      addLead(addLeadDialogInputObject)
+        .then(function (response) {
+          if (response.data.message === "Dublicate System") {
+            showToast("success", response.data.message);
+            return;
+          }
+          showToast("success", response.data.message);
+          setIsAddDialogVisible(false);
+          renderDuplicateLeads();
+        })
+        .catch(function (error) {
+          console.log(error);
+          showToast("error", response.data.message);
+        });
+    } else {
+      showToast("error", "Пожалуйста, введите все поля");
+    }
   };
 
   const handlePostLead = () => {
-    postLead(dialogInputObject)
+    console.log(isAllFieldsFilled(postLeadDialogInputObject));
+    if (isAllFieldsFilled(postLeadDialogInputObject)) {
+      postLead(postLeadDialogInputObject)
+        .then(function (response) {
+          setIsLeadDialogVisible(false);
+          showToast("success", response.data.message);
+          renderDuplicateLeads();
+        })
+        .catch(function (error) {
+          console.log(error);
+          showToast("error", error.response.data.message);
+        });
+    } else {
+      showToast("error", "Пожалуйста, введите все поля");
+    }
+  };
+
+  const handleEditLead = () => {
+    editLead(postLeadDialogInputObject, selectedLeadID)
       .then(function (response) {
         setIsLeadDialogVisible(false);
         showToast("success", response.data.message);
-        renderLeads();
+        renderDuplicateLeads();
       })
       .catch(function (error) {
         console.log(error);
-        showToast("error", response.data.message);
+        showToast("error", error.response.data.message);
       });
+  };
+
+  const handleDeleteLead = () => {
+    deleteLead(selectedLeadID)
+      .then(function (response) {
+        showToast("success", response.data.message);
+        renderDuplicateLeads();
+      })
+      .catch(function (error) {
+        showToast("error", response.data.message);
+        console.log(error);
+      });
+  };
+
+  // Функция для сброса стейтов
+  const clearDialogInputObject = () => {
+    setAddLeadDialogInputObject(addLeadDialogInitialState);
+    setPostLeadDialogInputObject(postLeadDialogInitialState);
+    setSelectedLeadID(null);
+    setLeadDialogType("post-lead");
+  };
+
+  // Рендер плажки на удаление данных из DataTable
+  const showConfirmDeletePopUp = (e) => {
+    confirmPopup({
+      group: "headless",
+      target: e.currentTarget,
+      message: "Вы точно хотите удалить лида?",
+      icon: "pi pi-info-circle",
+      defaultFocus: "reject",
+      acceptClassName: "p-button-danger",
+    });
+  };
+
+  // Вспомогательные функции
+  const getSelectedFunnelID = (name) => {
+    const filteredArray = funnels.filter((obj) => obj.name === name);
+    return filteredArray[0].id;
+  };
+
+  const getSelectedOfferID = (name) => {
+    const filteredArray = offers.filter((obj) => obj.name === name);
+    return filteredArray[0].id;
+  };
+
+  const getSelectedUserID = (name) => {
+    const filteredArray = users.filter((obj) => obj.name === name);
+    return filteredArray[0].id;
   };
 
   const formatTimestamp = (timestamp) => {
@@ -233,44 +518,9 @@ function Duplicates() {
     return new Date(timestamp);
   };
 
-  const onGlobalFilterChange = (e) => {
-    const value = e.target.value;
-    let _filters = { ...state.filters };
-    _filters["global"].value = value;
-
-    dispatch({ type: "SET_FILTERS", payload: _filters });
-    dispatch({ type: "SET_GLOBAL_FILTER_VALUE", payload: value });
-  };
-
-  const showToast = (severity, text) => {
-    toast.current.show({
-      severity: severity,
-      detail: text,
-      life: 2000,
-    });
-  };
-
-  const handleDeleteOffer = () => {
-    deleteOffer(state.selectedOfferID)
-      .then(function (response) {
-        console.log(response);
-        showToast("success", response.data.message);
-        renderLeads();
-      })
-      .catch(function (error) {
-        showToast("error", response.data.message);
-        console.log(error);
-      });
-  };
-
-  const showConfirmDeletePopUp = (e) => {
-    confirmPopup({
-      group: "headless",
-      target: e.currentTarget,
-      message: "Вы точно хотите удалить лида?",
-      icon: "pi pi-info-circle",
-      defaultFocus: "reject",
-      acceptClassName: "p-button-danger",
+  const isAllFieldsFilled = (object) => {
+    return Object.values(object).every((value) => {
+      return value !== "" && value !== null && value.length !== 0;
     });
   };
 
@@ -292,14 +542,10 @@ function Duplicates() {
     }
   };
 
+    // Шаблоны для DataTable
   const actionButtonsTemplate = (rowData) => {
     return (
       <div className="flex gap-3">
-        <Button
-          icon="pi pi-pencil"
-          severity="success"
-          onClick={(e) => handleEditActionClick(rowData)}
-        />
         <Button
           icon="pi pi-trash"
           severity="danger"
@@ -315,7 +561,7 @@ function Duplicates() {
         <span className="p-input-icon-left">
           <i className="pi pi-search" />
           <InputText
-            value={state.globalFilterValue}
+            value={globalFilterValue}
             onChange={onGlobalFilterChange}
             placeholder="Поиск"
           />
@@ -359,52 +605,6 @@ function Duplicates() {
     );
   };
 
-  const handleURLParameterClick = (rowData, selectedURLParamsArray) => {
-    dispatch({
-      type: "SET_PROPERTY",
-      property: "selectedLeadID",
-      payload: rowData.id,
-    });
-    dispatch({
-      type: "SET_PROPERTY",
-      property: "isParameterDialogVisible",
-      payload: true,
-    });
-    dispatch({
-      type: "SET_PROPERTY",
-      property: "selectedURLParams",
-      payload: selectedURLParamsArray,
-    });
-  };
-
-  const handlePhoneClick = (rowData) => {
-    console.log("rowData", rowData);
-    const parsedStatusArray = JSON.parse(rowData.status);
-    const newestStatus = parsedStatusArray[parsedStatusArray.length - 1];
-    console.log(newestStatus);
-    dispatch({
-      type: "SET_PROPERTY",
-      property: "selectedLeadID",
-      payload: rowData.id,
-    });
-    setIsLeadDialogVisible(true);
-    setDialogInputObject({
-      id: rowData.id,
-      full_name: rowData.full_name,
-      domain: rowData.domain,
-      email: rowData.email,
-      funnel: rowData.funnel,
-      phone: rowData.phone,
-      offer: rowData.offer,
-      ip: rowData.ip,
-      status: newestStatus,
-      user: rowData.user,
-      geo: rowData.geo,
-      created_at: formatTimestampForCalendar(rowData.created_at),
-      url_params: rowData.url_params,
-    });
-  };
-
   const URLParamsTemplate = (rowData) => {
     const splittedURLParams = rowData.url_params.split("&");
     const selectedURLParamsArray = splittedURLParams.map((param) => {
@@ -412,6 +612,47 @@ function Duplicates() {
       return { parameter, value };
     });
 
+    const style =
+      splittedURLParams.length > 1
+        ? {
+            cursor: "pointer",
+            color: "#34d399",
+            textDecoration: "underline",
+            textUnderlineOffset: "5px",
+          }
+        : {};
+
+    const handleClick =
+      splittedURLParams.length > 1
+        ? () => {
+            handleURLParameterClick(rowData, selectedURLParamsArray);
+          }
+        : undefined;
+
+    return (
+      <div style={style} onClick={handleClick}>
+        {splittedURLParams.length > 1
+          ? splittedURLParams[0] + ` (+${splittedURLParams.length - 1})`
+          : splittedURLParams[0]}
+      </div>
+    );
+  };
+
+  const createdAtTemplate = (rowData) => {
+    return <div>{formatTimestamp(rowData.created_at)}</div>;
+  };
+
+  const dateDepositedTemplate = (rowData) => {
+    return <div>{formatTimestamp(rowData.date_deposited)}</div>;
+  };
+
+  const leadSentTemplate = (rowData) => {
+    return <div>{formatTimestamp(rowData.lead_sent)}</div>;
+  };
+
+  const statusTemplate = (rowData) => {
+    const parsedArray = JSON.parse(rowData.status);
+    const newestStatus = parsedArray[parsedArray.length - 1].status;
     return (
       <div
         style={{
@@ -421,32 +662,12 @@ function Duplicates() {
           textUnderlineOffset: "5px",
         }}
         onClick={() => {
-          handleURLParameterClick(rowData, selectedURLParamsArray);
+          handleStatusClick(rowData, parsedArray);
         }}
       >
-        {splittedURLParams[0]}
+        {newestStatus}
       </div>
     );
-  };
-
-  const actionBodyTemplate = (rowData) => {
-    return (
-      <Button
-        onClick={() => console.log("lol")}
-        icon="pi pi-trash"
-        className="p-button-danger"
-        style={{ maxWidth: "48px", margin: "0 auto" }}
-      />
-    );
-  };
-
-  const createdAtTemplate = (rowData) => {
-    return <div>{formatTimestamp(rowData.created_at)}</div>;
-  };
-
-  const statusTemplate = (rowData) => {
-    const parsedArray = JSON.parse(rowData.status);
-    return <div>{parsedArray[parsedArray.length - 1]}</div>;
   };
 
   const phoneTemplate = (rowData) => {
@@ -467,30 +688,52 @@ function Duplicates() {
     );
   };
 
+  const isDepositedTemplate = (rowData) => {
+    const parsedValue = rowData.is_deposited === 1 ? "Yes" : "No";
+    return (
+      <div>
+        {parsedValue === "Yes" ? (
+          <div style={{ color: "#34d399" }}>{parsedValue}</div>
+        ) : (
+          <div>{parsedValue}</div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <>
       <Dialog
         className="w-full max-w-25rem min-w-25rem"
         header="Параметры"
-        visible={state.isParameterDialogVisible}
+        visible={isParameterDialogVisible}
         resizable={false}
         draggable={false}
         onHide={() => {
-          dispatch({
-            type: "SET_PROPERTY",
-            property: "selectedLeadID",
-            payload: null,
-          });
-          dispatch({
-            type: "SET_PROPERTY",
-            property: "isParameterDialogVisible",
-            payload: false,
-          });
+          setSelectedLeadID(null);
+          setIsParameterDialogVisible(false);
         }}
       >
-        <DataTable value={state.selectedURLParams} stripedRows showGridlines>
+        <DataTable value={selectedURLParams} stripedRows showGridlines>
           <Column field="parameter" header="Параметр"></Column>
           <Column field="value" header="Значение"></Column>
+        </DataTable>
+      </Dialog>
+
+      <Dialog
+        className="w-full max-w-25rem min-w-25rem"
+        header="Статусы"
+        visible={isStatusDialogVisible}
+        resizable={false}
+        draggable={false}
+        onHide={() => {
+          setSelectedLeadID(null);
+          setIsStatusDialogVisible(false);
+        }}
+      >
+        <DataTable value={selectedStatuses} stripedRows showGridlines>
+          <Column field="time" header="Время"></Column>
+          <Column field="status" header="Статус"></Column>
         </DataTable>
       </Dialog>
 
@@ -499,13 +742,15 @@ function Duplicates() {
         isDialogVisible={isLeadDialogVisible}
         setIsDialogVisible={setIsLeadDialogVisible}
         header="Лид"
-        dialogInputObject={dialogInputObject}
-        setDialogInputObject={setDialogInputObject}
-        isLeadDialogDisabled={isLeadDialogDisabled}
-        setIsLeadDialogDisabled={setIsLeadDialogDisabled}
+        dialogInputObject={postLeadDialogInputObject}
+        setDialogInputObject={setPostLeadDialogInputObject}
+        leadDialogType={leadDialogType}
+        setLeadDialogType={setLeadDialogType}
         formatCalendarDate={formatTimestampForCalendar}
-        inputs={leadDialogInputs}
+        inputs={postLeadDialogInputs}
         handleAdd={handlePostLead}
+        handleEdit={handleEditLead}
+        clearDialogInputObject={clearDialogInputObject}
       />
 
       <DialogComponent
@@ -513,11 +758,12 @@ function Duplicates() {
         isDialogVisible={isAddDialogVisible}
         setIsDialogVisible={setIsAddDialogVisible}
         header="Добавить лида"
-        dialogInputObject={dialogInputObject}
-        setDialogInputObject={setDialogInputObject}
+        dialogInputObject={addLeadDialogInputObject}
+        setDialogInputObject={setAddLeadDialogInputObject}
         formatCalendarDate={formatCalendarDate}
-        inputs={leadDialogInputs}
+        inputs={addLeadDialogInputs}
         handleAdd={handleAddLead}
+        clearDialogInputObject={clearDialogInputObject}
       />
 
       <Toast ref={toast} />
@@ -528,7 +774,7 @@ function Duplicates() {
           className="flex justify-content-between my-5"
           style={{ width: "90%" }}
         >
-          <h2 className="m-0">Системные дубли</h2>
+          <h2 className="m-0">Дубли</h2>
           <Button
             label="Добавить"
             icon="pi pi-plus"
@@ -536,7 +782,8 @@ function Duplicates() {
           />
         </div>
         <DataTable
-          value={state.leads}
+          value={duplicateLeads}
+          loading={loading}
           paginator
           header={headerTemplate}
           rows={10}
@@ -544,10 +791,10 @@ function Duplicates() {
           showGridlines
           rowsPerPageOptions={[5, 10, 25, 50]}
           paginatorPosition="top"
-          filters={state.filters}
+          filters={filters}
           style={{ width: "90%" }}
         >
-          <Column field="id" header="ID"></Column>
+          <Column field="id" header="ID" sortable></Column>
           <Column
             field="phone"
             header="Номер телефона"
@@ -573,8 +820,7 @@ function Duplicates() {
           <Column
             field="category"
             header="Действие"
-            body={actionBodyTemplate}
-            style={{ width: "30%" }}
+            body={actionButtonsTemplate}
           ></Column>
         </DataTable>
       </div>
@@ -582,4 +828,4 @@ function Duplicates() {
   );
 }
 
-export default Duplicates;
+export default Leads;

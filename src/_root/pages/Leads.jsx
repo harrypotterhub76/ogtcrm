@@ -12,7 +12,6 @@ import {
   getFunnels,
   getLeads,
   getOffers,
-  getStatuses,
   getStatusesCRM,
   getUsers,
   postLead,
@@ -24,6 +23,7 @@ import { Dialog } from "primereact/dialog";
 import { DialogComponent } from "../../components/DialogComponent";
 
 function Leads() {
+  // Стейты
   const [leads, setLeads] = useState([]);
   const [funnels, setFunnels] = useState({});
   const [offers, setOffers] = useState([]);
@@ -53,6 +53,7 @@ function Leads() {
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
   const [globalFilterValue, setGlobalFilterValue] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const addLeadDialogInitialState = {
     full_name: "",
@@ -86,6 +87,76 @@ function Leads() {
     addLeadDialogInitialState
   );
 
+  const toast = useRef(null);
+
+  // Функция на рендер тоста
+  const showToast = (severity, text) => {
+    toast.current.show({
+      severity: severity,
+      detail: text,
+      life: 2000,
+    });
+  };
+
+  // useEffect'ы для рендера, вывода логов
+  useEffect(() => {
+    console.log("addLeadDialogInputObject: ", addLeadDialogInputObject);
+    console.log("postLeadDialogInputObject: ", postLeadDialogInputObject);
+    console.log("leadDialogType: ", leadDialogType);
+    console.log("statusesOptions: ", statusesCRMOptions);
+    console.log("funnels: ", funnels);
+  }, [
+    addLeadDialogInputObject,
+    postLeadDialogInputObject,
+    leadDialogType,
+    statusesCRMOptions,
+    funnels,
+  ]);
+
+  useEffect(() => {
+    if (selectedFunnelDialog) {
+      setPostLeadDialogInputObject((prevState) => ({
+        ...prevState,
+        funnel: selectedFunnelDialog,
+        funnel_id: getSelectedFunnelID(selectedFunnelDialog),
+      }));
+    }
+    console.log("selectedFunnelDialog", selectedFunnelDialog);
+  }, [selectedFunnelDialog]);
+
+  useEffect(() => {
+    if (selectedOfferDialog) {
+      setPostLeadDialogInputObject((prevState) => ({
+        ...prevState,
+        offer: selectedOfferDialog,
+        offer_id: getSelectedOfferID(selectedOfferDialog),
+      }));
+    }
+    console.log("selectedOfferDialog", selectedOfferDialog);
+  }, [selectedOfferDialog]);
+
+  useEffect(() => {
+    if (selectedUserDialog) {
+      setPostLeadDialogInputObject((prevState) => ({
+        ...prevState,
+        user: selectedUserDialog,
+        user_id: getSelectedUserID(selectedUserDialog),
+      }));
+    }
+    console.log("selectedFunnelDialog", selectedUserDialog);
+  }, [selectedUserDialog]);
+
+  useEffect(() => {
+    renderLeads();
+    getCountriesData();
+    getFunnelsData();
+    getOffersData();
+    getStatusesCRMData();
+    getUsersData();
+    setLoading(false)
+  }, []);
+
+  // Инпуты для DialogComponent
   const postLeadDialogInputs = [
     {
       label: "Имя",
@@ -222,99 +293,71 @@ function Leads() {
     },
   ];
 
-  const toast = useRef(null);
+  // Функции подтягиваний данных с бека
+  const renderLeads = () => {
+    getLeads().then(function (response) {
+      setLeads(response.data);
+    });
+  };
 
-  useEffect(() => {
-    console.log("addLeadDialogInputObject: ", addLeadDialogInputObject);
-    console.log("postLeadDialogInputObject: ", postLeadDialogInputObject);
-    console.log("leadDialogType: ", leadDialogType);
-    console.log("statusesOptions: ", statusesCRMOptions);
-    console.log("funnels: ", funnels);
-  }, [
-    addLeadDialogInputObject,
-    postLeadDialogInputObject,
-    leadDialogType,
-    statusesCRMOptions,
-    funnels,
-  ]);
-
-  useEffect(() => {
-    if (selectedFunnelDialog) {
-      setPostLeadDialogInputObject((prevState) => ({
-        ...prevState,
-        funnel: selectedFunnelDialog,
-        funnel_id: getSelectedFunnelID(selectedFunnelDialog),
-      }));
-    }
-    console.log("selectedFunnelDialog", selectedFunnelDialog);
-  }, [selectedFunnelDialog]);
-
-  useEffect(() => {
-    if (selectedOfferDialog) {
-      setPostLeadDialogInputObject((prevState) => ({
-        ...prevState,
-        offer: selectedOfferDialog,
-        offer_id: getSelectedOfferID(selectedOfferDialog),
-      }));
-    }
-    console.log("selectedOfferDialog", selectedOfferDialog);
-  }, [selectedOfferDialog]);
-
-  useEffect(() => {
-    if (selectedUserDialog) {
-      setPostLeadDialogInputObject((prevState) => ({
-        ...prevState,
-        user: selectedUserDialog,
-        user_id: getSelectedUserID(selectedUserDialog),
-      }));
-    }
-    console.log("selectedFunnelDialog", selectedUserDialog);
-  }, [selectedUserDialog]);
-
-  useEffect(() => {
-    renderLeads();
+  const getOffersData = () => {
     getOffers().then((response) => {
       const updatedOffers = response.data.map(({ name }) => name);
-      setOffers(response.data)
+      setOffers(response.data);
       setOffersOptions(updatedOffers);
     });
+  };
+  const getFunnelsData = () => {
     getFunnels().then((response) => {
       const updatedFunnels = response.data.map(({ name }) => name);
       setFunnels(response.data);
       setFunnelsOptions(updatedFunnels);
     });
+  };
+
+  const getCountriesData = () => {
     getCountries().then((response) => {
       const updatedGeos = response.data.map(({ iso }) => iso);
       setGeosOptions(updatedGeos);
     });
+  };
+
+  const getUsersData = () => {
     getUsers().then((response) => {
-      setUsers(response.data)
+      setUsers(response.data);
       setUsersOptions(response.data.map(({ name }) => name));
     });
+  };
+
+  const getStatusesCRMData = () => {
     getStatusesCRM().then((response) => {
-      const updatedStatusesCRM = response.data.map(({ crm_status }) => crm_status);
+      const updatedStatusesCRM = response.data.map(
+        ({ crm_status }) => crm_status
+      );
       setStatusesCRMOptions(updatedStatusesCRM);
     });
-  }, []);
-
-  const getSelectedFunnelID = (name) => {
-    const filteredArray = funnels.filter((obj) => obj.name === name);
-    return filteredArray[0].id;
   };
 
-  const getSelectedOfferID = (name) => {
-    const filteredArray = offers.filter((obj) => obj.name === name);
-    return filteredArray[0].id;
-  };
-
-  const getSelectedUserID = (name) => {
-    const filteredArray = users.filter((obj) => obj.name === name);
-    return filteredArray[0].id;
-  };
-
-  const renderLeads = () => {
-    getLeads().then(function (response) {
-      setLeads(response.data);
+  // Обработчики кликов по данным таблицы
+  const handlePhoneClick = (rowData) => {
+    const parsedStatusArray = JSON.parse(rowData.status);
+    const newestStatusObject = parsedStatusArray[parsedStatusArray.length - 1];
+    setIsLeadDialogVisible(true);
+    setSelectedLeadID(rowData.id);
+    setSelectedFunnelDialog(rowData.funnel);
+    setSelectedOfferDialog(rowData.offer);
+    setSelectedUserDialog(rowData.user);
+    setPostLeadDialogInputObject({
+      id: rowData.id,
+      full_name: rowData.full_name,
+      domain: rowData.domain,
+      email: rowData.email,
+      phone: rowData.phone,
+      ip: rowData.ip,
+      status: newestStatusObject.status,
+      geo: rowData.geo,
+      created_at: formatTimestampForCalendar(rowData.created_at),
+      url_params: rowData.url_params,
     });
   };
 
@@ -323,6 +366,19 @@ function Leads() {
     setSelectedLeadID(rowData.id);
   };
 
+  const handleURLParameterClick = (rowData, selectedURLParamsArray) => {
+    setIsParameterDialogVisible(true);
+    setSelectedLeadID(rowData.id);
+    setSelectedURLParams(selectedURLParamsArray);
+  };
+
+  const handleStatusClick = (rowData, parsedArray) => {
+    setIsStatusDialogVisible(true);
+    setSelectedLeadID(rowData.id);
+    setSelectedStatuses(parsedArray);
+  };
+
+  // Функция для управления плажкой на удаление данных из DataTable
   const handleConfirmPopUpButtonClick = (option, hide) => {
     option === "delete"
       ? handleDeleteLead(selectedLeadID)
@@ -331,6 +387,17 @@ function Leads() {
     setSelectedLeadID(null);
   };
 
+  // Сеттер фильтра глобального поиска
+  const onGlobalFilterChange = (e) => {
+    const value = e.target.value;
+    let _filters = { ...filters };
+    _filters["global"].value = value;
+
+    setFilters(_filters);
+    setGlobalFilterValue(value);
+  };
+
+  // Обработчики взаимодействия фронта с беком
   const handleAddLead = () => {
     console.log(isAllFieldsFilled(addLeadDialogInputObject));
     if (isAllFieldsFilled(addLeadDialogInputObject)) {
@@ -396,6 +463,42 @@ function Leads() {
       });
   };
 
+  // Функция для сброса стейтов
+  const clearDialogInputObject = () => {
+    setAddLeadDialogInputObject(addLeadDialogInitialState);
+    setPostLeadDialogInputObject(postLeadDialogInitialState);
+    setSelectedLeadID(null);
+    setLeadDialogType("post-lead");
+  };
+
+  // Рендер плажки на удаление данных из DataTable
+  const showConfirmDeletePopUp = (e) => {
+    confirmPopup({
+      group: "headless",
+      target: e.currentTarget,
+      message: "Вы точно хотите удалить лида?",
+      icon: "pi pi-info-circle",
+      defaultFocus: "reject",
+      acceptClassName: "p-button-danger",
+    });
+  };
+
+  // Вспомогательные функции
+  const getSelectedFunnelID = (name) => {
+    const filteredArray = funnels.filter((obj) => obj.name === name);
+    return filteredArray[0].id;
+  };
+
+  const getSelectedOfferID = (name) => {
+    const filteredArray = offers.filter((obj) => obj.name === name);
+    return filteredArray[0].id;
+  };
+
+  const getSelectedUserID = (name) => {
+    const filteredArray = users.filter((obj) => obj.name === name);
+    return filteredArray[0].id;
+  };
+
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
 
@@ -421,34 +524,6 @@ function Leads() {
     });
   };
 
-  const onGlobalFilterChange = (e) => {
-    const value = e.target.value;
-    let _filters = { ...filters };
-    _filters["global"].value = value;
-
-    setFilters(_filters);
-    setGlobalFilterValue(value);
-  };
-
-  const showToast = (severity, text) => {
-    toast.current.show({
-      severity: severity,
-      detail: text,
-      life: 2000,
-    });
-  };
-
-  const showConfirmDeletePopUp = (e) => {
-    confirmPopup({
-      group: "headless",
-      target: e.currentTarget,
-      message: "Вы точно хотите удалить лида?",
-      icon: "pi pi-info-circle",
-      defaultFocus: "reject",
-      acceptClassName: "p-button-danger",
-    });
-  };
-
   const formatCalendarDate = (timestamp, option) => {
     if (option === "to string") {
       const originalDate = new Date(timestamp);
@@ -467,75 +542,7 @@ function Leads() {
     }
   };
 
-  
-  const handleURLParameterClick = (rowData, selectedURLParamsArray) => {
-    setSelectedLeadID(rowData.id);
-    setIsParameterDialogVisible(true);
-    setSelectedURLParams(selectedURLParamsArray);
-  };
-
-  const handleStatusClick = (rowData, parsedArray) => {
-    setIsStatusDialogVisible(true);
-    setSelectedLeadID(rowData.id);
-    setSelectedStatuses(parsedArray);
-  };
-
-  const handlePhoneClick = (rowData) => {
-    const parsedStatusArray = JSON.parse(rowData.status);
-    const newestStatusObject = parsedStatusArray[parsedStatusArray.length - 1];
-    setSelectedLeadID(rowData.id);
-    setIsLeadDialogVisible(true);
-    setSelectedFunnelDialog(rowData.funnel)
-    setSelectedOfferDialog(rowData.offer)
-    setSelectedUserDialog(rowData.user)
-    setPostLeadDialogInputObject({
-      id: rowData.id,
-      full_name: rowData.full_name,
-      domain: rowData.domain,
-      email: rowData.email,
-      funnel: rowData.funnel,
-      phone: rowData.phone,
-      offer: rowData.offer,
-      ip: rowData.ip,
-      status: newestStatusObject.status,
-      user: rowData.user,
-      geo: rowData.geo,
-      created_at: formatTimestampForCalendar(rowData.created_at),
-      url_params: rowData.url_params,
-    });
-  };
-
-  // Функция для сброса состояний
-  const clearDialogInputObject = () => {
-    setAddLeadDialogInputObject({
-      full_name: "",
-      domain: "",
-      email: "",
-      funnel: "",
-      phone: "",
-      offer: "",
-      ip: "",
-      geo: [],
-      url_params: "",
-    });
-    setPostLeadDialogInputObject({
-      full_name: "",
-      domain: "",
-      email: "",
-      funnel: "",
-      phone: "",
-      offer: "",
-      ip: "",
-      status: "",
-      user: "",
-      geo: [],
-      created_at: "",
-      url_params: "",
-    });
-    setSelectedLeadID(null);
-    setLeadDialogType("post-lead");
-  };
-
+    // Шаблоны для DataTable
   const actionButtonsTemplate = (rowData) => {
     return (
       <div className="flex gap-3">
@@ -596,7 +603,7 @@ function Leads() {
         </div>
       </div>
     );
-  }; 
+  };
 
   const URLParamsTemplate = (rowData) => {
     const splittedURLParams = rowData.url_params.split("&");
@@ -744,7 +751,6 @@ function Leads() {
         handleAdd={handlePostLead}
         handleEdit={handleEditLead}
         clearDialogInputObject={clearDialogInputObject}
-        setDropdownValue={""}
       />
 
       <DialogComponent
@@ -758,7 +764,6 @@ function Leads() {
         inputs={addLeadDialogInputs}
         handleAdd={handleAddLead}
         clearDialogInputObject={clearDialogInputObject}
-        setDropdownValue={""}
       />
 
       <Toast ref={toast} />
@@ -778,6 +783,7 @@ function Leads() {
         </div>
         <DataTable
           value={leads}
+          loading={loading}
           paginator
           header={headerTemplate}
           rows={10}
@@ -788,7 +794,7 @@ function Leads() {
           filters={filters}
           style={{ width: "90%" }}
         >
-          <Column field="id" header="ID"></Column>
+          <Column field="id" header="ID" sortable></Column>
           <Column field="offer" header="Оффер"></Column>
           <Column
             field="phone"

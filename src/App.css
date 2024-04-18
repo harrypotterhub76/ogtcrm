@@ -1,3 +1,16 @@
 .p-datatable-wrapper::-webkit-scrollbar {
   display: none;
 }
+
+.p-dialog-content::-webkit-scrollbar {
+  width: 10px;
+  background-color: #181c24;
+  border-radius: 15px;
+}
+
+.p-dialog-content::-webkit-scrollbar-thumb {
+  width: 10px;
+  background-color: #34d399;
+  border-radius: 15px;
+  cursor: pointer;
+}

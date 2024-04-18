@@ -177,7 +177,7 @@ function Domains() {
       .then(function (response) {
         showToast("success", response.data.message);
         setIsAddDialogVisible(false);
-        setDialogInputObject({});
+        clearDialogInputObject()
         renderDomains();
       })
       .catch(function (error) {

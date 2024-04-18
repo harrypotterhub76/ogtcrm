@@ -173,3 +173,5 @@ export const getLeadsForChart = () =>
 
 export const getStats = () =>
   axios.get(`http://25.18.88.64:8000/api/leads-stats`);
+
+export const getDuplicateLeads = () => axios.get(`http://25.18.88.64:8000/api/duplicate-leads`);

@@ -243,7 +243,6 @@ function Spends() {
   };
 
   // Вспомогательные функции
-
   const getSelectedUserID = (name) => {
     const filteredArray = users.filter((obj) => obj.name === name);
     return filteredArray[0].id;
