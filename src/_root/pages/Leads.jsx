@@ -13,6 +13,7 @@ import {
   getLeads,
   getOffers,
   getStatuses,
+  getStatusesCRM,
   getUsers,
   postLead,
 } from "../../utilities/api";
@@ -24,24 +25,35 @@ import { DialogComponent } from "../../components/DialogComponent";
 
 function Leads() {
   const [leads, setLeads] = useState([]);
+  const [funnels, setFunnels] = useState({});
+  const [offers, setOffers] = useState([]);
+  const [users, setUsers] = useState([]);
+
+  const [offersOptions, setOffersOptions] = useState([]);
+  const [funnelsOptions, setFunnelsOptions] = useState([]);
+  const [usersOptions, setUsersOptions] = useState([]);
+  const [geosOptions, setGeosOptions] = useState([]);
+  const [statusesCRMOptions, setStatusesCRMOptions] = useState([]);
+
+  const [selectedOfferDialog, setSelectedOfferDialog] = useState(null);
+  const [selectedFunnelDialog, setSelectedFunnelDialog] = useState(null);
+  const [selectedUserDialog, setSelectedUserDialog] = useState(null);
+  const [selectedURLParams, setSelectedURLParams] = useState([]);
+  const [selectedStatuses, setSelectedStatuses] = useState([]);
+  const [selectedLeadID, setSelectedLeadID] = useState(null);
+
   const [isLeadDialogVisible, setIsLeadDialogVisible] = useState(false);
   const [leadDialogType, setLeadDialogType] = useState("post-lead");
   const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
-  const [offers, setOffers] = useState([]);
-  const [funnels, setFunnels] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [geos, setGeos] = useState([]);
-  const [statuses, setStatuses] = useState([]);
-  const [selectedLeadID, setSelectedLeadID] = useState(null);
   const [isParameterDialogVisible, setIsParameterDialogVisible] =
     useState(false);
   const [isStatusDialogVisible, setIsStatusDialogVisible] = useState(false);
-  const [selectedURLParams, setSelectedURLParams] = useState([]);
-  const [selectedStatuses, setSelectedStatuses] = useState([]);
+
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
   const [globalFilterValue, setGlobalFilterValue] = useState("");
+
   const addLeadDialogInitialState = {
     full_name: "",
     domain: "",
@@ -98,7 +110,8 @@ function Leads() {
       key: "funnel",
       type: "dropdown",
       placeholder: "Воронка",
-      options: funnels,
+      options: funnelsOptions,
+      setDropdownValue: setSelectedFunnelDialog,
     },
     {
       label: "Телефон",
@@ -111,7 +124,8 @@ function Leads() {
       key: "offer",
       type: "dropdown",
       placeholder: "Оффер",
-      options: offers,
+      options: offersOptions,
+      setDropdownValue: setSelectedOfferDialog,
     },
     {
       label: "IP",
@@ -124,21 +138,22 @@ function Leads() {
       key: "status",
       type: "dropdown",
       placeholder: "Статус",
-      options: statuses,
+      options: statusesCRMOptions,
     },
     {
       label: "Пользователь",
       key: "user",
       type: "dropdown",
       placeholder: "Пользователь",
-      options: users,
+      options: usersOptions,
+      setDropdownValue: setSelectedUserDialog,
     },
     {
       label: "Гео",
       key: "geo",
       type: "dropdown",
       placeholder: "Гео",
-      options: geos,
+      options: geosOptions,
     },
     {
       label: "Дата создания",
@@ -178,7 +193,7 @@ function Leads() {
       key: "funnel",
       type: "dropdown",
       placeholder: "Воронка",
-      options: funnels,
+      options: funnelsOptions,
     },
     {
       label: "Телефон",
@@ -197,7 +212,7 @@ function Leads() {
       key: "geo",
       type: "dropdown",
       placeholder: "Гео",
-      options: geos,
+      options: geosOptions,
     },
     {
       label: "Параметры",
@@ -213,36 +228,89 @@ function Leads() {
     console.log("addLeadDialogInputObject: ", addLeadDialogInputObject);
     console.log("postLeadDialogInputObject: ", postLeadDialogInputObject);
     console.log("leadDialogType: ", leadDialogType);
-    console.log("statuses: ", statuses);
+    console.log("statusesOptions: ", statusesCRMOptions);
+    console.log("funnels: ", funnels);
   }, [
     addLeadDialogInputObject,
     postLeadDialogInputObject,
     leadDialogType,
-    statuses,
+    statusesCRMOptions,
+    funnels,
   ]);
+
+  useEffect(() => {
+    if (selectedFunnelDialog) {
+      setPostLeadDialogInputObject((prevState) => ({
+        ...prevState,
+        funnel: selectedFunnelDialog,
+        funnel_id: getSelectedFunnelID(selectedFunnelDialog),
+      }));
+    }
+    console.log("selectedFunnelDialog", selectedFunnelDialog);
+  }, [selectedFunnelDialog]);
+
+  useEffect(() => {
+    if (selectedOfferDialog) {
+      setPostLeadDialogInputObject((prevState) => ({
+        ...prevState,
+        offer: selectedOfferDialog,
+        offer_id: getSelectedOfferID(selectedOfferDialog),
+      }));
+    }
+    console.log("selectedOfferDialog", selectedOfferDialog);
+  }, [selectedOfferDialog]);
+
+  useEffect(() => {
+    if (selectedUserDialog) {
+      setPostLeadDialogInputObject((prevState) => ({
+        ...prevState,
+        user: selectedUserDialog,
+        user_id: getSelectedUserID(selectedUserDialog),
+      }));
+    }
+    console.log("selectedFunnelDialog", selectedUserDialog);
+  }, [selectedUserDialog]);
 
   useEffect(() => {
     renderLeads();
     getOffers().then((response) => {
       const updatedOffers = response.data.map(({ name }) => name);
-      setOffers(updatedOffers);
+      setOffers(response.data)
+      setOffersOptions(updatedOffers);
     });
     getFunnels().then((response) => {
       const updatedFunnels = response.data.map(({ name }) => name);
-      setFunnels(updatedFunnels);
+      setFunnels(response.data);
+      setFunnelsOptions(updatedFunnels);
     });
     getCountries().then((response) => {
       const updatedGeos = response.data.map(({ iso }) => iso);
-      setGeos(updatedGeos);
+      setGeosOptions(updatedGeos);
     });
     getUsers().then((response) => {
-      setUsers(response.data.map((obj) => obj.name));
+      setUsers(response.data)
+      setUsersOptions(response.data.map(({ name }) => name));
     });
-    getStatuses().then((response) => {
-      const updatedStatuses = response.data.map(({ crm_status }) => crm_status);
-      setStatuses(updatedStatuses);
+    getStatusesCRM().then((response) => {
+      const updatedStatusesCRM = response.data.map(({ crm_status }) => crm_status);
+      setStatusesCRMOptions(updatedStatusesCRM);
     });
   }, []);
+
+  const getSelectedFunnelID = (name) => {
+    const filteredArray = funnels.filter((obj) => obj.name === name);
+    return filteredArray[0].id;
+  };
+
+  const getSelectedOfferID = (name) => {
+    const filteredArray = offers.filter((obj) => obj.name === name);
+    return filteredArray[0].id;
+  };
+
+  const getSelectedUserID = (name) => {
+    const filteredArray = users.filter((obj) => obj.name === name);
+    return filteredArray[0].id;
+  };
 
   const renderLeads = () => {
     getLeads().then(function (response) {
@@ -264,15 +332,13 @@ function Leads() {
   };
 
   const handleAddLead = () => {
-    console.log(isAllFieldsFilled(addLeadDialogInputObject))
-    if (
-      isAllFieldsFilled(addLeadDialogInputObject)
-    ) {
+    console.log(isAllFieldsFilled(addLeadDialogInputObject));
+    if (isAllFieldsFilled(addLeadDialogInputObject)) {
       addLead(addLeadDialogInputObject)
         .then(function (response) {
-          if(response.data.message === "Dublicate System") {
+          if (response.data.message === "Dublicate System") {
             showToast("success", response.data.message);
-            return
+            return;
           }
           showToast("success", response.data.message);
           setIsAddDialogVisible(false);
@@ -288,10 +354,8 @@ function Leads() {
   };
 
   const handlePostLead = () => {
-    console.log(isAllFieldsFilled(postLeadDialogInputObject))
-    if (
-      isAllFieldsFilled(postLeadDialogInputObject)
-    ) {
+    console.log(isAllFieldsFilled(postLeadDialogInputObject));
+    if (isAllFieldsFilled(postLeadDialogInputObject)) {
       postLead(postLeadDialogInputObject)
         .then(function (response) {
           setIsLeadDialogVisible(false);
@@ -403,6 +467,75 @@ function Leads() {
     }
   };
 
+  
+  const handleURLParameterClick = (rowData, selectedURLParamsArray) => {
+    setSelectedLeadID(rowData.id);
+    setIsParameterDialogVisible(true);
+    setSelectedURLParams(selectedURLParamsArray);
+  };
+
+  const handleStatusClick = (rowData, parsedArray) => {
+    setIsStatusDialogVisible(true);
+    setSelectedLeadID(rowData.id);
+    setSelectedStatuses(parsedArray);
+  };
+
+  const handlePhoneClick = (rowData) => {
+    const parsedStatusArray = JSON.parse(rowData.status);
+    const newestStatusObject = parsedStatusArray[parsedStatusArray.length - 1];
+    setSelectedLeadID(rowData.id);
+    setIsLeadDialogVisible(true);
+    setSelectedFunnelDialog(rowData.funnel)
+    setSelectedOfferDialog(rowData.offer)
+    setSelectedUserDialog(rowData.user)
+    setPostLeadDialogInputObject({
+      id: rowData.id,
+      full_name: rowData.full_name,
+      domain: rowData.domain,
+      email: rowData.email,
+      funnel: rowData.funnel,
+      phone: rowData.phone,
+      offer: rowData.offer,
+      ip: rowData.ip,
+      status: newestStatusObject.status,
+      user: rowData.user,
+      geo: rowData.geo,
+      created_at: formatTimestampForCalendar(rowData.created_at),
+      url_params: rowData.url_params,
+    });
+  };
+
+  // Функция для сброса состояний
+  const clearDialogInputObject = () => {
+    setAddLeadDialogInputObject({
+      full_name: "",
+      domain: "",
+      email: "",
+      funnel: "",
+      phone: "",
+      offer: "",
+      ip: "",
+      geo: [],
+      url_params: "",
+    });
+    setPostLeadDialogInputObject({
+      full_name: "",
+      domain: "",
+      email: "",
+      funnel: "",
+      phone: "",
+      offer: "",
+      ip: "",
+      status: "",
+      user: "",
+      geo: [],
+      created_at: "",
+      url_params: "",
+    });
+    setSelectedLeadID(null);
+    setLeadDialogType("post-lead");
+  };
+
   const actionButtonsTemplate = (rowData) => {
     return (
       <div className="flex gap-3">
@@ -463,72 +596,7 @@ function Leads() {
         </div>
       </div>
     );
-  };
-
-  const handleURLParameterClick = (rowData, selectedURLParamsArray) => {
-    setSelectedLeadID(rowData.id);
-    setIsParameterDialogVisible(true);
-    setSelectedURLParams(selectedURLParamsArray);
-  };
-
-  const handleStatusClick = (rowData, parsedArray) => {
-    setIsStatusDialogVisible(true);
-    setSelectedLeadID(rowData.id);
-    setSelectedStatuses(parsedArray);
-  };
-
-  const handlePhoneClick = (rowData) => {
-    const parsedStatusArray = JSON.parse(rowData.status);
-    const newestStatus = parsedStatusArray[parsedStatusArray.length - 1];
-    setSelectedLeadID(rowData.id);
-    setIsLeadDialogVisible(true);
-    setPostLeadDialogInputObject({
-      id: rowData.id,
-      full_name: rowData.full_name,
-      domain: rowData.domain,
-      email: rowData.email,
-      funnel: rowData.funnel,
-      phone: rowData.phone,
-      offer: rowData.offer,
-      ip: rowData.ip,
-      status: newestStatus,
-      user: rowData.user,
-      geo: rowData.geo,
-      created_at: formatTimestampForCalendar(rowData.created_at),
-      url_params: rowData.url_params,
-    });
-  };
-
-  // Функция для сброса состояний
-  const clearDialogInputObject = () => {
-    setAddLeadDialogInputObject({
-      full_name: "",
-      domain: "",
-      email: "",
-      funnel: "",
-      phone: "",
-      offer: "",
-      ip: "",
-      geo: [],
-      url_params: "",
-    });
-    setPostLeadDialogInputObject({
-      full_name: "",
-      domain: "",
-      email: "",
-      funnel: "",
-      phone: "",
-      offer: "",
-      ip: "",
-      status: "",
-      user: "",
-      geo: [],
-      created_at: "",
-      url_params: "",
-    });
-    setSelectedLeadID(null);
-    setLeadDialogType("post-lead");
-  };
+  }; 
 
   const URLParamsTemplate = (rowData) => {
     const splittedURLParams = rowData.url_params.split("&");
@@ -676,6 +744,7 @@ function Leads() {
         handleAdd={handlePostLead}
         handleEdit={handleEditLead}
         clearDialogInputObject={clearDialogInputObject}
+        setDropdownValue={""}
       />
 
       <DialogComponent
@@ -689,6 +758,7 @@ function Leads() {
         inputs={addLeadDialogInputs}
         handleAdd={handleAddLead}
         clearDialogInputObject={clearDialogInputObject}
+        setDropdownValue={""}
       />
 
       <Toast ref={toast} />

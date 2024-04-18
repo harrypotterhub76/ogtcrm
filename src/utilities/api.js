@@ -24,7 +24,7 @@ export const addUser = (dialogInputObject) =>
 
 export const editUser = (dialogInputObject, id) =>
   axios.put(`http://25.18.88.64:8000/api/users/update/${id}`, {
-    name: dialogInputObject.name,
+    name: dialogInputObject.name, 
     email: dialogInputObject.email,
     role: dialogInputObject.role,
   });
@@ -55,23 +55,13 @@ export const editDomain = (dialogInputObject, id) =>
 export const getSpends = () => axios.get(`http://25.18.88.64:8000/api/spends`);
 
 export const addSpend = (dialogInputObject) =>
-  axios.post(`http://25.18.88.64:8000/api/spends/store`, {
-    name: dialogInputObject.name.name,
-    summary: dialogInputObject.summary,
-    date: dialogInputObject.date,
-    user_id: dialogInputObject.user_id,
-  });
+  axios.post(`http://25.18.88.64:8000/api/spends/store`,  dialogInputObject);
 
 export const deleteSpend = (id) =>
   axios.delete(`http://25.18.88.64:8000/api/spends/${id}`);
 
 export const editSpend = (dialogInputObject, id) =>
-  axios.put(`http://25.18.88.64:8000/api/spends/update/${id}`, {
-    name: dialogInputObject.name.name,
-    summary: dialogInputObject.summary,
-    date: dialogInputObject.date,
-    user_id: dialogInputObject.user_id,
-  });
+  axios.put(`http://25.18.88.64:8000/api/spends/update/${id}`,  dialogInputObject);
 
 export const getOffers = () => axios.get(`http://25.18.88.64:8000/api/offers`);
 

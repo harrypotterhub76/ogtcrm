@@ -18,8 +18,9 @@ import { DialogComponent } from "../../components/DialogComponent";
 
 function Spends() {
   // Стейты
-  const [selectedUser, setSelectedUser] = useState(null);
   const [spends, setSpends] = useState(null);
+  const [usersOptions, setUsersOptions] = useState([]);
+  const [selectedUser, setSelectedUser] = useState("");
   const [selectedSpendID, setSelectedSpendID] = useState(null);
   const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
   const [isEditDialogVisible, setIsEditDialogVisible] = useState(false);
@@ -56,7 +57,7 @@ function Spends() {
       setDialogInputObject((prevState) => ({
         ...prevState,
         name: selectedUser,
-        user_id: selectedUser.id,
+        user_id: getSelectedUserID(selectedUser),
       }));
     }
   }, [selectedUser]);
@@ -65,9 +66,10 @@ function Spends() {
     console.log("_________________________________________");
     console.log("dialogInputObject: ", dialogInputObject);
     console.log("users: ", users);
-    console.log("selectedUser: ", selectedUser);
+    console.log("usersOptions: ", usersOptions);
+    console.log("selectedUser", selectedUser);
     console.log("_________________________________________");
-  }, [dialogInputObject, users, selectedUser]);
+  }, [dialogInputObject, users, usersOptions, selectedUser]);
 
   // Инпуты для DialogComponent
   const addDialogInputs = [
@@ -76,7 +78,8 @@ function Spends() {
       key: "name",
       type: "dropdown",
       placeholder: "Введите имя",
-      options: users,
+      options: usersOptions,
+      setDropdownValue: setSelectedUser,
     },
     {
       label: "Сумма",
@@ -98,7 +101,7 @@ function Spends() {
       key: "name",
       type: "dropdown",
       placeholder: "Введите имя",
-      options: users,
+      options: usersOptions,
     },
     {
       label: "Сумма",
@@ -123,15 +126,14 @@ function Spends() {
 
   const getUsersArray = () => {
     getUsers().then((response) => {
-      setUsers(response.data.map((obj) => getUpdatedUsersObject(obj)));
+      setUsers(response.data);
+      setUsersOptions(response.data.map(({ name }) => name));
     });
   };
 
   // Обработчики для actionButtonsTemplate
   const handleEditActionClick = (rowData) => {
-    const userObject = users.find((obj) => obj.name === rowData.name);
-    console.log("userObject: ", userObject);
-    setSelectedUser(userObject);
+    setSelectedUser(rowData.name);
     setDialogInputObject({
       summary: rowData.summary,
       date: rowData.date,
@@ -241,8 +243,10 @@ function Spends() {
   };
 
   // Вспомогательные функции
-  const getUpdatedUsersObject = (obj) => {
-    return { id: obj.id, name: obj.name };
+
+  const getSelectedUserID = (name) => {
+    const filteredArray = users.filter((obj) => obj.name === name);
+    return filteredArray[0].id;
   };
 
   const formatCalendarDate = (timestamp, option) => {
@@ -354,7 +358,6 @@ function Spends() {
         handleAdd={handleAddSpend}
         formatCalendarDate={formatCalendarDate}
         clearDialogInputObject={clearDialogInputObject}
-        setSelectedUser={setSelectedUser}
       />
 
       <DialogComponent
@@ -368,7 +371,6 @@ function Spends() {
         handleEdit={handleEditSpend}
         formatCalendarDate={formatCalendarDate}
         clearDialogInputObject={clearDialogInputObject}
-        setSelectedUser={setSelectedUser}
       />
 
       <div className="flex flex-column align-items-center justify-content-center">

@@ -13,7 +13,6 @@ import {
   getStatuses,
   deleteStatus,
   addStatus,
-  editStatus,
   getStatusesCRM,
   editStatusBroker,
   editStatusCRMValidity,
@@ -79,7 +78,7 @@ function Statuses() {
       type: "dropdown",
       placeholder: "Введите статус CRM",
       options: statusesCRMOptions,
-      setDropdownValue: true,
+      setDropdownValue: setSelectedStatusCRM,
     },
   ];
 
@@ -405,7 +404,6 @@ function Statuses() {
           setDialogInputObject={setEditStatusDialogInputObject}
           inputs={inputsEdit}
           handleEdit={editCurrentStatus}
-          setDropdownValue={setSelectedStatusCRM}
           clearDialogInputObject={clearDialogInputObject}
         />
       </div>

@@ -112,7 +112,7 @@ export const DialogComponent = ({
                       value={dialogInputObject[input.key]}
                       onChange={(e) => {
                         input.setDropdownValue
-                          ? setDropdownValue(e.value)
+                          ? input.setDropdownValue(e.value)
                           : handleDialogInputChange(input.key, e.value);
                       }}
                       options={input.options}

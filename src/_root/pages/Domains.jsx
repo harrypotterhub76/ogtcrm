@@ -76,7 +76,7 @@ function Domains() {
       type: "dropdown",
       placeholder: "Выберите пользователя",
       options: usersOptions,
-      setDropdownValue: true,
+      setDropdownValue: setSelectedUser,
     },
   ];
 
@@ -93,7 +93,7 @@ function Domains() {
       type: "dropdown",
       placeholder: "Выберите пользователя",
       options: usersOptions,
-      setDropdownValue: true,
+      setDropdownValue: setSelectedUser,
     },
   ];
 
@@ -109,7 +109,7 @@ function Domains() {
     renderDomains();
     getUsers()
       .then((response) => {
-        setUsers(response.data.map((obj) => getUpdatedUsers(obj)));
+        setUsers(response.data);
         setUsersOptions(response.data.map(({ name }) => name));
       })
       .catch((error) => {
@@ -117,10 +117,6 @@ function Domains() {
         showToast("error", "Ошибка при загрузке пользователей");
       });
   }, []);
-
-  const getUpdatedUsers = (obj) => {
-    return { id: obj.id, name: obj.name };
-  };
 
   const renderDomains = () => {
     getDomains()
@@ -328,7 +324,6 @@ function Domains() {
           inputs={addDomainInputs}
           handleAdd={addNewDomain}
           clearDialogInputObject={clearDialogInputObject}
-          setDropdownValue={setSelectedUser}
         />
         <DialogComponent
           type="edit"
@@ -340,7 +335,6 @@ function Domains() {
           inputs={editDomainInputs}
           handleEdit={editCurrentDomain}
           clearDialogInputObject={clearDialogInputObject}
-          setDropdownValue={setSelectedUser}
         />
       </div>
 
