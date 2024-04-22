@@ -153,7 +153,7 @@ function Leads() {
     getOffersData();
     getStatusesCRMData();
     getUsersData();
-    setLoading(false)
+    setLoading(false);
   }, []);
 
   // Инпуты для DialogComponent
@@ -542,7 +542,7 @@ function Leads() {
     }
   };
 
-    // Шаблоны для DataTable
+  // Шаблоны для DataTable
   const actionButtonsTemplate = (rowData) => {
     return (
       <div className="flex gap-3">
@@ -782,13 +782,14 @@ function Leads() {
           />
         </div>
         <DataTable
+          selectionMode="single"
           value={leads}
           loading={loading}
           paginator
           header={headerTemplate}
           rows={10}
-          stripedRows
-          showGridlines
+          // stripedRows
+          // showGridlines
           rowsPerPageOptions={[5, 10, 25, 50]}
           paginatorPosition="top"
           filters={filters}

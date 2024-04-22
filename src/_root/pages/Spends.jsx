@@ -11,15 +11,18 @@ import {
   getUsers,
   deleteSpend,
   editSpend,
+  getCountries,
 } from "../../utilities/api";
 import { ConfirmPopup } from "primereact/confirmpopup";
 import { confirmPopup } from "primereact/confirmpopup";
 import { DialogComponent } from "../../components/DialogComponent";
+import { Chip } from "primereact/chip";
 
 function Spends() {
   // Стейты
   const [spends, setSpends] = useState(null);
   const [usersOptions, setUsersOptions] = useState([]);
+  const [geosOptions, setGeosOptions] = useState([]);
   const [selectedUser, setSelectedUser] = useState("");
   const [selectedSpendID, setSelectedSpendID] = useState(null);
   const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
@@ -29,12 +32,16 @@ function Spends() {
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
-  const [dialogInputObject, setDialogInputObject] = useState({
+  const dialogInputObjectInitialState = {
     name: "",
     summary: "",
+    geo_spend: "",
     date: "",
     user_id: "",
-  });
+  };
+  const [dialogInputObject, setDialogInputObject] = useState(
+    dialogInputObjectInitialState
+  );
   const toast = useRef(null);
 
   // Функция на рендер тоста
@@ -50,6 +57,7 @@ function Spends() {
   useEffect(() => {
     getUsersArray();
     renderSpends();
+    getCountriesData();
   }, []);
 
   useEffect(() => {
@@ -66,10 +74,11 @@ function Spends() {
     console.log("_________________________________________");
     console.log("dialogInputObject: ", dialogInputObject);
     console.log("users: ", users);
+    console.log("spends: ", spends);
     console.log("usersOptions: ", usersOptions);
     console.log("selectedUser", selectedUser);
     console.log("_________________________________________");
-  }, [dialogInputObject, users, usersOptions, selectedUser]);
+  }, [dialogInputObject, users, usersOptions, selectedUser, spends]);
 
   // Инпуты для DialogComponent
   const addDialogInputs = [
@@ -86,6 +95,13 @@ function Spends() {
       key: "summary",
       type: "text",
       placeholder: "Введите сумму",
+    },
+    {
+      label: "Гео",
+      key: "geo_spend",
+      type: "dropdown",
+      placeholder: "Выберите гео",
+      options: geosOptions,
     },
     {
       label: "Дата",
@@ -110,6 +126,13 @@ function Spends() {
       placeholder: "Введите сумму",
     },
     {
+      label: "Гео",
+      key: "geo_spend",
+      type: "dropdown",
+      placeholder: "Выберите гео",
+      options: geosOptions,
+    },
+    {
       label: "Дата",
       key: "date",
       type: "calendar",
@@ -131,12 +154,20 @@ function Spends() {
     });
   };
 
+  const getCountriesData = () => {
+    getCountries().then((response) => {
+      const updatedGeos = response.data.map(({ iso }) => iso);
+      setGeosOptions(updatedGeos);
+    });
+  };
+
   // Обработчики для actionButtonsTemplate
   const handleEditActionClick = (rowData) => {
     setSelectedUser(rowData.name);
     setDialogInputObject({
       summary: rowData.summary,
       date: rowData.date,
+      geo_spend: rowData.geo_spend
     });
     setSelectedSpendID(rowData.id);
     setIsEditDialogVisible(true);
@@ -220,12 +251,7 @@ function Spends() {
 
   // Функция для сброса состояния DialogInputObject
   const clearDialogInputObject = () => {
-    setDialogInputObject({
-      name: "",
-      summary: "",
-      date: "",
-      user_id: "",
-    });
+    setDialogInputObject(dialogInputObjectInitialState);
     setSelectedUser(null);
     setSelectedSpendID(null);
   };
@@ -334,6 +360,11 @@ function Spends() {
     );
   };
 
+  const geoSpendTemplate = (rowData) => {
+    const geoSpend = rowData.geo_spend;
+    return <Chip label={geoSpend} />;
+  };
+
   const dateTemplate = (rowData) => {
     const dateString = rowData.date;
     const splittedDateString = dateString.split("-");
@@ -399,6 +430,11 @@ function Spends() {
           <Column field="id" header="ID"></Column>
           <Column field="name" header="Имя"></Column>
           <Column field="summary" header="Сумма"></Column>
+          <Column
+            field="geo_spend"
+            header="Гео"
+            body={geoSpendTemplate}
+          ></Column>
           <Column field="date" header="Дата" body={dateTemplate}></Column>
           <Column
             header="Действия"

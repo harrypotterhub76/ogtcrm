@@ -24,7 +24,7 @@ export const addUser = (dialogInputObject) =>
 
 export const editUser = (dialogInputObject, id) =>
   axios.put(`http://25.18.88.64:8000/api/users/update/${id}`, {
-    name: dialogInputObject.name, 
+    name: dialogInputObject.name,
     email: dialogInputObject.email,
     role: dialogInputObject.role,
   });
@@ -55,13 +55,16 @@ export const editDomain = (dialogInputObject, id) =>
 export const getSpends = () => axios.get(`http://25.18.88.64:8000/api/spends`);
 
 export const addSpend = (dialogInputObject) =>
-  axios.post(`http://25.18.88.64:8000/api/spends/store`,  dialogInputObject);
+  axios.post(`http://25.18.88.64:8000/api/spends/store`, dialogInputObject);
 
 export const deleteSpend = (id) =>
   axios.delete(`http://25.18.88.64:8000/api/spends/${id}`);
 
 export const editSpend = (dialogInputObject, id) =>
-  axios.put(`http://25.18.88.64:8000/api/spends/update/${id}`,  dialogInputObject);
+  axios.put(
+    `http://25.18.88.64:8000/api/spends/update/${id}`,
+    dialogInputObject
+  );
 
 export const getOffers = () => axios.get(`http://25.18.88.64:8000/api/offers`);
 
@@ -135,8 +138,7 @@ export const getLeadStatus = () => {
 };
 
 export const getLogs = (date) =>
-  axios.post(`http://25.18.88.64:8000/api/logs`, { created_at: date }
-  );
+  axios.post(`http://25.18.88.64:8000/api/logs`, { created_at: date });
 
 export const getStatuses = () =>
   axios.get(`http://25.18.88.64:8000/api/status`);
@@ -174,4 +176,11 @@ export const getLeadsForChart = () =>
 export const getStats = () =>
   axios.get(`http://25.18.88.64:8000/api/leads-stats`);
 
-export const getDuplicateLeads = () => axios.get(`http://25.18.88.64:8000/api/duplicate-leads`);
+export const postLeadsStats = ({stat_start, stat_end}) =>
+  axios.post(`http://25.18.88.64:8000/api/leads/leads-stats`, {
+    stat_start,
+    stat_end,
+  });
+
+export const getDuplicateLeads = () =>
+  axios.get(`http://25.18.88.64:8000/api/duplicate-leads`);
