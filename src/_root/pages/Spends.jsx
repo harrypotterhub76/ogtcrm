@@ -18,6 +18,8 @@ import { confirmPopup } from "primereact/confirmpopup";
 import { DialogComponent } from "../../components/DialogComponent";
 import { Chip } from "primereact/chip";
 
+import FiltersStyled from "../../components/FiltersComponent";
+
 function Spends() {
   // Стейты
   const [spends, setSpends] = useState(null);
@@ -32,6 +34,8 @@ function Spends() {
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
+  const [sidebarVisible, setSidebarVisible] = useState(false);
+
   const dialogInputObjectInitialState = {
     name: "",
     summary: "",
@@ -79,6 +83,31 @@ function Spends() {
     console.log("selectedUser", selectedUser);
     console.log("_________________________________________");
   }, [dialogInputObject, users, usersOptions, selectedUser, spends]);
+
+  //фильтры для FitersComponent
+
+  const filtersArray = [
+    {
+      label: "Имя",
+      key: "name",
+      type: "multiselect",
+      placeholder: "Введите имя",
+      options: usersOptions,
+    },
+    {
+      label: "Гео",
+      key: "geo_spend",
+      type: "multiselect",
+      placeholder: "Выберите гео",
+      options: geosOptions,
+    },
+    {
+      label: "Дата",
+      key: "date",
+      type: "calendar",
+      placeholder: "Выберите дату",
+    },
+  ];
 
   // Инпуты для DialogComponent
   const addDialogInputs = [
@@ -167,7 +196,7 @@ function Spends() {
     setDialogInputObject({
       summary: rowData.summary,
       date: rowData.date,
-      geo_spend: rowData.geo_spend
+      geo_spend: rowData.geo_spend,
     });
     setSelectedSpendID(rowData.id);
     setIsEditDialogVisible(true);
@@ -295,7 +324,7 @@ function Spends() {
   // Шаблоны для DataTable
   const headerTemplate = () => {
     return (
-      <div className="flex justify-content-end">
+      <div className="flex justify-content-end gap-5">
         <span className="p-input-icon-left">
           <i className="pi pi-search" />
           <InputText
@@ -304,6 +333,14 @@ function Spends() {
             placeholder="Поиск"
           />
         </span>
+        <Button icon="pi pi-filter" onClick={() => setSidebarVisible(true)} />
+        <FiltersStyled
+          visible={sidebarVisible}
+          setVisible={setSidebarVisible}
+          filtersArray={filtersArray}
+          formatCalendarDate={formatCalendarDate}
+          setFilteredData={setSpends}
+        />
       </div>
     );
   };
