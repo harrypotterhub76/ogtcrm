@@ -233,6 +233,7 @@ function Statistics() {
           value={dates}
           onChange={(e) => setDates(e.value)}
           selectionMode="range"
+          locale='ru'
         />
       </div>
       <DataTable
