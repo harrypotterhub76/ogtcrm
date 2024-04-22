@@ -137,6 +137,7 @@ function FiltersStyled({
                         }}
                         selectionMode="range"
                         placeholder={filter.placeholder}
+                        locale="ru"
                       />
                     ) : filter.type === "multiselect" ? (
                       <MultiSelect
