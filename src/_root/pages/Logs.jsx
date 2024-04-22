@@ -54,6 +54,7 @@ function Logs() {
 
         <Calendar
           value={date}
+          locale="ru"
           onChange={(e) => {
             setDate(e.value);
           }}

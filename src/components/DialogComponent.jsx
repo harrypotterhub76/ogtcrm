@@ -124,6 +124,7 @@ export const DialogComponent = ({
                     />
                   ) : input.type === "calendar" ? (
                     <Calendar
+                    locale="ru"
                       value={
                         input.key === "offer_start" || input.key === "offer_end"
                           ? formatCalendarTime(
