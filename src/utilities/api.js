@@ -176,15 +176,20 @@ export const getLeadsForChart = () =>
 export const getStats = () =>
   axios.get(`http://25.18.88.64:8000/api/leads-stats`);
 
-export const postLeadsStats = ({stat_start, stat_end}) =>
-  axios.post(`http://25.18.88.64:8000/api/leads/leads-stats`, {
-    stat_start,
-    stat_end,
-  });
+export const postLeadsStats = (postDates) =>
+  axios.post(`http://25.18.88.64:8000/api/leads/leads-stats`, postDates);
+
+export const postOffersStats = (postDates) =>
+  axios.post(`http://25.18.88.64:8000/api/leads/offer-stats`, postDates);
+
+export const postFunnelsStats = (postDates) =>
+  axios.post(`http://25.18.88.64:8000/api/leads/funnel-stats`, postDates);
 
 export const getDuplicateLeads = () =>
   axios.get(`http://25.18.88.64:8000/api/duplicate-leads`);
-  
-  export const getFilteredSpends = (filtersObject) =>
-  axios.post(`http://25.18.88.64:8000/api/spends/filtersForSpend`, filtersObject
-)
+
+export const getFilteredSpends = (filtersObject) =>
+  axios.post(
+    `http://25.18.88.64:8000/api/spends/filtersForSpend`,
+    filtersObject
+  );
