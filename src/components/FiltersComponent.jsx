@@ -161,6 +161,25 @@ function FiltersStyled({
                     ) : (
                       <span>Другой тип filter</span>
                     )}
+                    <p
+                      style={{
+                        cursor: "pointer",
+                        color: "#34d399",
+                        textDecoration: "underline",
+                        textUnderlineOffset: "5px",
+                      }}
+                      onClick={() => {
+                        if (filter.key == "date") {
+                          setDates([]);
+                          setPostDates({});
+                          handleFilterChange('start_filter', '');
+                          handleFilterChange('end_filter', '');
+                        }
+                        handleFilterChange(filter.key, []);
+                      }}
+                    >
+                      Обнулить поле {filter.label}
+                    </p>
                   </li>
                 );
               })}
