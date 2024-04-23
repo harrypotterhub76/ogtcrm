@@ -193,3 +193,9 @@ export const getFilteredSpends = (filtersObject) =>
     `http://25.18.88.64:8000/api/spends/filtersForSpend`,
     filtersObject
   );
+
+export const getFilteredOffers = (filtersObject) =>
+  axios.post(
+    `http://25.18.88.64:8000/api/offer/filtersOffer`,
+    filtersObject
+  );

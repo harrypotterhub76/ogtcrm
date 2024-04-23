@@ -340,6 +340,7 @@ function Spends() {
           filtersArray={filtersArray}
           formatCalendarDate={formatCalendarDate}
           setFilteredData={setSpends}
+          type="spends"
         />
       </div>
     );

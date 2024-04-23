@@ -5,7 +5,7 @@ import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
 import { MultiSelect } from "primereact/multiselect";
 import { useEffect, useState, useRef } from "react";
-import { getFilteredSpends } from "../utilities/api";
+import { getFilteredSpends, getFilteredOffers } from "../utilities/api";
 
 function FiltersStyled({
   visible,
@@ -13,6 +13,7 @@ function FiltersStyled({
   filtersArray,
   formatCalendarDate,
   setFilteredData,
+  type,
 }) {
   const postDatesInitialState = {
     stat_start: "",
@@ -70,9 +71,21 @@ function FiltersStyled({
 
   useEffect(() => {
     if (ref.current) {
-      getFilteredSpends(filtersObject).then((response) => {
-        setFilteredData(response.data);
-      });
+      switch (type) {
+        case "spends": {
+          getFilteredSpends(filtersObject).then((response) => {
+            setFilteredData(response.data);
+          });
+          break;
+        }
+        case "offers": {
+          getFilteredOffers(filtersObject).then((response) => {
+            console.log(response);
+            setFilteredData(response.data);
+          });
+          break;
+        }
+      }
     }
     ref.current++;
   }, [filtersObject]);
@@ -111,7 +124,10 @@ function FiltersStyled({
                   <li className="m-0-1" key={index}>
                     {filter.type === "text" ? (
                       <InputText
-                        onChange={(e) => {}}
+                        onChange={(e) => {
+                          console.log(e.target.value);
+                          handleFilterChange(filter.key, e.target.value);
+                        }}
                         style={{ width: "100%" }}
                         placeholder={filter.placeholder}
                       />
@@ -172,8 +188,8 @@ function FiltersStyled({
                         if (filter.key == "date") {
                           setDates([]);
                           setPostDates({});
-                          handleFilterChange('start_filter', '');
-                          handleFilterChange('end_filter', '');
+                          handleFilterChange("start_filter", "");
+                          handleFilterChange("end_filter", "");
                         }
                         handleFilterChange(filter.key, []);
                       }}

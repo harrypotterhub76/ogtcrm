@@ -20,6 +20,7 @@ import { confirmPopup } from "primereact/confirmpopup";
 import { DialogComponent } from "../../components/DialogComponent";
 import { Chip } from "primereact/chip";
 import { InputSwitch } from "primereact/inputswitch";
+import FiltersStyled from "../../components/FiltersComponent";
 
 function Offers() {
   // Стейты
@@ -44,6 +45,8 @@ function Offers() {
     offer_end: "",
     source: [],
   });
+  const [sidebarVisible, setSidebarVisible] = useState(false);
+  const[ offersNames, setOffersNames ] = useState([])
 
   const toast = useRef(null);
 
@@ -174,6 +177,39 @@ function Offers() {
     },
   ];
 
+  //фильтры для FitersComponent
+
+  const filtersArray = [
+    {
+      label: "Оффер",
+      key: "name",
+      type: "multiselect",
+      placeholder: "Введите название оффера",
+      options: offersNames,
+    },
+    {
+      label: "Воронки",
+      key: "funnels",
+      type: "multiselect",
+      placeholder: "Выберите воронки",
+      options: funnelsOptions,
+    },
+    {
+      label: "Гео",
+      key: "geo",
+      type: "multiselect",
+      placeholder: "Выберите гео",
+      options: geosOptions,
+    },
+    {
+      label: "Источники",
+      key: "source",
+      type: "multiselect",
+      placeholder: "Выберите источники",
+      options: sourceOptions,
+    },
+  ];
+
   // Функции подтягиваний данных с бека
   const renderOffers = () => {
     getOffers().then(function (response) {
@@ -196,6 +232,8 @@ function Offers() {
         return obj;
       });
       setOffers(updatedOffers);
+      setOffersNames(updatedOffers.map((offer) => offer.name));
+
       setActivityChecked(offerActiveArray);
     });
   };
@@ -408,7 +446,7 @@ function Offers() {
 
   const headerTemplate = () => {
     return (
-      <div className="flex justify-content-end">
+      <div className="flex justify-content-end gap-5">
         <span className="p-input-icon-left">
           <i className="pi pi-search" />
           <InputText
@@ -417,6 +455,15 @@ function Offers() {
             placeholder="Поиск"
           />
         </span>
+
+        <Button icon="pi pi-filter" onClick={() => setSidebarVisible(true)} />
+        <FiltersStyled
+          visible={sidebarVisible}
+          setVisible={setSidebarVisible}
+          filtersArray={filtersArray}
+          type="offers"
+          setFilteredData={setOffers}
+        />
       </div>
     );
   };
