@@ -5,7 +5,7 @@ import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
 import { MultiSelect } from "primereact/multiselect";
 import { useEffect, useState, useRef } from "react";
-import { getFilteredSpends, getFilteredOffers } from "../utilities/api";
+import { getFilteredSpends, getFilteredOffers, getFilteredFunnels } from "../utilities/api";
 
 function FiltersStyled({
   visible,
@@ -80,6 +80,13 @@ function FiltersStyled({
         }
         case "offers": {
           getFilteredOffers(filtersObject).then((response) => {
+            console.log(response);
+            setFilteredData(response.data);
+          });
+          break;
+        }
+        case "funnels": {
+          getFilteredFunnels(filtersObject).then((response) => {
             console.log(response);
             setFilteredData(response.data);
           });

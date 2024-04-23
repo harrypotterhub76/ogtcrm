@@ -195,7 +195,10 @@ export const getFilteredSpends = (filtersObject) =>
   );
 
 export const getFilteredOffers = (filtersObject) =>
+  axios.post(`http://25.18.88.64:8000/api/offer/filtersOffer`, filtersObject);
+
+export const getFilteredFunnels = (filtersObject) =>
   axios.post(
-    `http://25.18.88.64:8000/api/offer/filtersOffer`,
+    `http://25.18.88.64:8000/api/funnels/filtersFunnel`,
     filtersObject
   );

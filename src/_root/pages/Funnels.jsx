@@ -5,22 +5,18 @@ import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
 import { Toast } from "primereact/toast";
-import { InputText } from "primereact/inputtext";
-import { FilterMatchMode } from "primereact/api";
-
 import { getFunnels, deleteFunnel, addFunnel } from "../../utilities/api";
 import { DialogComponent } from "../../components/DialogComponent";
+import FiltersStyled from "../../components/FiltersComponent";
 
 function Funnels() {
   const [funnels, setFunnels] = useState([]);
   const [popupCreateVisible, setPopupCreateVisible] = useState(false);
   const [dialogInputObject, setDialogInputObject] = useState({ name: "" });
   const [currentRowData, setCurrentRowData] = useState(null);
-  const [filters, setFilters] = useState({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-  });
   const [loading, setLoading] = useState(true);
-  const [globalFilterValue, setGlobalFilterValue] = useState("");
+  const [sidebarVisible, setSidebarVisible] = useState(false);
+  const [funnelsNames, setFunnelsNames] = useState([]);
 
   const inputs = [
     {
@@ -29,6 +25,18 @@ function Funnels() {
       type: "text",
       placeholder: "Название воронки",
       options: [],
+    },
+  ];
+
+  //фильтры для FitersComponent
+
+  const filtersArray = [
+    {
+      label: "Воронка",
+      key: "name",
+      type: "multiselect",
+      placeholder: "Название воронки",
+      options: funnelsNames,
     },
   ];
 
@@ -50,22 +58,13 @@ function Funnels() {
     getFunnels()
       .then((response) => {
         setFunnels(response.data);
+        setFunnelsNames(response.data.map((funnel) => funnel.name));
         setLoading(false);
       })
       .catch((error) => {
         console.log(error);
         showToast("error", "Ошибка при загрузке воронок");
       });
-  };
-
-  const onGlobalFilterChange = (e) => {
-    const value = e.target.value;
-    let _filters = { ...filters };
-
-    _filters["global"].value = value;
-
-    setFilters(_filters);
-    setGlobalFilterValue(value);
   };
 
   const confirmDeleteFunnel = (event, rowData) => {
@@ -116,14 +115,14 @@ function Funnels() {
   const renderHeader = () => {
     return (
       <div className="flex justify-content-end">
-        <span className="p-input-icon-left">
-          <i className="pi pi-search" />
-          <InputText
-            value={globalFilterValue}
-            onChange={onGlobalFilterChange}
-            placeholder="Keyword Search"
-          />
-        </span>
+        <Button icon="pi pi-filter" onClick={() => setSidebarVisible(true)} />
+        <FiltersStyled
+          visible={sidebarVisible}
+          setVisible={setSidebarVisible}
+          filtersArray={filtersArray}
+          type="funnels"
+          setFilteredData={setFunnels}
+        />
       </div>
     );
   };
@@ -210,18 +209,13 @@ function Funnels() {
           tableStyle={{ minWidth: "50rem" }}
           paginatorPosition="both"
           dataKey="id"
-          filters={filters}
+          // filters={filters}
           loading={loading}
-          globalFilterFields={["name"]}
+          // globalFilterFields={["name"]}
           header={renderHeader()}
           emptyMessage="Воронка не найдена."
         >
-          <Column
-            field="id"
-            header="ID"
-            sortable
-            style={{ width: "30%" }}
-          ></Column>
+          <Column field="id" header="ID" style={{ width: "30%" }}></Column>
           <Column field="name" header="Воронка"></Column>
           <Column
             field="category"
