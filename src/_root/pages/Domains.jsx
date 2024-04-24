@@ -351,7 +351,6 @@ function Domains() {
           <Column
             field="id"
             header="ID"
-            sortable
             style={{ width: "20%" }}
           ></Column>
           <Column field="domain" header="Домен"></Column>
