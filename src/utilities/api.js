@@ -202,3 +202,9 @@ export const getFilteredFunnels = (filtersObject) =>
     `http://25.18.88.64:8000/api/funnels/filtersFunnel`,
     filtersObject
   );
+
+  export const getFilteredDomains = (filtersObject) =>
+  axios.post(
+    `http://25.18.88.64:8000/api/domains/filtersDomains`,
+    filtersObject
+  );

@@ -5,8 +5,6 @@ import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
 import { Toast } from "primereact/toast";
-import { InputText } from "primereact/inputtext";
-import { FilterMatchMode } from "primereact/api";
 
 import {
   getDomains,
@@ -15,8 +13,8 @@ import {
   editDomain,
   getUsers,
 } from "../../utilities/api";
-import { MultiSelect } from "primereact/multiselect";
 import { DialogComponent } from "../../components/DialogComponent";
+import FiltersStyled from "../../components/FiltersComponent";
 
 function Domains() {
   const [domains, setDomains] = useState([]);
@@ -27,12 +25,10 @@ function Domains() {
   const [usersOptions, setUsersOptions] = useState([]);
   const [selectedUser, setSelectedUser] = useState("");
   const [currentRowData, setCurrentRowData] = useState(null);
-  const [filters, setFilters] = useState({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    name: { value: null, matchMode: FilterMatchMode.IN },
-  });
+  const [sidebarVisible, setSidebarVisible] = useState(false);
+  const [domainsUsers, setDomainsUsers] = useState([]);
+
   const [loading, setLoading] = useState(true);
-  const [globalFilterValue, setGlobalFilterValue] = useState("");
 
   const dialogInputObjectInitialState = { name: "", user: "", user_id: "" };
 
@@ -97,6 +93,25 @@ function Domains() {
     },
   ];
 
+  //фильтры для FitersComponent
+
+  const filtersArray = [
+    {
+      label: "Название",
+      key: "domain",
+      type: "multiselect",
+      placeholder: "Введите название домена",
+      options: domainsOptions,
+    },
+    {
+      label: "Пользователь",
+      key: "name",
+      type: "multiselect",
+      placeholder: "Выберите пользователя",
+      options: domainsUsers,
+    },
+  ];
+
   useEffect(() => {
     console.log("dialogInputObject", dialogInputObject);
     console.log("users", users);
@@ -122,6 +137,8 @@ function Domains() {
     getDomains()
       .then((response) => {
         setDomains(response.data);
+        setDomainsUsers(response.data.map((funnel) => funnel.name));
+
         setDomainsOptions(response.data.map(({ domain }) => domain));
         setLoading(false);
       })
@@ -129,16 +146,6 @@ function Domains() {
         console.log(error);
         showToast("error", "Ошибка при загрузке доменов");
       });
-  };
-
-  const onGlobalFilterChange = (e) => {
-    const value = e.target.value;
-    let _filters = { ...filters };
-
-    _filters["global"].value = value;
-
-    setFilters(_filters);
-    setGlobalFilterValue(value);
   };
 
   const confirmDeleteDomain = (event, rowData) => {
@@ -177,7 +184,7 @@ function Domains() {
       .then(function (response) {
         showToast("success", response.data.message);
         setIsAddDialogVisible(false);
-        clearDialogInputObject()
+        clearDialogInputObject();
         renderDomains();
       })
       .catch(function (error) {
@@ -223,11 +230,13 @@ function Domains() {
     return (
       <div className="flex justify-content-end">
         <span className="p-input-icon-left">
-          <i className="pi pi-search" />
-          <InputText
-            value={globalFilterValue}
-            onChange={onGlobalFilterChange}
-            placeholder="Поиск"
+          <Button icon="pi pi-filter" onClick={() => setSidebarVisible(true)} />
+          <FiltersStyled
+            visible={sidebarVisible}
+            setVisible={setSidebarVisible}
+            filtersArray={filtersArray}
+            type="domains"
+            setFilteredData={setDomains}
           />
         </span>
       </div>
@@ -250,20 +259,6 @@ function Domains() {
           className="p-button-danger"
         />
       </div>
-    );
-  };
-
-  const representativeFilterTemplate = (options) => {
-    return (
-      <MultiSelect
-        value={options.value}
-        options={users}
-        onChange={(e) => options.filterApplyCallback(e.value)}
-        placeholder="Any"
-        optionLabel="name"
-        optionValue="name"
-        className="p-column-filter"
-      />
     );
   };
 
@@ -349,14 +344,7 @@ function Domains() {
           tableStyle={{ minWidth: "50rem" }}
           paginatorPosition="both"
           dataKey="id"
-          filters={filters}
           loading={loading}
-          globalFilterFields={[
-            "domain",
-            "name",
-            "representative.name",
-            "status",
-          ]}
           header={renderHeader()}
           emptyMessage="Домен не найден."
         >
@@ -370,12 +358,9 @@ function Domains() {
           <Column
             field="name"
             header="Пользователь"
-            filter
-            filterField="name"
             showFilterMatchModes={false}
             optionLabel="username"
             body={representativeBodyTemplate}
-            filterElement={representativeFilterTemplate}
           ></Column>
           <Column
             field="category"
