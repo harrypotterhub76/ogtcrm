@@ -15,12 +15,7 @@ export const addFunnel = (funnelName) =>
 export const getUsers = () => axios.get(`http://25.18.88.64:8000/api/users`);
 
 export const addUser = (dialogInputObject) =>
-  axios.post(`http://25.18.88.64:8000/api/users/store`, {
-    name: dialogInputObject.name,
-    email: dialogInputObject.email,
-    password: dialogInputObject.password,
-    role: dialogInputObject.role,
-  });
+  axios.post(`http://25.18.88.64:8000/api/users/store`, dialogInputObject);
 
 export const editUser = (dialogInputObject, id) =>
   axios.put(`http://25.18.88.64:8000/api/users/update/${id}`, {
@@ -117,7 +112,7 @@ export const getLeads = () => axios.get(`http://25.18.88.64:8000/api/leads`);
 
 export const postLead = (dialogInputObject) =>
   axios.post(
-    `http://25.18.88.64:8000/api/integration/valik`,
+    `http://25.18.88.64:8000/api/offer/control-send`,
     dialogInputObject
   );
 
@@ -203,8 +198,22 @@ export const getFilteredFunnels = (filtersObject) =>
     filtersObject
   );
 
-  export const getFilteredDomains = (filtersObject) =>
+export const getFilteredDomains = (filtersObject) =>
   axios.post(
     `http://25.18.88.64:8000/api/domains/filtersDomains`,
     filtersObject
   );
+
+export const postOfferForLead = (dialogInputObject) =>
+  axios.post(
+    `http://25.18.88.64:8000/api/offers/offerforlead`,
+    dialogInputObject
+  );
+
+export const generatePassword = () =>
+  axios({
+    method: "get",
+    url: "https://api.api-ninjas.com/v1/passwordgenerator?length=16",
+    headers: { "X-Api-Key": "AavHY7KdIR2V8+sTlGxCcA==fAnbORAjskzshSrB" },
+    contentType: "application/json",
+  });

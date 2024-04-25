@@ -16,3 +16,15 @@
   border-radius: 15px;
   cursor: pointer;
 }
+
+.p-password-input {
+  width: 100%;
+}
+
+.p-input-icon-right > i:last-of-type,
+.p-input-icon-right > svg:last-of-type,
+.p-input-icon-right > .p-input-suffix {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}

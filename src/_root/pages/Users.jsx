@@ -5,7 +5,13 @@ import { Button } from "primereact/button";
 import { FilterMatchMode } from "primereact/api";
 import { Toast } from "primereact/toast";
 import { InputText } from "primereact/inputtext";
-import { getUsers, deleteUser, addUser, editUser } from "../../utilities/api";
+import {
+  getUsers,
+  deleteUser,
+  addUser,
+  editUser,
+  generatePassword,
+} from "../../utilities/api";
 import { ConfirmPopup } from "primereact/confirmpopup";
 import { confirmPopup } from "primereact/confirmpopup";
 import { DialogComponent } from "../../components/DialogComponent";
@@ -16,6 +22,7 @@ function Users() {
   const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
   const [isEditDialogVisible, setIsEditDialogVisible] = useState(false);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
+  const [confirmedPassword, setConfirmedPassword] = useState("")
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
@@ -38,6 +45,16 @@ function Users() {
     });
   };
 
+  const handleGeneratePassword = () => {
+    generatePassword().then((response) => {
+      setDialogInputObject((prevState) => ({
+        ...prevState,
+        password: response.data.random_password,
+      }));
+      setConfirmedPassword(response.data.random_password)
+    });
+  };
+
   const addDialogInputs = [
     {
       label: "Имя",
@@ -54,8 +71,21 @@ function Users() {
     {
       label: "Пароль",
       key: "password",
-      type: "text",
+      type: "password",
       placeholder: "Введите пароль",
+    },
+    {
+      label: "Повторите пароль",
+      key: "confirmed-password",
+      type: "password",
+      placeholder: "Введите пароль",
+      confirmedPassword: confirmedPassword,
+      setConfirmedPassword: setConfirmedPassword,
+    },
+    {
+      type: "button",
+      placeholder: "Сгенерировать пароль",
+      onClick: handleGeneratePassword,
     },
     {
       label: "Роль",
@@ -92,6 +122,10 @@ function Users() {
     renderUsers();
   }, []);
 
+  useEffect(() => {
+    console.log(dialogInputObject);
+  }, [dialogInputObject]);
+
   const renderUsers = () => {
     getUsers().then(function (response) {
       setUsers(response.data);
@@ -103,7 +137,6 @@ function Users() {
     if (option === "add") {
       showPopUp(e);
     } else {
-      console.log(users);
       setDialogInputObject({
         name: users.name,
         email: users.email,
@@ -182,8 +215,8 @@ function Users() {
     showToast("info", "Удаление пользователя отменено");
   };
 
-  const handleAddUser = ({ name, email, password, role }) => {
-    if (name !== "" && email !== "" && password !== "" && role !== "") {
+  const handleAddUser = () => {
+    if (dialogInputObject.password == confirmedPassword) {
       addUser(dialogInputObject)
         .then(function (response) {
           setIsAddDialogVisible(false);
@@ -195,7 +228,8 @@ function Users() {
         });
     } else {
       console.log("Fill all fields");
-      showToast("info", "Заполните все поля");
+      console.log(confirmedPassword, dialogInputObject.password)
+      showToast("info", "Заполните все поля правильно");
     }
   };
 
@@ -252,8 +286,6 @@ function Users() {
     });
     setSelectedUserID(null);
   };
-
-
   const popUpContent = ({ message, acceptBtnRef, rejectBtnRef, hide }) => {
     return (
       <div className="border-round p-3">

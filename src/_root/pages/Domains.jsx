@@ -15,6 +15,7 @@ import {
 } from "../../utilities/api";
 import { DialogComponent } from "../../components/DialogComponent";
 import FiltersStyled from "../../components/FiltersComponent";
+import { FileUpload } from "primereact/fileupload";
 
 function Domains() {
   const [domains, setDomains] = useState([]);
@@ -309,6 +310,14 @@ function Domains() {
           icon="pi pi-plus"
           onClick={setIsAddDialogVisible}
         />
+          <FileUpload
+            name="file"
+            url={"http://25.18.88.64:8000/api/import-leads"}
+            multiple
+            emptyTemplate={
+              <p className="m-0">Drag and drop files to here to upload.</p>
+            }
+          />
         <DialogComponent
           type="add"
           isDialogVisible={isAddDialogVisible}

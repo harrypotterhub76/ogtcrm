@@ -15,12 +15,14 @@ import {
   getStatusesCRM,
   getUsers,
   postLead,
+  postOfferForLead,
 } from "../../utilities/api";
 import { deleteLead } from "../../utilities/api";
 import { ConfirmPopup } from "primereact/confirmpopup";
 import { confirmPopup } from "primereact/confirmpopup";
 import { Dialog } from "primereact/dialog";
 import { DialogComponent } from "../../components/DialogComponent";
+import { Dropdown } from "primereact/dropdown";
 
 function Leads() {
   // Стейты
@@ -48,12 +50,14 @@ function Leads() {
   const [isParameterDialogVisible, setIsParameterDialogVisible] =
     useState(false);
   const [isStatusDialogVisible, setIsStatusDialogVisible] = useState(false);
+  const [isSendLeadDialogVisible, setIsSendLeadDialogVisible] = useState(false);
 
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
   const [globalFilterValue, setGlobalFilterValue] = useState("");
   const [loading, setLoading] = useState(true);
+  const isMounted = useRef(false);
 
   const addLeadDialogInitialState = {
     full_name: "",
@@ -65,13 +69,13 @@ function Leads() {
     geo: [],
     url_params: "",
   };
+
   const postLeadDialogInitialState = {
     full_name: "",
     domain: "",
     email: "",
     funnel: "",
     phone: "",
-    offer: "",
     ip: "",
     status: "",
     user: "",
@@ -79,6 +83,7 @@ function Leads() {
     created_at: "",
     url_params: "",
   };
+
   const [postLeadDialogInputObject, setPostLeadDialogInputObject] = useState(
     postLeadDialogInitialState
   );
@@ -147,6 +152,13 @@ function Leads() {
   }, [selectedUserDialog]);
 
   useEffect(() => {
+    if (isMounted.current) {
+      getOffersOptionsData();
+    }
+    isMounted.current = true;
+  }, [isMounted, postLeadDialogInputObject]);
+
+  useEffect(() => {
     renderLeads();
     getCountriesData();
     getFunnelsData();
@@ -189,14 +201,6 @@ function Leads() {
       key: "phone",
       type: "text",
       placeholder: "Телефон",
-    },
-    {
-      label: "Оффер",
-      key: "offer",
-      type: "dropdown",
-      placeholder: "Оффер",
-      options: offersOptions,
-      setDropdownValue: setSelectedOfferDialog,
     },
     {
       label: "IP",
@@ -302,8 +306,15 @@ function Leads() {
 
   const getOffersData = () => {
     getOffers().then((response) => {
-      const updatedOffers = response.data.map(({ name }) => name);
       setOffers(response.data);
+    });
+  };
+  const getOffersOptionsData = () => {
+    postOfferForLead({
+      funnel: postLeadDialogInputObject.funnel,
+      geo: postLeadDialogInputObject.geo,
+    }).then((response) => {
+      const updatedOffers = response.data.map(({ name }) => name);
       setOffersOptions(updatedOffers);
     });
   };
@@ -345,7 +356,6 @@ function Leads() {
     setIsLeadDialogVisible(true);
     setSelectedLeadID(rowData.id);
     setSelectedFunnelDialog(rowData.funnel);
-    setSelectedOfferDialog(rowData.offer);
     setSelectedUserDialog(rowData.user);
     setPostLeadDialogInputObject({
       id: rowData.id,
@@ -359,6 +369,10 @@ function Leads() {
       created_at: formatTimestampForCalendar(rowData.created_at),
       url_params: rowData.url_params,
     });
+    // setSendLeadDialogInputObject({
+    //   funnel: rowData.funnel,
+    //   geo: rowData.geo,
+    // });
   };
 
   const handleDeleteActionClick = (e, rowData) => {
@@ -376,6 +390,10 @@ function Leads() {
     setIsStatusDialogVisible(true);
     setSelectedLeadID(rowData.id);
     setSelectedStatuses(parsedArray);
+  };
+
+  const handleOpenSendLeadDialog = () => {
+    setIsSendLeadDialogVisible(true);
   };
 
   // Функция для управления плажкой на удаление данных из DataTable
@@ -399,7 +417,6 @@ function Leads() {
 
   // Обработчики взаимодействия фронта с беком
   const handleAddLead = () => {
-    console.log(isAllFieldsFilled(addLeadDialogInputObject));
     if (isAllFieldsFilled(addLeadDialogInputObject)) {
       addLead(addLeadDialogInputObject)
         .then(function (response) {
@@ -421,11 +438,11 @@ function Leads() {
   };
 
   const handlePostLead = () => {
-    console.log(isAllFieldsFilled(postLeadDialogInputObject));
     if (isAllFieldsFilled(postLeadDialogInputObject)) {
       postLead(postLeadDialogInputObject)
         .then(function (response) {
           setIsLeadDialogVisible(false);
+          setIsSendLeadDialogVisible(false);
           showToast("success", response.data.message);
           renderLeads();
         })
@@ -441,8 +458,8 @@ function Leads() {
   const handleEditLead = () => {
     editLead(postLeadDialogInputObject, selectedLeadID)
       .then(function (response) {
-        setIsLeadDialogVisible(false);
         showToast("success", response.data.message);
+        setLeadDialogType("post-lead");
         renderLeads();
       })
       .catch(function (error) {
@@ -737,6 +754,24 @@ function Leads() {
         </DataTable>
       </Dialog>
 
+      <Dialog
+        header="Выбрать оффер"
+        visible={isSendLeadDialogVisible}
+        style={{ maxWidth: "calc(50% - 0.5rem)" }}
+        onHide={() => setIsSendLeadDialogVisible(false)}
+      >
+        <Dropdown
+          value={postLeadDialogInputObject["offer"]}
+          onChange={(e) => {
+            setSelectedOfferDialog(e.value);
+          }}
+          options={offersOptions}
+          placeholder={"Офферы"}
+          className="w-full mb-5"
+        />
+        <Button label="Отправить" onClick={handlePostLead} />
+      </Dialog>
+
       <DialogComponent
         type="lead"
         isDialogVisible={isLeadDialogVisible}
@@ -748,7 +783,7 @@ function Leads() {
         setLeadDialogType={setLeadDialogType}
         formatCalendarDate={formatTimestampForCalendar}
         inputs={postLeadDialogInputs}
-        handleAdd={handlePostLead}
+        handleAdd={handleOpenSendLeadDialog}
         handleEdit={handleEditLead}
         clearDialogInputObject={clearDialogInputObject}
       />

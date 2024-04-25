@@ -5,6 +5,7 @@ import { InputText } from "primereact/inputtext";
 import { Calendar } from "primereact/calendar";
 import { MultiSelect } from "primereact/multiselect";
 import { InputSwitch } from "primereact/inputswitch";
+import { Password } from "primereact/password";
 
 export const DialogComponent = ({
   type,
@@ -21,7 +22,6 @@ export const DialogComponent = ({
   handleEdit,
   formatCalendarDate,
   formatCalendarTime,
-  setDropdownValue,
 }) => {
   const handleDialogInputChange = (field, value) => {
     setDialogInputObject((prevState) => ({
@@ -51,13 +51,10 @@ export const DialogComponent = ({
             <div className="p-dialog-header-icons flex gap-3">
               {type === "lead" ? (
                 <Button
-                  icon={
-                    leadDialogType === "post-lead"
-                      ? "pi pi-pencil"
-                      : "pi pi-check"
-                  }
+                  icon="pi pi-pencil"
                   text
                   severity="success"
+                  disabled={leadDialogType === "edit-lead"}
                   onClick={() =>
                     setLeadDialogType(
                       leadDialogType === "post-lead" ? "edit-lead" : "post-lead"
@@ -107,6 +104,23 @@ export const DialogComponent = ({
                         leadDialogType === "post-lead" || input.disabled
                       }
                     />
+                  ) : input.type === "password" ? (
+                    <Password
+                      value={
+                        input.confirmedPassword
+                          ? input.confirmedPassword
+                          : dialogInputObject[input.key]
+                      }
+                      onChange={(e) =>
+                        input.setConfirmedPassword
+                          ? input.setConfirmedPassword(e.target.value)
+                          : handleDialogInputChange(input.key, e.target.value)
+                      }
+                      style={{ width: "100%" }}
+                      placeholder={input.placeholder}
+                      toggleMask
+                      feedback={false}
+                    />
                   ) : input.type === "dropdown" ? (
                     <Dropdown
                       value={dialogInputObject[input.key]}
@@ -124,7 +138,7 @@ export const DialogComponent = ({
                     />
                   ) : input.type === "calendar" ? (
                     <Calendar
-                    locale="ru"
+                      locale="ru"
                       value={
                         input.key === "offer_start" || input.key === "offer_end"
                           ? formatCalendarTime(
@@ -176,13 +190,22 @@ export const DialogComponent = ({
                         handleDialogInputChange(input.key, Number(e.value));
                       }}
                     />
+                  ) : input.type === "button" ? (
+                    <Button
+                      style={{ width: "fit-content" }}
+                      label={input.placeholder}
+                      onClick={input.onClick}
+                    />
                   ) : (
                     <span>Другой тип input</span>
                   )}
                 </div>
               );
             })}
-            <div className="flex">
+            <div
+              className="flex align-items-end w-full"
+              style={{ maxWidth: "calc(50% - 0.5rem)" }}
+            >
               <Button
                 label={
                   type.includes("add")
