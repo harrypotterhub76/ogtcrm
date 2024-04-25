@@ -18,9 +18,10 @@ import {
   Logs,
   Duplicates,
   Statuses,
+  ImportLeads,
 } from "./_root/pages";
 import RootLayout from "./_root/RootLayout";
-import "./App.css"
+import "./App.css";
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
           <Route path="/logs" element={<Logs />} />
           <Route path="/duplicates" element={<Duplicates />} />
           <Route path="/statuses" element={<Statuses />} />
+          <Route path="/import-leads" element={<ImportLeads />} />
         </Route>
       </Routes>
     </>

@@ -94,7 +94,7 @@ export const sidebarLinks = [
         name: "Статусы",
       },
       {
-        to: "/leads-hold",
+        to: "/import-leads",
         icon: "pi-chart-pie",
         name: "Импорт",
       },

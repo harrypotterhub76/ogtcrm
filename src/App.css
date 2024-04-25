@@ -1,4 +1,30 @@
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 10px;
+  background-color: #111417;
+}
+
+.p-card, .p-fileupload .p-fileupload-content, .p-fileupload .p-fileupload-buttonbar {
+  background: #161a1f;
+  border: 1px solid var(--surface-border);
+}
+
 .p-datatable-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.p-breadcrumb {
+  width: fit-content;
+  background: transparent;
+  border: none;
+}
+
+#pr_id_2_sep_home {
   display: none;
 }
 
