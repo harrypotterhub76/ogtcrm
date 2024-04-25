@@ -5,19 +5,36 @@ export const sidebarLinks = [
     name: "Дашборд",
   },
   {
-    to: "/statistics",
-    icon: "pi-chart-line",
-    name: "Статистика",
-  },
-  {
     to: "/leads",
     icon: "pi-user",
     name: "Лиды",
+    links: [
+      {
+        to: "/leads",
+        icon: "pi-chart-pie",
+        name: "Лиды",
+      },
+      {
+        to: "/leads-hold",
+        icon: "pi-chart-pie",
+        name: "Лиды в холде",
+      },
+      {
+        to: "/duplicates",
+        icon: "pi-home",
+        name: "Системные дубликаты",
+      },
+      {
+        to: "/leads-hold",
+        icon: "pi-chart-pie",
+        name: "История импортов",
+      },
+    ],
   },
   {
-    to: "/duplicates",
-    icon: "pi-home",
-    name: "Дубли",
+    to: "/statistics",
+    icon: "pi-chart-line",
+    name: "Аналитика",
   },
   {
     to: "/users",
@@ -45,14 +62,21 @@ export const sidebarLinks = [
     name: "Оффера",
   },
   {
-    to: "/spends",
-    icon: "pi-dollar",
-    name: "Расходы",
+    to: "/finances",
+    icon: "pi-cog",
+    name: "Финансы",
+    links: [
+      {
+        to: "/spends",
+        icon: "pi-dollar",
+        name: "Расходы",
+      },
+    ],
   },
   {
     to: "/settings",
     icon: "pi-cog",
-    name: "Настройки",
+    name: "Инструменты",
     links: [
       {
         to: "/sources",
@@ -68,6 +92,11 @@ export const sidebarLinks = [
         to: "/statuses",
         icon: "pi-chart-pie",
         name: "Статусы",
+      },
+      {
+        to: "/leads-hold",
+        icon: "pi-chart-pie",
+        name: "Импорт",
       },
     ],
   },

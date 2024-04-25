@@ -9,8 +9,9 @@ import SidebarLink from "./SidebarLink";
 import { useRef } from "react";
 
 function SidebarStyled({ visible, setVisible, theme }) {
+  const btnRef1 = useRef(null);
+  const btnRef2 = useRef(null);
   const btnRef3 = useRef(null);
-  //TODO если будут ещё раскрывающиеся списки, придумать решение получше для рефов
 
   const handleHide = () => {
     setVisible(false);
@@ -48,7 +49,13 @@ function SidebarStyled({ visible, setVisible, theme }) {
                   return (
                     <li key={index}>
                       <StyleClass
-                        nodeRef={btnRef3}
+                        nodeRef={
+                          link.name == "Лиды"
+                            ? btnRef1
+                            : link.name == "Инструменты"
+                            ? btnRef2
+                            : btnRef3
+                        }
                         selector="@next"
                         enterClassName="hidden"
                         enterActiveClassName="slidedown"
@@ -56,7 +63,13 @@ function SidebarStyled({ visible, setVisible, theme }) {
                         leaveActiveClassName="slideup"
                       >
                         <a
-                          ref={btnRef3}
+                          ref={
+                            link.name == "Лиды"
+                              ? btnRef1
+                              : link.name == "Инструменты"
+                              ? btnRef2
+                              : btnRef3
+                          }
                           className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full"
                         >
                           <i className="pi pi-chart-line mr-2"></i>
