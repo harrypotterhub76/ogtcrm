@@ -2003,9 +2003,9 @@
     border: 1px solid #4ade80;
   }
   .p-button.p-button-success:not(:disabled):hover, .p-buttonset.p-button-success > .p-button:not(:disabled):hover, .p-splitbutton.p-button-success > .p-button:not(:disabled):hover, .p-fileupload-choose.p-button-success:not(:disabled):hover {
-    background: #86efac;
+    background: #34d399;
     color: #052e16;
-    border-color: #86efac;
+    border-color: #34d399;
   }
   .p-button.p-button-success:not(:disabled):focus, .p-buttonset.p-button-success > .p-button:not(:disabled):focus, .p-splitbutton.p-button-success > .p-button:not(:disabled):focus, .p-fileupload-choose.p-button-success:not(:disabled):focus {
     box-shadow: 0 0 0 1px #80e8a6;

@@ -8,10 +8,10 @@ function SidebarLink({ handleHide, link }) {
       <Link
         onClick={() => handleHide()}
         to={link.to}
-        className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full no-underline"
+        className="p-ripple flex align-items-center cursor-pointer py-3 px-5 text-700 hover:surface-100 transition-duration-150 transition-colors w-full no-underline"
       >
         <i className={`pi ${link.icon} mr-2`}></i>
-        <span className="font-medium">{link.name}</span>
+        <span className="text-lg font-medium">{link.name}</span>
         <Ripple />
       </Link>
     </li>

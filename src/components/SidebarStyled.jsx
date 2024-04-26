@@ -23,7 +23,7 @@ function SidebarStyled({ visible, setVisible, theme }) {
       onHide={() => handleHide()}
       content={({ closeIconRef, hide }) => (
         <div className="flex flex-column h-full">
-          <div className="flex align-items-center justify-content-between px-3 pt-3 flex-shrink-0">
+          <div className="flex align-items-center justify-content-center p-3 pt-3 flex-shrink-0">
             <span className="inline-flex align-items-center gap-2">
               {theme === "lara-dark-green" ? (
                 <img src="/assets/images/ogt-logo-light.png" width={140} />
@@ -31,7 +31,7 @@ function SidebarStyled({ visible, setVisible, theme }) {
                 <img src="/assets/images/ogt-logo-dark.png" width={140} />
               )}
             </span>
-            <span>
+            {/* <span>
               <Button
                 type="button"
                 ref={closeIconRef}
@@ -40,14 +40,14 @@ function SidebarStyled({ visible, setVisible, theme }) {
                 icon="pi pi-chevron-right"
                 className="h-3rem w-3rem"
               ></Button>
-            </span>
+            </span> */}
           </div>
           <div className="overflow-y-auto">
-            <ul className="list-none p-3 m-0">
+            <ul className="list-none p-0 m-0">
               {sidebarLinks.map((link, index) => {
                 if ("links" in link) {
                   return (
-                    <li key={index}>
+                    <li key={index} className="w-full">
                       <StyleClass
                         nodeRef={
                           link.name == "Лиды"
@@ -70,10 +70,10 @@ function SidebarStyled({ visible, setVisible, theme }) {
                               ? btnRef2
                               : btnRef3
                           }
-                          className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full"
+                          className="p-ripple flex align-items-center cursor-pointer py-3 px-5 text-700 hover:surface-100 transition-duration-150 transition-colors w-full"
                         >
                           <i className="pi pi-chart-line mr-2"></i>
-                          <span className="font-medium">{link.name}</span>
+                          <span className="font-medium text-lg">{link.name}</span>
                           <i className="pi pi-chevron-down ml-auto mr-1"></i>
                           <Ripple />
                         </a>
