@@ -1,12 +1,13 @@
 import { FileUpload } from "primereact/fileupload";
 import { Card } from "primereact/card";
-import { BreadCrumb } from "primereact/breadcrumb";
+import { BreadCrumb } from 'primereact/breadcrumb';
+        
 
 function ImportLeads() {
-  const items = [{ label: 'Инструменты' }, { label: 'Импорт' }];
+  const items = [{ label: "Инструменты" }, { label: "Импорт" }];
   return (
     <>
-      <BreadCrumb model={items} className="my-5"/>
+    <BreadCrumb model={items} home={null} />
       <Card>
         <FileUpload
           name="file"

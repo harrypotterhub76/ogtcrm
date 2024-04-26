@@ -481,8 +481,12 @@ function Leads() {
   const clearDialogInputObject = () => {
     setAddLeadDialogInputObject(addLeadDialogInitialState);
     setPostLeadDialogInputObject(postLeadDialogInitialState);
-    setSelectedLeadID(null);
     setLeadDialogType("post-lead");
+    setSelectedLeadID(null);
+    setSelectedOfferDialog(null);
+    setSelectedFunnelDialog(null);
+    setSelectedUserDialog(null);
+    setSelectedURLParams(null);
   };
 
   // Рендер плажки на удаление данных из DataTable

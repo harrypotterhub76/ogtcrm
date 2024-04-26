@@ -1,10 +1,12 @@
 import { Knob } from "primereact/knob";
 import { Toast } from "primereact/toast";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { getOffers, getLeadsForChart, getStats } from "../../utilities/api";
 import { useEffect } from "react";
 import { useRef } from "react";
 import { Chart } from "primereact/chart";
+import { BreadCrumbContext } from "../../context/BreadCrumbContext";
+import { BreadCrumb } from "primereact/breadcrumb";
 
 function Dashboard() {
   const [value, setValue] = useState(10);
@@ -18,6 +20,8 @@ function Dashboard() {
 
   const toast = useRef(null);
   const ref = useRef(0);
+
+  const { items, setItems } = useContext(BreadCrumbContext);
 
   const showToast = (severity, text) => {
     toast.current.show({
@@ -72,7 +76,6 @@ function Dashboard() {
     renderOffers();
     renderStats();
     renderLeads();
-    console.log('test');
   }, []);
 
   useEffect(() => {
@@ -160,9 +163,7 @@ function Dashboard() {
   return (
     <div className="" style={{ maxWidth: "100%", margin: "0 auto" }}>
       <Toast ref={toast} />
-      <div>
-        <h2 className="m-0">Дашборд</h2>
-      </div>
+      <BreadCrumb home={null} model={items} />
       <div className="flex flex-wrap gap-4 align-items-center justify-content-center">
         <div className="col-12 md:col-6 lg:col-3">
           <div className="surface-card shadow-2 p-3 border-round">
