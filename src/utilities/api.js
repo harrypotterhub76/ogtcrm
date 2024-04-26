@@ -217,3 +217,6 @@ export const generatePassword = () =>
     headers: { "X-Api-Key": "AavHY7KdIR2V8+sTlGxCcA==fAnbORAjskzshSrB" },
     contentType: "application/json",
   });
+
+export const getNoSendLeads = () =>
+  axios.get(`http://25.18.88.64:8000/api/nosend-leads`);

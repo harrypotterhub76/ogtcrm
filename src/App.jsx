@@ -19,6 +19,7 @@ import {
   Duplicates,
   Statuses,
   ImportLeads,
+  LeadsInHold,
 } from "./_root/pages";
 import RootLayout from "./_root/RootLayout";
 import "./App.css";
@@ -44,6 +45,7 @@ function App() {
           <Route path="/duplicates" element={<Duplicates />} />
           <Route path="/statuses" element={<Statuses />} />
           <Route path="/import-leads" element={<ImportLeads />} />
+          <Route path="/leads-in-hold" element={<LeadsInHold />} />
         </Route>
       </Routes>
     </>

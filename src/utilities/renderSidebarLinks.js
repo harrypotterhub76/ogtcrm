@@ -15,7 +15,7 @@ export const sidebarLinks = [
         name: "Лиды",
       },
       {
-        to: "/leads-hold",
+        to: "/leads-in-hold",
         icon: "pi-chart-pie",
         name: "Лиды в холде",
       },

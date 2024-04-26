@@ -10,7 +10,7 @@ import {
   editLead,
   getCountries,
   getFunnels,
-  getLeads,
+  getNoSendLeads,
   getOffers,
   getStatusesCRM,
   getUsers,
@@ -25,7 +25,7 @@ import { DialogComponent } from "../../components/DialogComponent";
 import { Dropdown } from "primereact/dropdown";
 import { Card } from "primereact/card";
 
-function Leads() {
+function LeadsInHold() {
   // Стейты
   const [leads, setLeads] = useState([]);
   const [funnels, setFunnels] = useState({});
@@ -47,7 +47,7 @@ function Leads() {
 
   const [isLeadDialogVisible, setIsLeadDialogVisible] = useState(false);
   const [leadDialogType, setLeadDialogType] = useState("post-lead");
-  const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
+  //   const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
   const [isParameterDialogVisible, setIsParameterDialogVisible] =
     useState(false);
   const [isStatusDialogVisible, setIsStatusDialogVisible] = useState(false);
@@ -245,62 +245,62 @@ function Leads() {
     },
   ];
 
-  const addLeadDialogInputs = [
-    {
-      label: "Имя",
-      key: "full_name",
-      type: "text",
-      placeholder: "Имя",
-    },
-    {
-      label: "Домен",
-      key: "domain",
-      type: "text",
-      placeholder: "Домен",
-    },
-    {
-      label: "Email",
-      key: "email",
-      type: "text",
-      placeholder: "Email",
-    },
-    {
-      label: "Воронка",
-      key: "funnel",
-      type: "dropdown",
-      placeholder: "Воронка",
-      options: funnelsOptions,
-    },
-    {
-      label: "Телефон",
-      key: "phone",
-      type: "text",
-      placeholder: "Телефон",
-    },
-    {
-      label: "IP",
-      key: "ip",
-      type: "text",
-      placeholder: "IP",
-    },
-    {
-      label: "Гео",
-      key: "geo",
-      type: "dropdown",
-      placeholder: "Гео",
-      options: geosOptions,
-    },
-    {
-      label: "Параметры",
-      key: "url_params",
-      type: "text",
-      placeholder: "Параметры",
-    },
-  ];
+  //   const addLeadDialogInputs = [
+  //     {
+  //       label: "Имя",
+  //       key: "full_name",
+  //       type: "text",
+  //       placeholder: "Имя",
+  //     },
+  //     {
+  //       label: "Домен",
+  //       key: "domain",
+  //       type: "text",
+  //       placeholder: "Домен",
+  //     },
+  //     {
+  //       label: "Email",
+  //       key: "email",
+  //       type: "text",
+  //       placeholder: "Email",
+  //     },
+  //     {
+  //       label: "Воронка",
+  //       key: "funnel",
+  //       type: "dropdown",
+  //       placeholder: "Воронка",
+  //       options: funnelsOptions,
+  //     },
+  //     {
+  //       label: "Телефон",
+  //       key: "phone",
+  //       type: "text",
+  //       placeholder: "Телефон",
+  //     },
+  //     {
+  //       label: "IP",
+  //       key: "ip",
+  //       type: "text",
+  //       placeholder: "IP",
+  //     },
+  //     {
+  //       label: "Гео",
+  //       key: "geo",
+  //       type: "dropdown",
+  //       placeholder: "Гео",
+  //       options: geosOptions,
+  //     },
+  //     {
+  //       label: "Параметры",
+  //       key: "url_params",
+  //       type: "text",
+  //       placeholder: "Параметры",
+  //     },
+  //   ];
 
   // Функции подтягиваний данных с бека
   const renderLeads = () => {
-    getLeads().then(function (response) {
+    getNoSendLeads().then(function (response) {
       setLeads(response.data);
     });
   };
@@ -413,26 +413,26 @@ function Leads() {
   };
 
   // Обработчики взаимодействия фронта с беком
-  const handleAddLead = () => {
-    if (isAllFieldsFilled(addLeadDialogInputObject)) {
-      addLead(addLeadDialogInputObject)
-        .then(function (response) {
-          if (response.data.message === "Dublicate System") {
-            showToast("success", response.data.message);
-            return;
-          }
-          showToast("success", response.data.message);
-          setIsAddDialogVisible(false);
-          renderLeads();
-        })
-        .catch(function (error) {
-          console.log(error);
-          showToast("error", response.data.message);
-        });
-    } else {
-      showToast("error", "Пожалуйста, введите все поля");
-    }
-  };
+  //   const handleAddLead = () => {
+  //     if (isAllFieldsFilled(addLeadDialogInputObject)) {
+  //       addLead(addLeadDialogInputObject)
+  //         .then(function (response) {
+  //           if (response.data.message === "Dublicate System") {
+  //             showToast("success", response.data.message);
+  //             return;
+  //           }
+  //           showToast("success", response.data.message);
+  //           setIsAddDialogVisible(false);
+  //           renderLeads();
+  //         })
+  //         .catch(function (error) {
+  //           console.log(error);
+  //           showToast("error", response.data.message);
+  //         });
+  //     } else {
+  //       showToast("error", "Пожалуйста, введите все поля");
+  //     }
+  //   };
 
   const handlePostLead = () => {
     if (isAllFieldsFilled(postLeadDialogInputObject)) {
@@ -656,22 +656,6 @@ function Leads() {
     return <div>{formatTimestamp(rowData.created_at)}</div>;
   };
 
-  const dateDepositedTemplate = (rowData) => {
-    return (
-      <div>
-        {!!rowData.date_deposited
-          ? formatTimestamp(rowData.date_deposited)
-          : ""}
-      </div>
-    );
-  };
-
-  const leadSentTemplate = (rowData) => {
-    return (
-      <div>{!!rowData.lead_sent ? formatTimestamp(rowData.lead_sent) : ""}</div>
-    );
-  };
-
   const statusTemplate = (rowData) => {
     const parsedArray = JSON.parse(rowData.status);
     const newestStatus = parsedArray[parsedArray.length - 1].status;
@@ -793,19 +777,6 @@ function Leads() {
         clearDialogInputObject={clearDialogInputObject}
       />
 
-      <DialogComponent
-        type="add lead"
-        isDialogVisible={isAddDialogVisible}
-        setIsDialogVisible={setIsAddDialogVisible}
-        header="Добавить лида"
-        dialogInputObject={addLeadDialogInputObject}
-        setDialogInputObject={setAddLeadDialogInputObject}
-        formatCalendarDate={formatCalendarDate}
-        inputs={addLeadDialogInputs}
-        handleAdd={handleAddLead}
-        clearDialogInputObject={clearDialogInputObject}
-      />
-
       <Toast ref={toast} />
       <ConfirmPopup group="headless" content={popUpContentTemplate} />
 
@@ -814,17 +785,13 @@ function Leads() {
           className="flex justify-content-between my-5"
           style={{ width: "90%" }}
         >
-          <h2 className="m-0">Лиды</h2>
-          <Button
-            label="Добавить"
-            icon="pi pi-plus"
-            onClick={() => setIsAddDialogVisible(true)}
-          />
+          <h2 className="m-0">Неотправленные Лиды</h2>
         </div>
         <Card style={{ width: "90%" }}>
           <DataTable
             value={leads}
             loading={loading}
+            resizableColumns
             paginator
             header={headerTemplate}
             rows={10}
@@ -833,7 +800,6 @@ function Leads() {
             filters={filters}
           >
             <Column field="id" header="ID" sortable></Column>
-            <Column field="offer" header="Оффер"></Column>
             <Column
               field="phone"
               header="Номер телефона"
@@ -866,16 +832,6 @@ function Leads() {
               body={createdAtTemplate}
             ></Column>
             <Column
-              field="lead_sent"
-              header="Лид отправлен"
-              body={leadSentTemplate}
-            ></Column>
-            <Column
-              field="date_deposited"
-              header="Дата депозита"
-              body={dateDepositedTemplate}
-            ></Column>
-            <Column
               field="category"
               header="Действие"
               body={actionButtonsTemplate}
@@ -887,4 +843,4 @@ function Leads() {
   );
 }
 
-export default Leads;
+export default LeadsInHold;
