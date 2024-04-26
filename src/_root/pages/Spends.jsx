@@ -458,7 +458,6 @@ function Spends() {
           paginator
           header={headerTemplate}
           rows={10}
-          stripedRows
           showGridlines
           rowsPerPageOptions={[5, 10, 25, 50]}
           paginatorPosition="top"

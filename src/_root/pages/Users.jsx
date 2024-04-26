@@ -362,7 +362,6 @@ function Users() {
           paginator
           header={header}
           rows={10}
-          stripedRows
           showGridlines
           rowsPerPageOptions={[5, 10, 25, 50]}
           paginatorPosition="top"

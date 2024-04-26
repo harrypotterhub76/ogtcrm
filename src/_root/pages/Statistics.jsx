@@ -239,7 +239,6 @@ function Statistics() {
       <DataTable
         value={leadsStats}
         rows={10}
-        stripedRows
         // showGridlines
         expandedRows={expandedRows}
         onRowToggle={(e) => setExpandedRows(e.data)}
@@ -261,7 +260,6 @@ function Statistics() {
       <DataTable
         value={offersStats}
         rows={10}
-        stripedRows
         // showGridlines
         className="mb-5"
       >
@@ -275,7 +273,6 @@ function Statistics() {
       <DataTable
         value={funnelsStats}
         rows={10}
-        stripedRows
         // showGridlines
       >
         <Column field="funnel" header="Воронка"></Column>

@@ -206,7 +206,6 @@ function Sources() {
           paginator
           rows={20}
           rowsPerPageOptions={[20, 50, 100]}
-          stripedRows
           showGridlines
           tableStyle={{ minWidth: "50rem" }}
           paginatorPosition="both"

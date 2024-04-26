@@ -39,7 +39,7 @@ function RootLayout() {
   return (
     <>
       <header className="card flex justify-content-between">
-        <Button icon="pi pi-bars" rounded text size="large" onClick={() => setSidebarVisible(true)} />
+        <Button icon="pi pi-bars" rounded text onClick={() => setSidebarVisible(true)} />
         <SidebarStyled
           visible={sidebarVisible}
           setVisible={setSidebarVisible}
