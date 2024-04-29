@@ -6,12 +6,14 @@ import SidebarStyled from "../components/SidebarStyled";
 import { InputSwitch } from "primereact/inputswitch";
 import { BreadCrumb } from "primereact/breadcrumb";
 import { BreadCrumbContext } from "../context/BreadCrumbContext";
+import { TitleContext } from "../context/TitleContext";
 
 function RootLayout() {
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [checked, setChecked] = useState(false);
   const [theme, setTheme] = useState("lara-dark-green");
   const { breadCrumbModel } = useContext(BreadCrumbContext);
+  const { titleModel } = useContext(TitleContext);
   let themeLink = document.getElementById("app-theme");
 
   useEffect(() => {
@@ -48,10 +50,17 @@ function RootLayout() {
             text
             onClick={() => setSidebarVisible(true)}
           />
-          <BreadCrumb
-            model={breadCrumbModel}
-            home={{ icon: "pi pi-home", url: "http://localhost:5173/dashboard" }}
-          />
+          {titleModel !== "Дашборд" ? (
+            <BreadCrumb
+              model={breadCrumbModel}
+              home={{
+                icon: "pi pi-home",
+                url: "http://localhost:5173/dashboard",
+              }}
+            />
+          ) : (
+            <></>
+          )}
         </div>
         <SidebarStyled
           visible={sidebarVisible}

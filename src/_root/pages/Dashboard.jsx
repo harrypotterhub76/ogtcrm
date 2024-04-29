@@ -5,8 +5,6 @@ import { getOffers, getLeadsForChart, getStats } from "../../utilities/api";
 import { useEffect } from "react";
 import { useRef } from "react";
 import { Chart } from "primereact/chart";
-import { BreadCrumbContext } from "../../context/BreadCrumbContext";
-import { BreadCrumb } from "primereact/breadcrumb";
 import { TitleContext } from "../../context/TitleContext";
 
 function Dashboard() {
@@ -22,7 +20,6 @@ function Dashboard() {
   const toast = useRef(null);
   const ref = useRef(0);
 
-  const { items, setItems } = useContext(BreadCrumbContext);
   const { setTitleModel } = useContext(TitleContext);
 
   const showToast = (severity, text) => {
