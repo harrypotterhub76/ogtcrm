@@ -23,13 +23,14 @@ function SidebarStyled({ visible, setVisible, theme }) {
       onHide={() => handleHide()}
       content={({ closeIconRef, hide }) => (
         <div className="flex flex-column h-full">
-          <div className="flex align-items-center justify-content-center p-3 pt-3 flex-shrink-0">
+          <div className="flex align-items-center justify-content-center px-3 py-5 flex-shrink-0">
             <span className="inline-flex align-items-center gap-2">
-              {theme === "lara-dark-green" ? (
+              {/* {theme === "lara-dark-green" ? (
                 <img src="/assets/images/ogt-logo-light.png" width={140} />
               ) : (
                 <img src="/assets/images/ogt-logo-dark.png" width={140} />
-              )}
+              )} */}
+               <img src="/assets/images/detrix-logo.svg" width={150} />
             </span>
             {/* <span>
               <Button

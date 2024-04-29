@@ -163,7 +163,6 @@ function Dashboard() {
   return (
     <div className="" style={{ maxWidth: "100%", margin: "0 auto" }}>
       <Toast ref={toast} />
-      <BreadCrumb home={null} model={items} />
       <div className="flex flex-wrap gap-4 align-items-center justify-content-center">
         <div className="col-12 md:col-6 lg:col-3">
           <div className="surface-card shadow-2 p-3 border-round">

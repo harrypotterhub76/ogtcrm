@@ -1,15 +1,17 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 
 import { Button } from "primereact/button";
 import SidebarStyled from "../components/SidebarStyled";
 import { InputSwitch } from "primereact/inputswitch";
+import { BreadCrumb } from "primereact/breadcrumb";
+import { BreadCrumbContext } from "../context/BreadCrumbContext";
 
 function RootLayout() {
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [checked, setChecked] = useState(false);
   const [theme, setTheme] = useState("lara-dark-green");
-
+  const { breadCrumbModel } = useContext(BreadCrumbContext);
   let themeLink = document.getElementById("app-theme");
 
   useEffect(() => {
@@ -39,7 +41,18 @@ function RootLayout() {
   return (
     <>
       <header className="card flex justify-content-between">
-        <Button icon="pi pi-bars" rounded text onClick={() => setSidebarVisible(true)} />
+        <div className="flex align-items-center gap-5">
+          <Button
+            icon="pi pi-bars"
+            rounded
+            text
+            onClick={() => setSidebarVisible(true)}
+          />
+          <BreadCrumb
+            model={breadCrumbModel}
+            home={{ icon: "pi pi-home", url: "http://localhost:5173/dashboard" }}
+          />
+        </div>
         <SidebarStyled
           visible={sidebarVisible}
           setVisible={setSidebarVisible}

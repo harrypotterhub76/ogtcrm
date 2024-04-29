@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useReducer } from "react";
+import { useState, useEffect, useRef, useReducer, useContext } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
@@ -24,6 +24,7 @@ import { Dialog } from "primereact/dialog";
 import { DialogComponent } from "../../components/DialogComponent";
 import { Dropdown } from "primereact/dropdown";
 import { Card } from "primereact/card";
+import { BreadCrumbContext } from "../../context/BreadCrumbContext";
 
 function Leads() {
   // Стейты
@@ -59,6 +60,7 @@ function Leads() {
   const [globalFilterValue, setGlobalFilterValue] = useState("");
   const [loading, setLoading] = useState(true);
   const isMounted = useRef(false);
+  const { setBreadCrumbModel } = useContext(BreadCrumbContext);
 
   const addLeadDialogInitialState = {
     full_name: "",
@@ -160,6 +162,7 @@ function Leads() {
   }, [isMounted, postLeadDialogInputObject]);
 
   useEffect(() => {
+    setBreadCrumbModel([{ label: "Лиды" }, { label: "Лиды" }]);
     renderLeads();
     getCountriesData();
     getFunnelsData();
@@ -740,7 +743,7 @@ function Leads() {
           setIsParameterDialogVisible(false);
         }}
       >
-        <DataTable value={selectedURLParams} stripedRows showGridlines>
+        <DataTable value={selectedURLParams} showGridlines>
           <Column field="parameter" header="Параметр"></Column>
           <Column field="value" header="Значение"></Column>
         </DataTable>
@@ -757,7 +760,7 @@ function Leads() {
           setIsStatusDialogVisible(false);
         }}
       >
-        <DataTable value={selectedStatuses} stripedRows showGridlines>
+        <DataTable value={selectedStatuses} showGridlines>
           <Column field="time" header="Время"></Column>
           <Column field="status" header="Статус"></Column>
         </DataTable>
@@ -814,11 +817,7 @@ function Leads() {
       <ConfirmPopup group="headless" content={popUpContentTemplate} />
 
       <div className="flex flex-column align-items-center justify-content-center">
-        <div
-          className="flex justify-content-between my-5"
-          style={{ width: "90%" }}
-        >
-          <h2 className="m-0">Лиды</h2>
+        <div className="flex justify-content-end my-5" style={{ width: "90%" }}>
           <Button
             label="Добавить"
             icon="pi pi-plus"

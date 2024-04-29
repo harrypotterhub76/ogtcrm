@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useReducer } from "react";
+import { useState, useEffect, useRef, useReducer, useContext } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
@@ -24,6 +24,7 @@ import { Dialog } from "primereact/dialog";
 import { DialogComponent } from "../../components/DialogComponent";
 import { Dropdown } from "primereact/dropdown";
 import { Card } from "primereact/card";
+import { BreadCrumbContext } from "../../context/BreadCrumbContext";
 
 function LeadsInHold() {
   // Стейты
@@ -59,6 +60,7 @@ function LeadsInHold() {
   const [globalFilterValue, setGlobalFilterValue] = useState("");
   const [loading, setLoading] = useState(true);
   const isMounted = useRef(false);
+  const { setBreadCrumbModel } = useContext(BreadCrumbContext);
 
   const addLeadDialogInitialState = {
     full_name: "",
@@ -160,6 +162,7 @@ function LeadsInHold() {
   }, [isMounted, postLeadDialogInputObject]);
 
   useEffect(() => {
+    setBreadCrumbModel([{ label: "Лиды" }, { label: "Лиды в холде" }]);
     renderLeads();
     getCountriesData();
     getFunnelsData();

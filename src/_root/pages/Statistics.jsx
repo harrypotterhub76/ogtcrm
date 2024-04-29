@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -15,6 +15,7 @@ import {
   postLeadsStats,
   postOffersStats,
 } from "../../utilities/api";
+import { BreadCrumbContext } from "../../context/BreadCrumbContext";
 
 function Statistics() {
   const postDatesInitialState = {
@@ -29,6 +30,7 @@ function Statistics() {
   const [dates, setDates] = useState(datesInitialState);
   const [postDates, setPostDates] = useState(postDatesInitialState);
   const [expandedRows, setExpandedRows] = useState(null);
+  const { setItems } = useContext(BreadCrumbContext);
 
   // useEffect'ы для рендера, вывода логов
   useEffect(() => {
@@ -61,14 +63,12 @@ function Statistics() {
     postOffersStats(postDates).then((response) => {
       setOffersStats(response.data);
     });
-    console.log("invoked");
   };
 
   const getFunnelsStatsData = () => {
     postFunnelsStats(postDates).then((response) => {
       setFunnelsStats(response.data);
     });
-    console.log("invoked");
   };
 
   const handleDateButtonClick = (option) => {
@@ -114,10 +114,13 @@ function Statistics() {
 
   const getBeginningOfLastWeekDate = () => {
     const today = new Date();
-    const lastMonday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay() - 6);
+    const lastMonday = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate() - today.getDay() - 6
+    );
     return lastMonday;
-  }
-  
+  };
 
   const getEndOfLastWeekDate = () => {
     const today = new Date();
@@ -233,7 +236,7 @@ function Statistics() {
           value={dates}
           onChange={(e) => setDates(e.value)}
           selectionMode="range"
-          locale='ru'
+          locale="ru"
         />
       </div>
       <DataTable
