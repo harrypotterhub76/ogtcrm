@@ -52,11 +52,6 @@ export const sidebarLinks = [
     name: "Воронки",
   },
   {
-    to: "/partners",
-    icon: "pi-share-alt",
-    name: "Партнеры",
-  },
-  {
     to: "/offers",
     icon: "pi-sitemap",
     name: "Оффера",
