@@ -529,6 +529,18 @@ function Offers() {
     );
   };
 
+  const sourcesTemplate = (object) => {
+    const sourcesArray = JSON.parse(object.source);
+    console.log(sourcesArray);
+    return (
+      <div className="flex flex-wrap max-w-30rem gap-2">
+        {sourcesArray.map((item) => (
+          <Chip key={item} label={item} />
+        ))}
+      </div>
+    );
+  };
+
   const capTimeTemplate = (obj) => {
     return (
       <div className="flex flex-column">
@@ -612,6 +624,11 @@ function Offers() {
             body={funnelsTemplate}
           ></Column>
           <Column field="geo" header="Гео" body={geoTemplate}></Column>
+          <Column
+            field="source"
+            header="Источники"
+            body={sourcesTemplate}
+          ></Column>
           <Column body={capTimeTemplate} header="Время капы"></Column>
           <Column
             field="active"
