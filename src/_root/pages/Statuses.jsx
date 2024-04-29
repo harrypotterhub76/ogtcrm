@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useState, useEffect, useRef } from "react";
 
 import { DataTable } from "primereact/datatable";
@@ -19,6 +19,7 @@ import {
 } from "../../utilities/api";
 import { DialogComponent } from "../../components/DialogComponent";
 import { InputSwitch } from "primereact/inputswitch";
+import { TitleContext } from "../../context/TitleContext";
 
 function Statuses() {
   const [visibleTable, setVisibleTable] = useState("broker-statuses");
@@ -53,6 +54,8 @@ function Statuses() {
 
   const [editStatusDialogInputObject, setEditStatusDialogInputObject] =
     useState(editStatusDialogInputObjectInitialState);
+
+  const { setTitleModel } = useContext(TitleContext);
 
   const toast = useRef(null);
 
@@ -125,6 +128,7 @@ function Statuses() {
 
   useEffect(() => {
     renderStatuses();
+    setTitleModel("Статусы");
   }, []);
 
   const renderStatuses = () => {

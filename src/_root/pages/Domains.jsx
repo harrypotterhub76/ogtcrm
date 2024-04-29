@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -16,6 +16,7 @@ import {
 import { DialogComponent } from "../../components/DialogComponent";
 import FiltersStyled from "../../components/FiltersComponent";
 import { FileUpload } from "primereact/fileupload";
+import { TitleContext } from "../../context/TitleContext";
 
 function Domains() {
   const [domains, setDomains] = useState([]);
@@ -30,6 +31,7 @@ function Domains() {
   const [domainsUsers, setDomainsUsers] = useState([]);
 
   const [loading, setLoading] = useState(true);
+  const { setTitleModel } = useContext(TitleContext);
 
   const dialogInputObjectInitialState = { name: "", user: "", user_id: "" };
 
@@ -123,6 +125,8 @@ function Domains() {
 
   useEffect(() => {
     renderDomains();
+    setTitleModel("Домены");
+
     getUsers()
       .then((response) => {
         setUsers(response.data);
@@ -348,11 +352,7 @@ function Domains() {
           header={renderHeader()}
           emptyMessage="Домен не найден."
         >
-          <Column
-            field="id"
-            header="ID"
-            style={{ width: "20%" }}
-          ></Column>
+          <Column field="id" header="ID" style={{ width: "20%" }}></Column>
           <Column field="domain" header="Домен"></Column>
           <Column
             field="name"

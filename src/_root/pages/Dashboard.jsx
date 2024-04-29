@@ -7,6 +7,7 @@ import { useRef } from "react";
 import { Chart } from "primereact/chart";
 import { BreadCrumbContext } from "../../context/BreadCrumbContext";
 import { BreadCrumb } from "primereact/breadcrumb";
+import { TitleContext } from "../../context/TitleContext";
 
 function Dashboard() {
   const [value, setValue] = useState(10);
@@ -22,6 +23,7 @@ function Dashboard() {
   const ref = useRef(0);
 
   const { items, setItems } = useContext(BreadCrumbContext);
+  const { setTitleModel } = useContext(TitleContext);
 
   const showToast = (severity, text) => {
     toast.current.show({
@@ -76,6 +78,7 @@ function Dashboard() {
     renderOffers();
     renderStats();
     renderLeads();
+    setTitleModel('Дашборд')
   }, []);
 
   useEffect(() => {

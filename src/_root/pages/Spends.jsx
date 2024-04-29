@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
@@ -19,6 +19,7 @@ import { DialogComponent } from "../../components/DialogComponent";
 import { Chip } from "primereact/chip";
 
 import FiltersStyled from "../../components/FiltersComponent";
+import { TitleContext } from "../../context/TitleContext";
 
 function Spends() {
   // Стейты
@@ -46,6 +47,8 @@ function Spends() {
   const [dialogInputObject, setDialogInputObject] = useState(
     dialogInputObjectInitialState
   );
+  const { setTitleModel } = useContext(TitleContext);
+
   const toast = useRef(null);
 
   // Функция на рендер тоста
@@ -62,6 +65,7 @@ function Spends() {
     getUsersArray();
     renderSpends();
     getCountriesData();
+    setTitleModel("Расходы");
   }, []);
 
   useEffect(() => {

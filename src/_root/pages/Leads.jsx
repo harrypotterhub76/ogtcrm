@@ -25,6 +25,7 @@ import { DialogComponent } from "../../components/DialogComponent";
 import { Dropdown } from "primereact/dropdown";
 import { Card } from "primereact/card";
 import { BreadCrumbContext } from "../../context/BreadCrumbContext";
+import { TitleContext } from "../../context/TitleContext";
 
 function Leads() {
   // Стейты
@@ -61,6 +62,7 @@ function Leads() {
   const [loading, setLoading] = useState(true);
   const isMounted = useRef(false);
   const { setBreadCrumbModel } = useContext(BreadCrumbContext);
+  const { setTitleModel } = useContext(TitleContext);
 
   const addLeadDialogInitialState = {
     full_name: "",
@@ -170,6 +172,7 @@ function Leads() {
     getStatusesCRMData();
     getUsersData();
     setLoading(false);
+    setTitleModel("Лиды");
   }, []);
 
   // Инпуты для DialogComponent

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useReducer } from "react";
+import { useState, useEffect, useRef, useReducer, useContext } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
@@ -21,6 +21,7 @@ import { DialogComponent } from "../../components/DialogComponent";
 import { Chip } from "primereact/chip";
 import { InputSwitch } from "primereact/inputswitch";
 import FiltersStyled from "../../components/FiltersComponent";
+import { TitleContext } from "../../context/TitleContext";
 
 function Offers() {
   // Стейты
@@ -46,7 +47,8 @@ function Offers() {
     source: [],
   });
   const [sidebarVisible, setSidebarVisible] = useState(false);
-  const[ offersNames, setOffersNames ] = useState([])
+  const [offersNames, setOffersNames] = useState([]);
+  const { setTitleModel } = useContext(TitleContext);
 
   const toast = useRef(null);
 
@@ -78,6 +80,8 @@ function Offers() {
       const updatedSources = response.data.map(({ name }) => name);
       setSourceOptions(updatedSources);
     });
+
+    setTitleModel("Оффера");
   }, []);
 
   // Инпуты для DialogComponent

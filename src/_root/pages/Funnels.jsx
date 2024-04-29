@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -8,6 +8,7 @@ import { Toast } from "primereact/toast";
 import { getFunnels, deleteFunnel, addFunnel } from "../../utilities/api";
 import { DialogComponent } from "../../components/DialogComponent";
 import FiltersStyled from "../../components/FiltersComponent";
+import { TitleContext } from "../../context/TitleContext";
 
 function Funnels() {
   const [funnels, setFunnels] = useState([]);
@@ -17,6 +18,7 @@ function Funnels() {
   const [loading, setLoading] = useState(true);
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [funnelsNames, setFunnelsNames] = useState([]);
+  const { setTitleModel } = useContext(TitleContext);
 
   const inputs = [
     {
@@ -52,6 +54,7 @@ function Funnels() {
 
   useEffect(() => {
     renderFunnels();
+    setTitleModel("Воронки");
   }, []);
 
   const renderFunnels = () => {

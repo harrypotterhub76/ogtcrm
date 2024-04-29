@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useReducer } from "react";
+import { useState, useEffect, useRef, useReducer, useContext } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
@@ -21,6 +21,7 @@ import { ConfirmPopup } from "primereact/confirmpopup";
 import { confirmPopup } from "primereact/confirmpopup";
 import { Dialog } from "primereact/dialog";
 import { DialogComponent } from "../../components/DialogComponent";
+import { TitleContext } from "../../context/TitleContext";
 
 function Leads() {
   // Стейты
@@ -54,6 +55,7 @@ function Leads() {
   });
   const [globalFilterValue, setGlobalFilterValue] = useState("");
   const [loading, setLoading] = useState(true);
+  const { setTitleModel } = useContext(TitleContext);
 
   const addLeadDialogInitialState = {
     full_name: "",
@@ -153,7 +155,8 @@ function Leads() {
     getOffersData();
     getStatusesCRMData();
     getUsersData();
-    setLoading(false)
+    setLoading(false);
+    setTitleModel("Системные дубликаты");
   }, []);
 
   // Инпуты для DialogComponent
@@ -542,7 +545,7 @@ function Leads() {
     }
   };
 
-    // Шаблоны для DataTable
+  // Шаблоны для DataTable
   const actionButtonsTemplate = (rowData) => {
     return (
       <div className="flex gap-3">

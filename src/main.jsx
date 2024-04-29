@@ -11,6 +11,7 @@ import { addLocale } from "primereact/api";
 
 import App from "./App.jsx";
 import { BreadCrumbArea } from "./context/BreadCrumbContext.jsx";
+import { TitleArea } from "./context/TitleContext.jsx";
 const value = {
   ripple: true,
   unstyled: false,
@@ -64,9 +65,11 @@ addLocale("ru", {
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <PrimeReactProvider value={value}>
-      <BreadCrumbArea>
-        <App />
-      </BreadCrumbArea>
+      <TitleArea>
+        <BreadCrumbArea>
+          <App />
+        </BreadCrumbArea>
+      </TitleArea>
     </PrimeReactProvider>
   </BrowserRouter>
 );

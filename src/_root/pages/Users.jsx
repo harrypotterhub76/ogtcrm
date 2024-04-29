@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
@@ -15,6 +15,7 @@ import {
 import { ConfirmPopup } from "primereact/confirmpopup";
 import { confirmPopup } from "primereact/confirmpopup";
 import { DialogComponent } from "../../components/DialogComponent";
+import { TitleContext } from "../../context/TitleContext";
 
 function Users() {
   const [users, setUsers] = useState(null);
@@ -22,7 +23,7 @@ function Users() {
   const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
   const [isEditDialogVisible, setIsEditDialogVisible] = useState(false);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
-  const [confirmedPassword, setConfirmedPassword] = useState("")
+  const [confirmedPassword, setConfirmedPassword] = useState("");
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
@@ -32,6 +33,7 @@ function Users() {
     password: "",
     role: "",
   });
+  const { setTitleModel } = useContext(TitleContext);
 
   const dialogRoles = ["Admin", "Buyer"];
 
@@ -51,7 +53,7 @@ function Users() {
         ...prevState,
         password: response.data.random_password,
       }));
-      setConfirmedPassword(response.data.random_password)
+      setConfirmedPassword(response.data.random_password);
     });
   };
 
@@ -120,6 +122,7 @@ function Users() {
 
   useEffect(() => {
     renderUsers();
+    setTitleModel("Пользователи");
   }, []);
 
   useEffect(() => {
@@ -228,7 +231,7 @@ function Users() {
         });
     } else {
       console.log("Fill all fields");
-      console.log(confirmedPassword, dialogInputObject.password)
+      console.log(confirmedPassword, dialogInputObject.password);
       showToast("info", "Заполните все поля правильно");
     }
   };

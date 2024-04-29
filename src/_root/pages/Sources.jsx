@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -11,6 +11,7 @@ import { FilterMatchMode } from "primereact/api";
 import { DialogComponent } from "../../components/DialogComponent";
 
 import { getSources, deleteSource, addSource } from "../../utilities/api";
+import { TitleContext } from "../../context/TitleContext";
 
 function Sources() {
   const [sources, setSources] = useState([]);
@@ -22,6 +23,7 @@ function Sources() {
   });
   const [loading, setLoading] = useState(true);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
+  const { setTitleModel } = useContext(TitleContext);
 
   const inputs = [
     {
@@ -45,6 +47,7 @@ function Sources() {
 
   useEffect(() => {
     renderSources();
+    setTitleModel("Источники");
   }, []);
 
   const renderSources = () => {

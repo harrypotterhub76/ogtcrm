@@ -16,6 +16,7 @@ import {
   postOffersStats,
 } from "../../utilities/api";
 import { BreadCrumbContext } from "../../context/BreadCrumbContext";
+import { TitleContext } from "../../context/TitleContext";
 
 function Statistics() {
   const postDatesInitialState = {
@@ -31,6 +32,7 @@ function Statistics() {
   const [postDates, setPostDates] = useState(postDatesInitialState);
   const [expandedRows, setExpandedRows] = useState(null);
   const { setItems } = useContext(BreadCrumbContext);
+  const { setTitleModel } = useContext(TitleContext);
 
   // useEffect'ы для рендера, вывода логов
   useEffect(() => {
@@ -51,6 +53,7 @@ function Statistics() {
       getOffersStatsData();
       getFunnelsStatsData();
     }
+    setTitleModel("Аналитика");
   }, [postDates]);
 
   const getLeadsStatsData = () => {

@@ -1,34 +1,37 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Calendar } from "primereact/calendar";
 import { getLogs } from "../../utilities/api";
 import { InputTextarea } from "primereact/inputtextarea";
+import { TitleContext } from "../../context/TitleContext";
 
 function Logs() {
   const [date, setDate] = useState(null);
   const [logs, setLogs] = useState(null);
   const hasRendered = useRef(false);
+  const { setTitleModel } = useContext(TitleContext);
 
   useEffect(() => {
     initStartDate();
+    setTitleModel("Логи брокеров");
   }, []);
 
   useEffect(() => {
     if (hasRendered.current) {
-    var dateObject = new Date(date);
+      var dateObject = new Date(date);
 
-    var year = dateObject.getFullYear();
-    var month = ("0" + (dateObject.getMonth() + 1)).slice(-2);
-    var day = ("0" + dateObject.getDate()).slice(-2);
-    let formattedDate = year + "-" + month + "-" + day;
-    console.log(formattedDate);
-    getLogs(formattedDate)
-      .then((response) => {
-        const formattedLogs = response.data.map((log) => log.response_text);
-        setLogs(formattedLogs.join('\n\n'));
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      var year = dateObject.getFullYear();
+      var month = ("0" + (dateObject.getMonth() + 1)).slice(-2);
+      var day = ("0" + dateObject.getDate()).slice(-2);
+      let formattedDate = year + "-" + month + "-" + day;
+      console.log(formattedDate);
+      getLogs(formattedDate)
+        .then((response) => {
+          const formattedLogs = response.data.map((log) => log.response_text);
+          setLogs(formattedLogs.join("\n\n"));
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     } else {
       hasRendered.current = true;
     }
