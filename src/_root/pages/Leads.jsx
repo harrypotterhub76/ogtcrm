@@ -357,7 +357,7 @@ function Leads() {
   };
 
   // Обработчики кликов по данным таблицы
-  const handlePhoneClick = (rowData) => {
+  const handleIdClick = (rowData) => {
     const parsedStatusArray = JSON.parse(rowData.status);
     const newestStatusObject = parsedStatusArray[parsedStatusArray.length - 1];
     setIsLeadDialogVisible(true);
@@ -712,10 +712,10 @@ function Leads() {
           textUnderlineOffset: "5px",
         }}
         onClick={() => {
-          handlePhoneClick(rowData);
+          handleIdClick(rowData);
         }}
       >
-        {rowData.phone}
+        {rowData.id}
       </div>
     );
   };
@@ -838,13 +838,9 @@ function Leads() {
             paginatorPosition="top"
             filters={filters}
           >
-            <Column field="id" header="ID" sortable></Column>
+            <Column field="id" header="ID" body={phoneTemplate}></Column>
             <Column field="offer" header="Оффер"></Column>
-            <Column
-              field="phone"
-              header="Номер телефона"
-              body={phoneTemplate}
-            ></Column>
+            <Column field="phone" header="Номер телефона"></Column>
             <Column field="full_name" header="Имя/Фамилия"></Column>
             <Column field="email" header="Почта"></Column>
             <Column field="geo" header="Гео"></Column>
