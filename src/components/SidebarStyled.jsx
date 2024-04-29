@@ -1,17 +1,17 @@
 import { Sidebar } from "primereact/sidebar";
-import { Button } from "primereact/button";
-
 import { Ripple } from "primereact/Ripple";
 import { StyleClass } from "primereact/StyleClass";
 
 import { sidebarLinks } from "../utilities/renderSidebarLinks";
 import SidebarLink from "./SidebarLink";
-import { useRef } from "react";
+import { useRef, useContext } from "react";
+import { SidebarContext } from "../context/SidebarContext";
 
 function SidebarStyled({ visible, setVisible, theme }) {
   const btnRef1 = useRef(null);
   const btnRef2 = useRef(null);
   const btnRef3 = useRef(null);
+  const { sidebarModel, setSidebarModel } = useContext(SidebarContext); // Access active link from context
 
   const handleHide = () => {
     setVisible(false);
@@ -25,35 +25,23 @@ function SidebarStyled({ visible, setVisible, theme }) {
         <div className="flex flex-column h-full">
           <div className="flex align-items-center justify-content-center px-3 py-5 flex-shrink-0">
             <span className="inline-flex align-items-center gap-2">
-              {/* {theme === "lara-dark-green" ? (
-                <img src="/assets/images/ogt-logo-light.png" width={140} />
-              ) : (
-                <img src="/assets/images/ogt-logo-dark.png" width={140} />
-              )} */}
-               <img src="/assets/images/detrix-logo.svg" width={150} />
+              <img src="/assets/images/detrix-logo.svg" width={150} />
             </span>
-            {/* <span>
-              <Button
-                type="button"
-                ref={closeIconRef}
-                onClick={(e) => hide(e)}
-                outlined
-                icon="pi pi-chevron-right"
-                className="h-3rem w-3rem"
-              ></Button>
-            </span> */}
           </div>
           <div className="overflow-y-auto">
             <ul className="list-none p-0 m-0">
               {sidebarLinks.map((link, index) => {
                 if ("links" in link) {
+                  const isOpen =
+                    sidebarModel && link.links.some((l) => l === sidebarModel); // Check if active link is within dropdown
+                  console.log(isOpen);
                   return (
                     <li key={index} className="w-full">
                       <StyleClass
                         nodeRef={
-                          link.name == "Лиды"
+                          link.name === "Лиды"
                             ? btnRef1
-                            : link.name == "Инструменты"
+                            : link.name === "Инструменты"
                             ? btnRef2
                             : btnRef3
                         }
@@ -62,34 +50,39 @@ function SidebarStyled({ visible, setVisible, theme }) {
                         enterActiveClassName="slidedown"
                         leaveToClassName="hidden"
                         leaveActiveClassName="slideup"
+                        initialClassName={isOpen ? "show" : "hidden"} // Set initial visibility based on activeLink
                       >
                         <a
                           ref={
-                            link.name == "Лиды"
+                            link.name === "Лиды"
                               ? btnRef1
-                              : link.name == "Инструменты"
+                              : link.name === "Инструменты"
                               ? btnRef2
                               : btnRef3
                           }
                           className="p-ripple flex align-items-center cursor-pointer py-3 px-5 text-700 hover:surface-100 transition-duration-150 transition-colors w-full"
                         >
                           <i className="pi pi-chart-line mr-2"></i>
-                          <span className="font-medium text-lg">{link.name}</span>
+                          <span className="font-medium text-lg">
+                            {link.name}
+                          </span>
                           <i className="pi pi-chevron-down ml-auto mr-1"></i>
                           <Ripple />
                         </a>
-                      </StyleClass>
-                      <ul className="list-none py-0 pl-3 pr-0 m-0 hidden overflow-y-hidden transition-all transition-duration-400 transition-ease-in-out">
-                        {link.links.map((link, index) => {
-                          return (
+                        <ul
+                          className={`list-none py-0 pl-0 pr-0 m-0 overflow-y-hidden transition-all transition-duration-400 transition-ease-in-out ${
+                            isOpen ? "show" : "hidden"
+                          }`}
+                        >
+                          {link.links.map((link, index) => (
                             <SidebarLink
                               key={index}
                               link={link}
                               handleHide={handleHide}
                             />
-                          );
-                        })}
-                      </ul>
+                          ))}
+                        </ul>
+                      </StyleClass>
                     </li>
                   );
                 }
@@ -105,7 +98,7 @@ function SidebarStyled({ visible, setVisible, theme }) {
           </div>
         </div>
       )}
-    ></Sidebar>
+    />
   );
 }
 

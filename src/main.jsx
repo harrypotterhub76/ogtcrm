@@ -12,6 +12,7 @@ import { addLocale } from "primereact/api";
 import App from "./App.jsx";
 import { BreadCrumbArea } from "./context/BreadCrumbContext.jsx";
 import { TitleArea } from "./context/TitleContext.jsx";
+import { SidebarArea } from "./context/SidebarContext.jsx";
 const value = {
   ripple: true,
   unstyled: false,
@@ -67,7 +68,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <PrimeReactProvider value={value}>
       <TitleArea>
         <BreadCrumbArea>
-          <App />
+          <SidebarArea>
+            <App />
+          </SidebarArea>
         </BreadCrumbArea>
       </TitleArea>
     </PrimeReactProvider>
