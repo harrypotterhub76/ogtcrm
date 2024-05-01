@@ -684,12 +684,12 @@ function Leads() {
 
   const statusTemplate = (rowData) => {
     const parsedArray = JSON.parse(rowData.status);
-    const newestStatus = parsedArray[parsedArray.length - 1].status;
+    // const newestStatus = parsedArray[parsedArray.length - 1].status;
     return (
       <div
         style={{
           cursor: "pointer",
-          color: "#34d399",
+          color: rowData.is_valid ? "#34d399" : "#ff6666",
           textDecoration: "underline",
           textUnderlineOffset: "5px",
         }}
@@ -697,7 +697,7 @@ function Leads() {
           handleStatusClick(rowData, parsedArray);
         }}
       >
-        {newestStatus}
+        {rowData.newest_status}
       </div>
     );
   };
