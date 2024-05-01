@@ -26,6 +26,7 @@ import { Dropdown } from "primereact/dropdown";
 import { Card } from "primereact/card";
 import { BreadCrumbContext } from "../../context/BreadCrumbContext";
 import { TitleContext } from "../../context/TitleContext";
+import { Checkbox } from "primereact/checkbox";
 
 function Leads() {
   // Стейты
@@ -54,13 +55,17 @@ function Leads() {
     useState(false);
   const [isStatusDialogVisible, setIsStatusDialogVisible] = useState(false);
   const [isSendLeadDialogVisible, setIsSendLeadDialogVisible] = useState(false);
+  const [allLeadsChecked, setAllLeadsChecked] = useState(false);
+  const [selectedLeadsArray, setSelectedLeadsArray] = useState([]);
 
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
   const [globalFilterValue, setGlobalFilterValue] = useState("");
   const [loading, setLoading] = useState(true);
+
   const isMounted = useRef(false);
+
   const { setBreadCrumbModel } = useContext(BreadCrumbContext);
   const { setTitleModel } = useContext(TitleContext);
 
@@ -173,9 +178,16 @@ function Leads() {
     getOffersData();
     getStatusesCRMData();
     getUsersData();
-    setLoading(false);
     setTitleModel("Лиды");
   }, []);
+
+  useEffect(() => {
+    setLoading(false);
+  }, [leads]);
+
+  useEffect(() => {
+    console.log("selected", selectedLeadsArray);
+  }, [selectedLeadsArray]);
 
   // Инпуты для DialogComponent
   const postLeadDialogInputs = [
@@ -568,6 +580,20 @@ function Leads() {
     }
   };
 
+  const onLeadSelect = (e) => {
+    let _selectedLeadsArray = [...selectedLeadsArray];
+
+    if (e.checked) _selectedLeadsArray.push(e.value);
+    else _selectedLeadsArray.splice(_selectedLeadsArray.indexOf(e.value), 1);
+
+    setSelectedLeadsArray(_selectedLeadsArray);
+  };
+
+  const refreshData = () => {
+    setLoading(true);
+    renderLeads();
+  };
+
   // Шаблоны для DataTable
   const actionButtonsTemplate = (rowData) => {
     return (
@@ -583,7 +609,13 @@ function Leads() {
 
   const headerTemplate = () => {
     return (
-      <div className="flex justify-content-end">
+      <div className="flex justify-content-between">
+        <Button
+          icon="pi pi-refresh"
+          label="Обновить данные"
+          loading={loading}
+          onClick={refreshData}
+        ></Button>
         <span className="p-input-icon-left">
           <i className="pi pi-search" />
           <InputText
@@ -593,6 +625,16 @@ function Leads() {
           />
         </span>
       </div>
+    );
+  };
+
+  const checkboxTemplate = (rowData) => {
+    return (
+      <Checkbox
+        onChange={onLeadSelect}
+        value={rowData.id}
+        checked={selectedLeadsArray.includes(rowData.id)}
+      ></Checkbox>
     );
   };
 
@@ -706,7 +748,7 @@ function Leads() {
 
   const fraudTemplate = (rowData) => {
     return (
-      <div>
+      <div className="flex justify-content-center">
         <i
           className="pi pi-circle-fill"
           style={{
@@ -853,10 +895,11 @@ function Leads() {
             paginatorPosition="top"
             filters={filters}
           >
+            <Column body={checkboxTemplate}></Column>
             <Column field="id" header="ID" body={phoneTemplate}></Column>
             <Column field="offer" header="Оффер"></Column>
             <Column field="phone" header="Номер телефона"></Column>
-            <Column field="full_name" header="Имя/Фамилия"></Column>
+            <Column field="full_name" header="Имя / Фамилия"></Column>
             <Column field="email" header="Почта"></Column>
             <Column field="geo" header="Гео"></Column>
             <Column field="domain" header="Домен"></Column>
@@ -868,7 +911,7 @@ function Leads() {
             ></Column>
             <Column
               field="is_fraud"
-              header="Fraud"
+              header="Shave"
               body={fraudTemplate}
             ></Column>
             <Column
