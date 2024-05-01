@@ -115,12 +115,14 @@ function Leads() {
     console.log("leadDialogType: ", leadDialogType);
     console.log("statusesOptions: ", statusesCRMOptions);
     console.log("funnels: ", funnels);
+    console.log("leads: ", leads);
   }, [
     addLeadDialogInputObject,
     postLeadDialogInputObject,
     leadDialogType,
     statusesCRMOptions,
     funnels,
+    leads,
   ]);
 
   useEffect(() => {
@@ -702,6 +704,19 @@ function Leads() {
     );
   };
 
+  const fraudTemplate = (rowData) => {
+    return (
+      <div>
+        <i
+          className="pi pi-circle-fill"
+          style={{
+            color: rowData.is_fraud ? "#ff6666" : "#34d399",
+          }}
+        ></i>
+      </div>
+    );
+  };
+
   const phoneTemplate = (rowData) => {
     return (
       <div
@@ -850,6 +865,11 @@ function Leads() {
               field="status"
               header="Статус"
               body={statusTemplate}
+            ></Column>
+            <Column
+              field="is_fraud"
+              header="Fraud"
+              body={fraudTemplate}
             ></Column>
             <Column
               field="is_deposited"
