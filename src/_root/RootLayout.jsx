@@ -51,13 +51,7 @@ function RootLayout() {
             onClick={() => setSidebarVisible(true)}
           />
           {titleModel !== "Дашборд" ? (
-            <BreadCrumb
-              model={breadCrumbModel}
-              home={{
-                icon: "pi pi-home",
-                url: "http://localhost:5173/dashboard",
-              }}
-            />
+            <BreadCrumb model={breadCrumbModel} home={null} separatorIcon="pi pi-check"/>
           ) : (
             <></>
           )}

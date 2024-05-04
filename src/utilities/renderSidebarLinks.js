@@ -25,7 +25,7 @@ export const sidebarLinks = [
         name: "Системные дубликаты",
       },
       {
-        to: "/leads-hold",
+        to: "/import-history",
         icon: "pi-chart-pie",
         name: "История импортов",
       },

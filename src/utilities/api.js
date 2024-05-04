@@ -220,3 +220,6 @@ export const generatePassword = () =>
 
 export const getNoSendLeads = () =>
   axios.get(`http://25.18.88.64:8000/api/nosend-leads`);
+
+export const getImportedLeads = () =>
+  axios.get(`http://25.18.88.64:8000/api/imported-leads`);

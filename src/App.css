@@ -73,6 +73,11 @@ td > div, .p-column-title {
   white-space: nowrap;
 }
 
+.p-menuitem-text {
+  font-size: 25px;
+  font-weight: 600;
+}
+
 :root {
   --surface-a: #161a1f;
   --surface-b: #111417;
