@@ -61,7 +61,6 @@ function Leads() {
   const [selectedLeadsArray, setSelectedLeadsArray] = useState([]);
   const [sidebarVisible, setSidebarVisible] = useState(false);
 
-
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
@@ -825,7 +824,8 @@ function Leads() {
       <div
         style={{
           cursor: "pointer",
-          color: rowData.is_valid ? "#34d399" : "#ff6666",
+          // color: rowData.is_valid ? "#34d399" : "#ff6666",
+          color: "#34d399",
           textDecoration: "underline",
           textUnderlineOffset: "5px",
         }}
