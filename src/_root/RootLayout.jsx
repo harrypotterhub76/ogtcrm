@@ -50,11 +50,11 @@ function RootLayout() {
             text
             onClick={() => setSidebarVisible(true)}
           />
-          {titleModel !== "Дашборд" ? (
+          {/* {titleModel !== "Дашборд" ? (
             <BreadCrumb model={breadCrumbModel} home={null} separatorIcon="pi pi-check"/>
           ) : (
             <></>
-          )}
+          )} */}
         </div>
         <SidebarStyled
           visible={sidebarVisible}

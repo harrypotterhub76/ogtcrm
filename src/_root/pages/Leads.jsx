@@ -28,6 +28,8 @@ import { BreadCrumbContext } from "../../context/BreadCrumbContext";
 import { TitleContext } from "../../context/TitleContext";
 import { Checkbox } from "primereact/checkbox";
 
+import FiltersStyled from "../../components/FiltersComponent";
+
 function Leads() {
   // Стейты
   const [leads, setLeads] = useState([]);
@@ -57,6 +59,8 @@ function Leads() {
   const [isSendLeadDialogVisible, setIsSendLeadDialogVisible] = useState(false);
   const [allLeadsChecked, setAllLeadsChecked] = useState(false);
   const [selectedLeadsArray, setSelectedLeadsArray] = useState([]);
+  const [sidebarVisible, setSidebarVisible] = useState(false);
+
 
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -309,6 +313,83 @@ function Leads() {
       type: "dropdown",
       placeholder: "Гео",
       options: geosOptions,
+    },
+    {
+      label: "Параметры",
+      key: "url_params",
+      type: "text",
+      placeholder: "Параметры",
+    },
+  ];
+
+  //фильтры для FitersComponent
+
+  const filtersArray = [
+    {
+      label: "Имя",
+      key: "full_name",
+      type: "text",
+      placeholder: "Имя",
+    },
+    {
+      label: "Домен",
+      key: "domain",
+      type: "text",
+      placeholder: "Домен",
+    },
+    {
+      label: "Email",
+      key: "email",
+      type: "text",
+      placeholder: "Email",
+    },
+    {
+      label: "Воронка",
+      key: "funnel",
+      type: "dropdown",
+      placeholder: "Воронка",
+      options: funnelsOptions,
+      setDropdownValue: setSelectedFunnelDialog,
+    },
+    {
+      label: "Телефон",
+      key: "phone",
+      type: "text",
+      placeholder: "Телефон",
+    },
+    {
+      label: "IP",
+      key: "ip",
+      type: "text",
+      placeholder: "IP",
+    },
+    {
+      label: "Статус",
+      key: "status",
+      type: "dropdown",
+      placeholder: "Статус",
+      options: statusesCRMOptions,
+    },
+    {
+      label: "Пользователь",
+      key: "user",
+      type: "dropdown",
+      placeholder: "Пользователь",
+      options: usersOptions,
+      setDropdownValue: setSelectedUserDialog,
+    },
+    {
+      label: "Гео",
+      key: "geo",
+      type: "dropdown",
+      placeholder: "Гео",
+      options: geosOptions,
+    },
+    {
+      label: "Дата создания",
+      key: "created_at",
+      type: "calendar",
+      placeholder: "Дата создания",
     },
     {
       label: "Параметры",
@@ -616,12 +697,23 @@ function Leads() {
           loading={loading}
           onClick={refreshData}
         ></Button>
-        <span className="p-input-icon-left">
+        {/* <span className="p-input-icon-left">
           <i className="pi pi-search" />
           <InputText
             value={globalFilterValue}
             onChange={onGlobalFilterChange}
             placeholder="Поиск"
+          />
+        </span> */}
+
+        <span className="p-input-icon-left">
+          <Button icon="pi pi-filter" onClick={() => setSidebarVisible(true)} />
+          <FiltersStyled
+            visible={sidebarVisible}
+            setVisible={setSidebarVisible}
+            filtersArray={filtersArray}
+            type="leads"
+            setFilteredData={setLeads}
           />
         </span>
       </div>
