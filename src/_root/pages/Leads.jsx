@@ -820,7 +820,7 @@ function Leads() {
 
   const statusTemplate = (rowData) => {
     const parsedArray = JSON.parse(rowData.status);
-    // const newestStatus = parsedArray[parsedArray.length - 1].status;
+    const newestStatus = parsedArray[parsedArray.length - 1].status;
     return (
       <div
         style={{
@@ -833,7 +833,7 @@ function Leads() {
           handleStatusClick(rowData, parsedArray);
         }}
       >
-        {rowData.newest_status}
+        {newestStatus}
       </div>
     );
   };
