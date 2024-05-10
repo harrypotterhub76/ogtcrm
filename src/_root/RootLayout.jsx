@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 
 import { Button } from "primereact/button";
 import SidebarStyled from "../components/SidebarStyled";
@@ -14,6 +14,7 @@ function RootLayout() {
   const [theme, setTheme] = useState("lara-dark-green");
   const { breadCrumbModel } = useContext(BreadCrumbContext);
   const { titleModel } = useContext(TitleContext);
+  const { pathname } = useLocation();
   let themeLink = document.getElementById("app-theme");
 
   useEffect(() => {
@@ -42,33 +43,43 @@ function RootLayout() {
 
   return (
     <>
-      <header className="card flex justify-content-between">
-        <div className="flex align-items-center gap-5">
-          <Button
-            icon="pi pi-bars"
-            rounded
-            text
-            onClick={() => setSidebarVisible(true)}
-          />
-          {/* {titleModel !== "Дашборд" ? (
+      {pathname !== "/login" ? (
+        <header className="card flex justify-content-between">
+          <div className="flex align-items-center gap-5">
+            <Button
+              icon="pi pi-bars"
+              rounded
+              text
+              onClick={() => setSidebarVisible(true)}
+            />
+            {/* {titleModel !== "Дашборд" ? (
             <BreadCrumb model={breadCrumbModel} home={null} separatorIcon="pi pi-check"/>
           ) : (
             <></>
           )} */}
-        </div>
-        <SidebarStyled
-          visible={sidebarVisible}
-          setVisible={setSidebarVisible}
-          theme={theme}
-        />
+          </div>
+          <SidebarStyled
+            visible={sidebarVisible}
+            setVisible={setSidebarVisible}
+            theme={theme}
+          />
 
-        <InputSwitch
+          {/* <InputSwitch
           checked={checked}
           onChange={(e) => switchThemeHandler(e.value)}
-        />
-      </header>
+        /> */}
+        </header>
+      ) : (
+        ""
+      )}
 
-      <section>
+      <section
+        className={`${
+          pathname === "/login"
+            ? "h-full flex justify-content-center align-items-center"
+            : ""
+        }`}
+      >
         <Outlet />
       </section>
     </>
