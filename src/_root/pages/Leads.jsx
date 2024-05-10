@@ -61,7 +61,6 @@ function Leads() {
   const [selectedLeadsArray, setSelectedLeadsArray] = useState([]);
   const [sidebarVisible, setSidebarVisible] = useState(false);
 
-
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
@@ -820,12 +819,13 @@ function Leads() {
 
   const statusTemplate = (rowData) => {
     const parsedArray = JSON.parse(rowData.status);
-    // const newestStatus = parsedArray[parsedArray.length - 1].status;
+    const newestStatus = parsedArray[parsedArray.length - 1].status;
     return (
       <div
         style={{
           cursor: "pointer",
-          color: rowData.is_valid ? "#34d399" : "#ff6666",
+          // color: rowData.is_valid ? "#34d399" : "#ff6666",
+          color: "#34d399",
           textDecoration: "underline",
           textUnderlineOffset: "5px",
         }}
@@ -833,7 +833,7 @@ function Leads() {
           handleStatusClick(rowData, parsedArray);
         }}
       >
-        {rowData.newest_status}
+        {newestStatus}
       </div>
     );
   };
