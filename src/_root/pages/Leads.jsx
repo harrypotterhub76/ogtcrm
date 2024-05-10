@@ -970,11 +970,11 @@ function Leads() {
 
       <div className="flex flex-column align-items-center justify-content-center">
         <div className="flex justify-content-end my-5" style={{ width: "90%" }}>
-          <Button
+          {/* <Button
             label="Добавить"
             icon="pi pi-plus"
             onClick={() => setIsAddDialogVisible(true)}
-          />
+          /> */}
         </div>
         <Card style={{ width: "90%" }}>
           <DataTable

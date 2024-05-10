@@ -223,3 +223,6 @@ export const getNoSendLeads = () =>
 
 export const getImportedLeads = () =>
   axios.get(`http://25.18.88.64:8000/api/imported-leads`);
+
+export const getFilteredLeads = (filtersObject) =>
+  axios.post(`http://25.18.88.64:8000/api/offer/filtersLeads`, filtersObject);
