@@ -24,7 +24,6 @@ import { Dialog } from "primereact/dialog";
 import { DialogComponent } from "../../components/DialogComponent";
 import { Dropdown } from "primereact/dropdown";
 import { Card } from "primereact/card";
-import { BreadCrumbContext } from "../../context/BreadCrumbContext";
 import { TitleContext } from "../../context/TitleContext";
 
 function LeadsInHold() {
@@ -61,7 +60,6 @@ function LeadsInHold() {
   const [globalFilterValue, setGlobalFilterValue] = useState("");
   const [loading, setLoading] = useState(true);
   const isMounted = useRef(false);
-  const { setBreadCrumbModel } = useContext(BreadCrumbContext);
   const { setTitleModel } = useContext(TitleContext);
 
   const addLeadDialogInitialState = {
@@ -164,7 +162,6 @@ function LeadsInHold() {
   }, [isMounted, postLeadDialogInputObject]);
 
   useEffect(() => {
-    setBreadCrumbModel([{ label: "Лиды" }, { label: "Лиды в холде" }]);
     renderLeads();
     getCountriesData();
     getFunnelsData();

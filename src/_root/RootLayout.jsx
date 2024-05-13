@@ -4,15 +4,12 @@ import { Outlet, useLocation } from "react-router-dom";
 import { Button } from "primereact/button";
 import SidebarStyled from "../components/SidebarStyled";
 import { InputSwitch } from "primereact/inputswitch";
-import { BreadCrumb } from "primereact/breadcrumb";
-import { BreadCrumbContext } from "../context/BreadCrumbContext";
 import { TitleContext } from "../context/TitleContext";
 
 function RootLayout() {
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [checked, setChecked] = useState(false);
   const [theme, setTheme] = useState("lara-dark-green");
-  const { breadCrumbModel } = useContext(BreadCrumbContext);
   const { titleModel } = useContext(TitleContext);
   const { pathname } = useLocation();
   let themeLink = document.getElementById("app-theme");
@@ -52,11 +49,6 @@ function RootLayout() {
               text
               onClick={() => setSidebarVisible(true)}
             />
-            {/* {titleModel !== "Дашборд" ? (
-            <BreadCrumb model={breadCrumbModel} home={null} separatorIcon="pi pi-check"/>
-          ) : (
-            <></>
-          )} */}
           </div>
           <SidebarStyled
             visible={sidebarVisible}

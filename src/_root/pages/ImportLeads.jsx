@@ -1,7 +1,6 @@
 import { useContext, useEffect } from "react";
 import { FileUpload } from "primereact/fileupload";
 import { Card } from "primereact/card";
-import { BreadCrumb } from 'primereact/breadcrumb';
 import { TitleContext } from "../../context/TitleContext";
         
 
@@ -16,7 +15,6 @@ function ImportLeads() {
 
   return (
     <>
-    <BreadCrumb model={items} home={null} />
       <Card>
         <FileUpload
           name="file"

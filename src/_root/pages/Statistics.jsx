@@ -15,7 +15,6 @@ import {
   postLeadsStats,
   postOffersStats,
 } from "../../utilities/api";
-import { BreadCrumbContext } from "../../context/BreadCrumbContext";
 import { TitleContext } from "../../context/TitleContext";
 
 function Statistics() {
@@ -31,7 +30,6 @@ function Statistics() {
   const [dates, setDates] = useState(datesInitialState);
   const [postDates, setPostDates] = useState(postDatesInitialState);
   const [expandedRows, setExpandedRows] = useState(null);
-  const { setItems } = useContext(BreadCrumbContext);
   const { setTitleModel } = useContext(TitleContext);
 
   // useEffect'ы для рендера, вывода логов

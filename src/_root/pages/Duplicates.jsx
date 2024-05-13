@@ -22,7 +22,6 @@ import { confirmPopup } from "primereact/confirmpopup";
 import { Dialog } from "primereact/dialog";
 import { DialogComponent } from "../../components/DialogComponent";
 import { TitleContext } from "../../context/TitleContext";
-import { BreadCrumbContext } from "../../context/BreadCrumbContext";
 
 function Leads() {
   // Стейты
@@ -57,7 +56,6 @@ function Leads() {
   const [globalFilterValue, setGlobalFilterValue] = useState("");
   const [loading, setLoading] = useState(true);
   const { setTitleModel } = useContext(TitleContext);
-  const { setBreadCrumbModel } = useContext(BreadCrumbContext)
 
   const addLeadDialogInitialState = {
     full_name: "",
@@ -159,7 +157,6 @@ function Leads() {
     getUsersData();
     setLoading(false);
     setTitleModel("Системные дубликаты");
-    setBreadCrumbModel([{ label: "Лиды" }, { label: "Системные дубликаты" }]);
   }, []);
 
   // Инпуты для DialogComponent

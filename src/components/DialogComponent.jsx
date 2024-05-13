@@ -30,6 +30,7 @@ export const DialogComponent = ({
     }));
     console.log(field, value);
   };
+  console.log(dialogInputObject);
   return (
     <Dialog
       header={header}
