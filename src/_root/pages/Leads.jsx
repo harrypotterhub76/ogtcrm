@@ -124,6 +124,7 @@ function Leads() {
     console.log("statusesOptions: ", statusesCRMOptions);
     console.log("funnels: ", funnels);
     console.log("leads: ", leads);
+    console.log('offers:', offers);
   }, [
     addLeadDialogInputObject,
     postLeadDialogInputObject,
@@ -343,6 +344,14 @@ function Leads() {
       placeholder: "Email",
     },
     {
+      label: "Оффер",
+      key: "offer",
+      type: "dropdown",
+      placeholder: "Оффер",
+      options: offersOptions,
+      setDropdownValue: setSelectedOfferDialog,
+    },
+    {
       label: "Воронка",
       key: "funnel",
       type: "dropdown",
@@ -407,7 +416,9 @@ function Leads() {
 
   const getOffersData = () => {
     getOffers().then((response) => {
+      const updatedOffers = response.data.map(({ name }) => name);
       setOffers(response.data);
+      setOffersOptions(updatedOffers);
     });
   };
   const getOffersOptionsData = () => {
