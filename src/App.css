@@ -121,6 +121,14 @@ td > div, .p-column-title {
   margin-left: 16px;
 }
 
+.p-column-header-content {
+  justify-content: center;
+}
+
+td {
+  text-align: center;
+}
+
 :root {
   --surface-a: #161a1f;
   --surface-b: #111417;

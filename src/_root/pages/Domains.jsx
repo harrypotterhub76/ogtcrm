@@ -15,7 +15,6 @@ import {
 } from "../../utilities/api";
 import { DialogComponent } from "../../components/DialogComponent";
 import FiltersStyled from "../../components/FiltersComponent";
-import { FileUpload } from "primereact/fileupload";
 import { TitleContext } from "../../context/TitleContext";
 import { Skeleton } from "primereact/skeleton";
 
@@ -40,7 +39,17 @@ function Domains() {
     dialogInputObjectInitialState
   );
 
-  const dummyData = [
+  const skeletonData = [
+    {
+      id: <Skeleton />,
+      domain: <Skeleton />,
+      name: <Skeleton />,
+    },
+    {
+      id: <Skeleton />,
+      domain: <Skeleton />,
+      name: <Skeleton />,
+    },
     {
       id: <Skeleton />,
       domain: <Skeleton />,
@@ -286,7 +295,7 @@ function Domains() {
     );
   };
 
-  const representativeBodyTemplate = (rowData) => {
+  const userTemplate = (rowData) => {
     return (
       <div className="flex align-items-center gap-2">
         <span>{rowData.name}</span>
@@ -294,8 +303,13 @@ function Domains() {
     );
   };
 
-  const skeletonTemplate = () => {
-    return <Skeleton></Skeleton>;
+  const actionSkeletonTemplate = () => {
+    return (
+      <div className="flex gap-3">
+        <Skeleton size="3rem" />
+        <Skeleton size="3rem" />
+      </div>
+    );
   };
 
   return (
@@ -363,7 +377,7 @@ function Domains() {
 
       <div style={{ margin: "0 auto" }}>
         <DataTable
-          value={loading ? dummyData : domains}
+          value={loading ? skeletonData : domains}
           paginator
           rows={20}
           rowsPerPageOptions={[20, 50, 100]}
@@ -378,12 +392,11 @@ function Domains() {
             field="name"
             header="Пользователь"
             showFilterMatchModes={false}
-            optionLabel="username"
-            body={loading ? <Skeleton /> : representativeBodyTemplate}
+            body={loading ? <Skeleton /> : userTemplate}
           ></Column>
           <Column
             header="Действие"
-            body={loading ? <Skeleton /> : actionBodyTemplate}
+            body={loading ? actionSkeletonTemplate : actionBodyTemplate}
             style={{ width: "20%" }}
           ></Column>
         </DataTable>

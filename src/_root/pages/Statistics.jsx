@@ -17,6 +17,7 @@ import {
 } from "../../utilities/api";
 import { TitleContext } from "../../context/TitleContext";
 import { Card } from "primereact/card";
+import { Skeleton } from "primereact/skeleton";
 
 function Statistics() {
   const postDatesInitialState = {
@@ -32,6 +33,44 @@ function Statistics() {
   const [postDates, setPostDates] = useState(postDatesInitialState);
   const [expandedRows, setExpandedRows] = useState(null);
   const { setTitleModel } = useContext(TitleContext);
+  const [loading, setLoading] = useState(true);
+
+  const leadsSkeletonData = [
+    {
+      name: <Skeleton />,
+      total_leads_count: <Skeleton />,
+      valid_leads_count: <Skeleton />,
+      invalid_leads_count: <Skeleton />,
+      invalid_leads_percentage: <Skeleton />,
+      deposited_count: <Skeleton />,
+      conversion_rate: <Skeleton />,
+      total_spend: <Skeleton />,
+      cpl: <Skeleton />,
+    },
+   
+  ];
+
+  const offersSkeletonData = [
+    {
+      offer: <Skeleton />,
+      total_leads_count: <Skeleton />,
+      valid_leads_count: <Skeleton />,
+      deposited_count: <Skeleton />,
+      conversion_rate: <Skeleton />,
+    },
+   
+  ];
+
+  const funnelsSkeletonData = [
+    {
+      funnel: <Skeleton />,
+      total_leads_count: <Skeleton />,
+      valid_leads_count: <Skeleton />,
+      deposited_count: <Skeleton />,
+      conversion_rate: <Skeleton />,
+    },
+   
+  ];
 
   // useEffect'ы для рендера, вывода логов
   useEffect(() => {
@@ -51,6 +90,7 @@ function Statistics() {
       getLeadsStatsData();
       getOffersStatsData();
       getFunnelsStatsData();
+      setLoading(false);
     }
     setTitleModel("Аналитика");
   }, [postDates]);
@@ -74,6 +114,7 @@ function Statistics() {
   };
 
   const handleDateButtonClick = (option) => {
+    setLoading(true);
     switch (option) {
       case "today":
         setDates(datesInitialState);
@@ -201,7 +242,10 @@ function Statistics() {
         <h2 className="m-0">Аналитика</h2>
       </div>
 
-      <div className="flex justify-content-between my-2" style={{ width: "90%" }}>
+      <div
+        className="flex justify-content-between my-2"
+        style={{ width: "90%" }}
+      >
         <Card className=" flex">
           <Button
             onClick={() => {
@@ -252,9 +296,8 @@ function Statistics() {
       </div>
       <Card className="my-2" style={{ width: "90%" }}>
         <DataTable
-          value={leadsStats}
+          value={loading ? leadsSkeletonData : leadsStats}
           rows={10}
-          // showGridlines
           expandedRows={expandedRows}
           onRowToggle={(e) => setExpandedRows(e.data)}
           rowExpansionTemplate={rowExpansionTemplate}
@@ -276,7 +319,7 @@ function Statistics() {
 
       <Card className="my-2" style={{ width: "90%" }}>
         <DataTable
-          value={offersStats}
+          value={loading ? offersSkeletonData : offersStats}
           rows={10}
           // showGridlines
           className="mb-5 w-full"
@@ -292,7 +335,7 @@ function Statistics() {
 
       <Card className="my-2" style={{ width: "90%" }}>
         <DataTable
-          value={funnelsStats}
+          value={loading ? funnelsSkeletonData : funnelsStats}
           rows={10}
           // showGridlines
           className="mb-5 w-full"
