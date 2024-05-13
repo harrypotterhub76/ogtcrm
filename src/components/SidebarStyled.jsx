@@ -25,7 +25,7 @@ function SidebarStyled({ visible, setVisible, theme }) {
         <div className="flex flex-column h-full">
           <div className="flex align-items-center justify-content-center px-3 py-5 flex-shrink-0">
             <span className="inline-flex align-items-center gap-2">
-              <img src="/assets/images/detrix-logo.svg" width={150} />
+              {/* <img src="/assets/images/detrix-logo.svg" width={150} /> */}
             </span>
           </div>
           <div className="overflow-y-auto">

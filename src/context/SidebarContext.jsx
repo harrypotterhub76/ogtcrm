@@ -5,7 +5,7 @@ export const SidebarContext = createContext(null);
 export function SidebarArea({ children }) {
   const [sidebarModel, setSidebarModel] = useState(null);
 
-  document.sidebar = sidebarModel + " | Detrix";
+  document.sidebar = sidebarModel;
   return (
     <SidebarContext.Provider value={{ sidebarModel, setSidebarModel }}>
       {children}
