@@ -703,7 +703,7 @@ function Leads() {
       <div className="flex justify-content-between">
         <Button
           icon="pi pi-refresh"
-          label="Обновить данные"
+          label=""
           loading={loading}
           onClick={refreshData}
         ></Button>
