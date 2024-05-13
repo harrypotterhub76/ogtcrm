@@ -2,7 +2,6 @@ import { useContext, useEffect } from "react";
 import { FileUpload } from "primereact/fileupload";
 import { Card } from "primereact/card";
 import { TitleContext } from "../../context/TitleContext";
-        
 
 function ImportLeads() {
   const { setTitleModel } = useContext(TitleContext);
@@ -14,7 +13,9 @@ function ImportLeads() {
   }, []);
 
   return (
-    <>
+    <div className="" style={{ maxWidth: "90%", margin: "0 auto" }}>
+      <h2 className="mb-5">Импорт лидов</h2>
+
       <Card>
         <FileUpload
           name="file"
@@ -25,7 +26,7 @@ function ImportLeads() {
           }
         />
       </Card>
-    </>
+    </div>
   );
 }
 

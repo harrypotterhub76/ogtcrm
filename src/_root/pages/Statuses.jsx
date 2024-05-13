@@ -335,7 +335,7 @@ function Statuses() {
   };
 
   return (
-    <div className="" style={{ maxWidth: "80%", margin: "0 auto" }}>
+    <div className="" style={{ maxWidth: "90%", margin: "0 auto" }}>
       <Toast ref={toast} />
       <ConfirmPopup
         group="headless"
@@ -366,7 +366,7 @@ function Statuses() {
           </div>
         )}
       />
-      <div className="flex justify-content-between items-center mb-6">
+      <div className="flex justify-content-between items-center mb-5">
         <h2 className="m-0">Статусы</h2>
         <Button
           label={
@@ -412,7 +412,7 @@ function Statuses() {
         />
       </div>
 
-      <div style={{ maxWidth: "60rem", margin: "0 auto" }}>
+      <div style={{ margin: "0 auto" }}>
         {visibleTable === "broker-statuses" ? (
           <DataTable
             value={statuses}

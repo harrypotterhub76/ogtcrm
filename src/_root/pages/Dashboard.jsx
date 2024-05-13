@@ -75,7 +75,7 @@ function Dashboard() {
     renderOffers();
     renderStats();
     renderLeads();
-    setTitleModel('Дашборд')
+    setTitleModel("Дашборд");
   }, []);
 
   useEffect(() => {
@@ -161,91 +161,99 @@ function Dashboard() {
   }, [leads.length]);
 
   return (
-    <div className="" style={{ maxWidth: "100%", margin: "0 auto" }}>
-      <Toast ref={toast} />
-      <div className="flex flex-wrap gap-4 align-items-center justify-content-center">
-        <div className="col-12 md:col-6 lg:col-3">
-          <div className="surface-card shadow-2 p-3 border-round">
-            <div className="flex justify-content-between mb-3">
-              <div>
-                <span className="block text-500 font-medium mb-3">
-                  Кол-во лидов
-                </span>
-                <div className="text-900 font-medium text-xl">
-                  {stats.leads_count}
-                </div>
-              </div>
-              <div
-                className="flex align-items-center justify-content-center bg-blue-100 border-round"
-                style={{ width: "2.5rem", height: "2.5rem" }}
-              >
-                <i className="pi pi-shopping-cart text-blue-500 text-xl"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="col-12 md:col-6 lg:col-3">
-          <div className="surface-card shadow-2 p-3 border-round">
-            <div className="flex justify-content-between mb-3">
-              <div>
-                <span className="block text-500 font-medium mb-3">
-                  Кол-во депов
-                </span>
-                <div className="text-900 font-medium text-xl">
-                  {stats.deposited_leads_count}
-                </div>
-              </div>
-              <div
-                className="flex align-items-center justify-content-center bg-orange-100 border-round"
-                style={{ width: "2.5rem", height: "2.5rem" }}
-              >
-                <i className="pi pi-chart-line text-orange-500 text-xl"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="col-12 md:col-6 lg:col-3">
-          <div className="surface-card shadow-2 p-3 border-round">
-            <div className="flex justify-content-between mb-3">
-              <div>
-                <span className="block text-500 font-medium mb-3">
-                  Сегодняшние затраты
-                </span>
-                <div className="text-900 font-medium text-xl">
-                  {stats.today_spend_summary}$
-                </div>
-              </div>
-              <div
-                className="flex align-items-center justify-content-center bg-cyan-100 border-round"
-                style={{ width: "2.5rem", height: "2.5rem" }}
-              >
-                <i className="pi pi-money-bill text-cyan-500 text-xl"></i>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div style={{ maxWidth: "80%", margin: "0 auto" }}>
+      <div className="flex justify-content-between items-center mb-5">
+        <h2 className="m-0">Дашборд</h2>
       </div>
-      <div className="flex flex-wrap gap-4">
-        {offers.map((offer) => {
-          if (offer.active) {
-            return (
-              <div className="flex flex-column align-items-center" key={offer}>
-                <h3>{offer.name}</h3>
-                <Knob
-                  value={offer.current_cap}
-                  max={offer.cap}
-                  readOnly
-                  size={100}
-                  valueTemplate={`${offer.current_cap}/${offer.cap}`}
-                />
+      <div className="" style={{ maxWidth: "100%", margin: "0 auto" }}>
+        <Toast ref={toast} />
+        <div className="flex flex-wrap gap-4 align-items-center justify-content-center">
+          <div className="col-12 md:col-6 lg:col-3">
+            <div className="surface-card shadow-2 p-3 border-round">
+              <div className="flex justify-content-between mb-3">
+                <div>
+                  <span className="block text-500 font-medium mb-3">
+                    Кол-во лидов
+                  </span>
+                  <div className="text-900 font-medium text-xl">
+                    {stats.leads_count}
+                  </div>
+                </div>
+                <div
+                  className="flex align-items-center justify-content-center bg-blue-100 border-round"
+                  style={{ width: "2.5rem", height: "2.5rem" }}
+                >
+                  <i className="pi pi-shopping-cart text-blue-500 text-xl"></i>
+                </div>
               </div>
-            );
-          }
-        })}
-      </div>
+            </div>
+          </div>
+          <div className="col-12 md:col-6 lg:col-3">
+            <div className="surface-card shadow-2 p-3 border-round">
+              <div className="flex justify-content-between mb-3">
+                <div>
+                  <span className="block text-500 font-medium mb-3">
+                    Кол-во депов
+                  </span>
+                  <div className="text-900 font-medium text-xl">
+                    {stats.deposited_leads_count}
+                  </div>
+                </div>
+                <div
+                  className="flex align-items-center justify-content-center bg-orange-100 border-round"
+                  style={{ width: "2.5rem", height: "2.5rem" }}
+                >
+                  <i className="pi pi-chart-line text-orange-500 text-xl"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="col-12 md:col-6 lg:col-3">
+            <div className="surface-card shadow-2 p-3 border-round">
+              <div className="flex justify-content-between mb-3">
+                <div>
+                  <span className="block text-500 font-medium mb-3">
+                    Сегодняшние затраты
+                  </span>
+                  <div className="text-900 font-medium text-xl">
+                    {stats.today_spend_summary}$
+                  </div>
+                </div>
+                <div
+                  className="flex align-items-center justify-content-center bg-cyan-100 border-round"
+                  style={{ width: "2.5rem", height: "2.5rem" }}
+                >
+                  <i className="pi pi-money-bill text-cyan-500 text-xl"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-4">
+          {offers.map((offer) => {
+            if (offer.active) {
+              return (
+                <div
+                  className="flex flex-column align-items-center"
+                  key={offer}
+                >
+                  <h3>{offer.name}</h3>
+                  <Knob
+                    value={offer.current_cap}
+                    max={offer.cap}
+                    readOnly
+                    size={100}
+                    valueTemplate={`${offer.current_cap}/${offer.cap}`}
+                  />
+                </div>
+              );
+            }
+          })}
+        </div>
 
-      <div className="card">
-        <Chart type="line" data={chartData} options={chartOptions} />
+        <div className="card">
+          <Chart type="line" data={chartData} options={chartOptions} />
+        </div>
       </div>
     </div>
   );

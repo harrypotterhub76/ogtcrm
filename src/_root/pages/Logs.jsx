@@ -49,11 +49,11 @@ function Logs() {
   };
 
   return (
-    <div className="" style={{ maxWidth: "100%", margin: "0 auto" }}>
+    <div className="" style={{ maxWidth: "90%", margin: "0 auto" }}>
       {/* <Toast ref={toast} /> */}
 
       <div>
-        <h2 className="m-0">Логи брокеров</h2>
+        <h2 className="mb-5">Логи брокеров</h2>
 
         <Calendar
           value={date}

@@ -192,14 +192,21 @@ function Statistics() {
   };
 
   return (
-    <>
-      <div className="flex w-full my-5">
+    <div className="flex flex-column align-items-center justify-content-center">
+      <div
+        className="flex justify-content-between my-0"
+        style={{ width: "90%" }}
+      >
+        <h2 className="m-0">Аналитика</h2>
+      </div>
+
+      <div className="flex  my-5" style={{ width: "90%" }}>
         <div className="w-full flex">
           <Button
             onClick={() => {
               handleDateButtonClick("today");
             }}
-            className="mx-2"
+            className="mr-2"
             label="Сегодня"
           ></Button>
           <Button
@@ -247,7 +254,8 @@ function Statistics() {
         expandedRows={expandedRows}
         onRowToggle={(e) => setExpandedRows(e.data)}
         rowExpansionTemplate={rowExpansionTemplate}
-        className="mb-5"
+        className="mb-5 w-full"
+        style={{ maxWidth: "90%" }}
       >
         <Column style={{ width: "5rem" }} expander={allowExpansion} />
         <Column field="name" header="Юзер"></Column>
@@ -265,7 +273,8 @@ function Statistics() {
         value={offersStats}
         rows={10}
         // showGridlines
-        className="mb-5"
+        className="mb-5 w-full"
+        style={{ maxWidth: "90%" }}
       >
         <Column field="offer" header="Оффер"></Column>
         <Column field="total_leads_count" header="Тотал"></Column>
@@ -278,6 +287,8 @@ function Statistics() {
         value={funnelsStats}
         rows={10}
         // showGridlines
+        className="mb-5 w-full"
+        style={{ maxWidth: "90%" }}
       >
         <Column field="funnel" header="Воронка"></Column>
         <Column field="total_leads_count" header="Тотал"></Column>
@@ -285,7 +296,7 @@ function Statistics() {
         <Column field="deposited_count" header="Депозиты"></Column>
         <Column field="conversion_rate" header="Процент конверсии"></Column>
       </DataTable>
-    </>
+    </div>
   );
 }
 

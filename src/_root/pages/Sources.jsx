@@ -151,7 +151,7 @@ function Sources() {
   };
 
   return (
-    <div className="" style={{ maxWidth: "80%", margin: "0 auto" }}>
+    <div className="" style={{ maxWidth: "90%", margin: "0 auto" }}>
       <Toast ref={toast} />
       <ConfirmPopup
         group="headless"
@@ -182,7 +182,7 @@ function Sources() {
           </div>
         )}
       />
-      <div className="flex justify-content-between items-center mb-6">
+      <div className="flex justify-content-between items-center mb-5">
         <h2 className="m-0">Источники</h2>
         <Button
           label="Создать"
@@ -203,7 +203,7 @@ function Sources() {
         />
       </div>
 
-      <div style={{ maxWidth: "60rem", margin: "0 auto" }}>
+      <div style={{ margin: "0 auto" }}>
         <DataTable
           value={sources}
           paginator

@@ -977,12 +977,8 @@ function Leads() {
       <ConfirmPopup group="headless" content={popUpContentTemplate} />
 
       <div className="flex flex-column align-items-center justify-content-center">
-        <div className="flex justify-content-end my-5" style={{ width: "90%" }}>
-          {/* <Button
-            label="Добавить"
-            icon="pi pi-plus"
-            onClick={() => setIsAddDialogVisible(true)}
-          /> */}
+        <div className="flex justify-content-between my-5" style={{ width: "90%" }}>
+        <h2 className="m-0">Лиды</h2>
         </div>
         <Card style={{ width: "90%" }}>
           <DataTable
