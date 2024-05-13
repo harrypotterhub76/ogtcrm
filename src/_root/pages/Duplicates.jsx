@@ -22,6 +22,7 @@ import { confirmPopup } from "primereact/confirmpopup";
 import { Dialog } from "primereact/dialog";
 import { DialogComponent } from "../../components/DialogComponent";
 import { TitleContext } from "../../context/TitleContext";
+import { Card } from "primereact/card";
 
 function Leads() {
   // Стейты
@@ -784,47 +785,64 @@ function Leads() {
             onClick={() => setIsAddDialogVisible(true)}
           />
         </div>
-        <DataTable
-          value={duplicateLeads}
-          loading={loading}
-          paginator
-          header={headerTemplate}
-          rows={10}
-          showGridlines
-          rowsPerPageOptions={[5, 10, 25, 50]}
-          paginatorPosition="top"
-          filters={filters}
-          style={{ width: "90%" }}
-        >
-          <Column field="id" header="ID" sortable></Column>
-          <Column
-            field="phone"
-            header="Номер телефона"
-            body={phoneTemplate}
-          ></Column>
-          <Column field="full_name" header="Имя/Фамилия"></Column>
-          <Column field="email" header="Почта"></Column>
-          <Column field="geo" header="Гео"></Column>
-          <Column field="domain" header="Домен"></Column>
-          <Column field="funnel" header="Воронка"></Column>
-          <Column field="status" header="Статус" body={statusTemplate}></Column>
-          <Column field="user" header="Пользователь"></Column>
-          <Column
-            field="url_params"
-            header="Параметры"
-            body={URLParamsTemplate}
-          ></Column>
-          <Column
-            field="created_at"
-            header="Лид создан"
-            body={createdAtTemplate}
-          ></Column>
-          <Column
-            field="category"
-            header="Действие"
-            body={actionButtonsTemplate}
-          ></Column>
-        </DataTable>
+        <Card style={{ width: "90%" }}>
+          <DataTable
+            value={duplicateLeads}
+            loading={loading}
+            paginator
+            header={headerTemplate}
+            rows={10}
+            rowsPerPageOptions={[5, 10, 25, 50]}
+            paginatorPosition="top"
+            filters={filters}
+          >
+            <Column field="id" header="ID" body={phoneTemplate}></Column>
+            <Column field="offer" header="Оффер"></Column>
+            <Column field="phone" header="Номер телефона"></Column>
+            <Column field="full_name" header="Имя / Фамилия"></Column>
+            <Column field="email" header="Почта"></Column>
+            <Column field="geo" header="Гео"></Column>
+            <Column field="domain" header="Домен"></Column>
+            <Column field="funnel" header="Воронка"></Column>
+            <Column
+              field="status"
+              header="Статус"
+              body={statusTemplate}
+            ></Column>
+          
+            <Column
+              field="is_deposited"
+              header="Депозит"
+              body={isDepositedTemplate}
+            ></Column>
+            <Column field="user" header="Пользователь"></Column>
+            <Column
+              field="url_params"
+              header="Параметры"
+              body={URLParamsTemplate}
+            ></Column>
+            <Column
+              field="created_at"
+              header="Лид создан"
+              body={createdAtTemplate}
+            ></Column>
+            <Column
+              field="lead_sent"
+              header="Лид отправлен"
+              body={leadSentTemplate}
+            ></Column>
+            <Column
+              field="date_deposited"
+              header="Дата депозита"
+              body={dateDepositedTemplate}
+            ></Column>
+            <Column
+              field="category"
+              header="Действие"
+              body={actionButtonsTemplate}
+            ></Column>
+          </DataTable>
+        </Card>
       </div>
     </>
   );

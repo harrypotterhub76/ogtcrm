@@ -16,6 +16,7 @@ import { ConfirmPopup } from "primereact/confirmpopup";
 import { confirmPopup } from "primereact/confirmpopup";
 import { DialogComponent } from "../../components/DialogComponent";
 import { TitleContext } from "../../context/TitleContext";
+import { Card } from "primereact/card";
 
 function Users() {
   const [users, setUsers] = useState(null);
@@ -360,26 +361,27 @@ function Users() {
             onClick={() => setIsAddDialogVisible(true)}
           />
         </div>
-        <DataTable
-          value={users}
-          paginator
-          header={header}
-          rows={10}
-          showGridlines
-          rowsPerPageOptions={[5, 10, 25, 50]}
-          paginatorPosition="top"
-          filters={filters}
-          style={{ width: "90%" }}
-        >
-          <Column field="id" header="ID"></Column>
-          <Column field="name" header="Имя"></Column>
-          <Column field="email" header="Почта"></Column>
-          <Column field="role" header="Роль"></Column>
-          <Column
-            header="Действия"
-            body={(users) => actionButtonsTemplate(users)}
-          ></Column>
-        </DataTable>
+        <Card style={{width: "90%"}}>
+          <DataTable
+            value={users}
+            paginator
+            header={header}
+            rows={10}
+            showGridlines
+            rowsPerPageOptions={[5, 10, 25, 50]}
+            paginatorPosition="top"
+            filters={filters}
+          >
+            <Column field="id" header="ID"></Column>
+            <Column field="name" header="Имя"></Column>
+            <Column field="email" header="Почта"></Column>
+            <Column field="role" header="Роль"></Column>
+            <Column
+              header="Действия"
+              body={(users) => actionButtonsTemplate(users)}
+            ></Column>
+          </DataTable>
+        </Card>
       </div>
     </>
   );

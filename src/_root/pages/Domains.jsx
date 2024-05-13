@@ -17,6 +17,7 @@ import { DialogComponent } from "../../components/DialogComponent";
 import FiltersStyled from "../../components/FiltersComponent";
 import { FileUpload } from "primereact/fileupload";
 import { TitleContext } from "../../context/TitleContext";
+import { Skeleton } from "primereact/skeleton";
 
 function Domains() {
   const [domains, setDomains] = useState([]);
@@ -38,6 +39,24 @@ function Domains() {
   const [dialogInputObject, setDialogInputObject] = useState(
     dialogInputObjectInitialState
   );
+
+  const dummyData = [
+    {
+      id: <Skeleton />,
+      domain: <Skeleton />,
+      name: <Skeleton />,
+    },
+    {
+      id: <Skeleton />,
+      domain: <Skeleton />,
+      name: <Skeleton />,
+    },
+    {
+      id: <Skeleton />,
+      domain: <Skeleton />,
+      name: <Skeleton />,
+    },
+  ];
 
   const toast = useRef(null);
 
@@ -275,6 +294,10 @@ function Domains() {
     );
   };
 
+  const skeletonTemplate = () => {
+    return <Skeleton></Skeleton>;
+  };
+
   return (
     <div className="" style={{ maxWidth: "90%", margin: "0 auto" }}>
       <Toast ref={toast} />
@@ -340,17 +363,14 @@ function Domains() {
 
       <div style={{ margin: "0 auto" }}>
         <DataTable
-          value={domains}
+          value={loading ? dummyData : domains}
           paginator
           rows={20}
           rowsPerPageOptions={[20, 50, 100]}
           showGridlines
           tableStyle={{ minWidth: "50rem" }}
-          paginatorPosition="both"
-          dataKey="id"
-          loading={loading}
+          paginatorPosition="top"
           header={renderHeader()}
-          emptyMessage="Домен не найден."
         >
           <Column field="id" header="ID" style={{ width: "20%" }}></Column>
           <Column field="domain" header="Домен"></Column>
@@ -359,12 +379,11 @@ function Domains() {
             header="Пользователь"
             showFilterMatchModes={false}
             optionLabel="username"
-            body={representativeBodyTemplate}
+            body={loading ? <Skeleton /> : representativeBodyTemplate}
           ></Column>
           <Column
-            field="category"
             header="Действие"
-            body={actionBodyTemplate}
+            body={loading ? <Skeleton /> : actionBodyTemplate}
             style={{ width: "20%" }}
           ></Column>
         </DataTable>

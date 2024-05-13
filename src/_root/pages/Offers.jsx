@@ -26,13 +26,19 @@ import { TitleContext } from "../../context/TitleContext";
 function Offers() {
   // Стейты
   const [offers, setOffers] = useState([]);
+  const [offersNames, setOffersNames] = useState([]);
+  
   const [funnelsOptions, setFunnelsOptions] = useState([]);
   const [geosOptions, setGeosOptions] = useState([]);
   const [sourceOptions, setSourceOptions] = useState([]);
+
   const [activityChecked, setActivityChecked] = useState([]);
   const [selectedOfferID, setSelectedOfferID] = useState(null);
+  const [sidebarVisible, setSidebarVisible] = useState(false);
+
   const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
   const [isEditDialogVisible, setIsEditDialogVisible] = useState(false);
+
   const [globalFilterValue, setGlobalFilterValue] = useState("");
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -46,8 +52,7 @@ function Offers() {
     offer_end: "",
     source: [],
   });
-  const [sidebarVisible, setSidebarVisible] = useState(false);
-  const [offersNames, setOffersNames] = useState([]);
+
   const { setTitleModel } = useContext(TitleContext);
 
   const toast = useRef(null);
@@ -580,7 +585,7 @@ function Offers() {
       />
 
       <DialogComponent
-        type="edit"
+        type="edit offer"
         isDialogVisible={isEditDialogVisible}
         setIsDialogVisible={setIsEditDialogVisible}
         header="Изменить оффер"

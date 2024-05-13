@@ -50,6 +50,7 @@ function App() {
           <Route path="/leads-in-hold" element={<LeadsInHold />} />
           <Route path="/import-history" element={<ImportHistory />} />
           <Route path="/login" element={<Login />} />
+          <Route path="*" element={<Login />} />
         </Route>
       </Routes>
     </>

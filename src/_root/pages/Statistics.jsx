@@ -16,6 +16,7 @@ import {
   postOffersStats,
 } from "../../utilities/api";
 import { TitleContext } from "../../context/TitleContext";
+import { Card } from "primereact/card";
 
 function Statistics() {
   const postDatesInitialState = {
@@ -200,8 +201,8 @@ function Statistics() {
         <h2 className="m-0">Аналитика</h2>
       </div>
 
-      <div className="flex  my-5" style={{ width: "90%" }}>
-        <div className="w-full flex">
+      <div className="flex justify-content-between my-2" style={{ width: "90%" }}>
+        <Card className=" flex">
           <Button
             onClick={() => {
               handleDateButtonClick("today");
@@ -234,68 +235,76 @@ function Statistics() {
             onClick={() => {
               handleDateButtonClick("last month");
             }}
-            className="mx-2"
+            className="ml-2"
             label="Прошлый месяц"
           ></Button>
-        </div>
-        <Calendar
-          className="w-20rem"
-          dateFormat="dd-mm-yy"
-          value={dates}
-          onChange={(e) => setDates(e.value)}
-          selectionMode="range"
-          locale="ru"
-        />
+        </Card>
+        <Card>
+          <Calendar
+            className="w-20rem"
+            dateFormat="dd-mm-yy"
+            value={dates}
+            onChange={(e) => setDates(e.value)}
+            selectionMode="range"
+            locale="ru"
+          />
+        </Card>
       </div>
-      <DataTable
-        value={leadsStats}
-        rows={10}
-        // showGridlines
-        expandedRows={expandedRows}
-        onRowToggle={(e) => setExpandedRows(e.data)}
-        rowExpansionTemplate={rowExpansionTemplate}
-        className="mb-5 w-full"
-        style={{ maxWidth: "90%" }}
-      >
-        <Column style={{ width: "5rem" }} expander={allowExpansion} />
-        <Column field="name" header="Юзер"></Column>
-        <Column field="total_leads_count" header="Тотал"></Column>
-        <Column field="valid_leads_count" header="Валид"></Column>
-        <Column field="invalid_leads_count" header="Невалид"></Column>
-        <Column field="invalid_leads_percentage" header="% невалида"></Column>
-        <Column field="deposited_count" header="Депозиты"></Column>
-        <Column field="conversion_rate" header="Процент конверсии"></Column>
-        <Column field="total_spend" header="Затраты"></Column>
-        <Column field="cpl" header="CPL"></Column>
-      </DataTable>
+      <Card className="my-2" style={{ width: "90%" }}>
+        <DataTable
+          value={leadsStats}
+          rows={10}
+          // showGridlines
+          expandedRows={expandedRows}
+          onRowToggle={(e) => setExpandedRows(e.data)}
+          rowExpansionTemplate={rowExpansionTemplate}
+          className="mb-5 w-full"
+          style={{ maxWidth: "90%" }}
+        >
+          <Column style={{ width: "5rem" }} expander={allowExpansion} />
+          <Column field="name" header="Юзер"></Column>
+          <Column field="total_leads_count" header="Тотал"></Column>
+          <Column field="valid_leads_count" header="Валид"></Column>
+          <Column field="invalid_leads_count" header="Невалид"></Column>
+          <Column field="invalid_leads_percentage" header="% невалида"></Column>
+          <Column field="deposited_count" header="Депозиты"></Column>
+          <Column field="conversion_rate" header="Процент конверсии"></Column>
+          <Column field="total_spend" header="Затраты"></Column>
+          <Column field="cpl" header="CPL"></Column>
+        </DataTable>
+      </Card>
 
-      <DataTable
-        value={offersStats}
-        rows={10}
-        // showGridlines
-        className="mb-5 w-full"
-        style={{ maxWidth: "90%" }}
-      >
-        <Column field="offer" header="Оффер"></Column>
-        <Column field="total_leads_count" header="Тотал"></Column>
-        <Column field="valid_leads_count" header="Валид"></Column>
-        <Column field="deposited_count" header="Депозиты"></Column>
-        <Column field="conversion_rate" header="Процент конверсии"></Column>
-      </DataTable>
+      <Card className="my-2" style={{ width: "90%" }}>
+        <DataTable
+          value={offersStats}
+          rows={10}
+          // showGridlines
+          className="mb-5 w-full"
+          style={{ maxWidth: "90%" }}
+        >
+          <Column field="offer" header="Оффер"></Column>
+          <Column field="total_leads_count" header="Тотал"></Column>
+          <Column field="valid_leads_count" header="Валид"></Column>
+          <Column field="deposited_count" header="Депозиты"></Column>
+          <Column field="conversion_rate" header="Процент конверсии"></Column>
+        </DataTable>
+      </Card>
 
-      <DataTable
-        value={funnelsStats}
-        rows={10}
-        // showGridlines
-        className="mb-5 w-full"
-        style={{ maxWidth: "90%" }}
-      >
-        <Column field="funnel" header="Воронка"></Column>
-        <Column field="total_leads_count" header="Тотал"></Column>
-        <Column field="valid_leads_count" header="Валид"></Column>
-        <Column field="deposited_count" header="Депозиты"></Column>
-        <Column field="conversion_rate" header="Процент конверсии"></Column>
-      </DataTable>
+      <Card className="my-2" style={{ width: "90%" }}>
+        <DataTable
+          value={funnelsStats}
+          rows={10}
+          // showGridlines
+          className="mb-5 w-full"
+          style={{ maxWidth: "90%" }}
+        >
+          <Column field="funnel" header="Воронка"></Column>
+          <Column field="total_leads_count" header="Тотал"></Column>
+          <Column field="valid_leads_count" header="Валид"></Column>
+          <Column field="deposited_count" header="Депозиты"></Column>
+          <Column field="conversion_rate" header="Процент конверсии"></Column>
+        </DataTable>
+      </Card>
     </div>
   );
 }

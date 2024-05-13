@@ -56,14 +56,11 @@ function Leads() {
     useState(false);
   const [isStatusDialogVisible, setIsStatusDialogVisible] = useState(false);
   const [isSendLeadDialogVisible, setIsSendLeadDialogVisible] = useState(false);
-  const [allLeadsChecked, setAllLeadsChecked] = useState(false);
-  const [selectedLeadsArray, setSelectedLeadsArray] = useState([]);
   const [sidebarVisible, setSidebarVisible] = useState(false);
 
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
-  const [globalFilterValue, setGlobalFilterValue] = useState("");
   const [loading, setLoading] = useState(true);
 
   const isMounted = useRef(false);
@@ -185,10 +182,6 @@ function Leads() {
   useEffect(() => {
     setLoading(false);
   }, [leads]);
-
-  useEffect(() => {
-    console.log("selected", selectedLeadsArray);
-  }, [selectedLeadsArray]);
 
   // Инпуты для DialogComponent
   const postLeadDialogInputs = [
@@ -668,15 +661,6 @@ function Leads() {
     }
   };
 
-  const onLeadSelect = (e) => {
-    let _selectedLeadsArray = [...selectedLeadsArray];
-
-    if (e.checked) _selectedLeadsArray.push(e.value);
-    else _selectedLeadsArray.splice(_selectedLeadsArray.indexOf(e.value), 1);
-
-    setSelectedLeadsArray(_selectedLeadsArray);
-  };
-
   const refreshData = () => {
     setLoading(true);
     renderLeads();
@@ -727,15 +711,7 @@ function Leads() {
     );
   };
 
-  const checkboxTemplate = (rowData) => {
-    return (
-      <Checkbox
-        onChange={onLeadSelect}
-        value={rowData.id}
-        checked={selectedLeadsArray.includes(rowData.id)}
-      ></Checkbox>
-    );
-  };
+
 
   const popUpContentTemplate = ({
     message,
@@ -991,7 +967,6 @@ function Leads() {
             paginatorPosition="top"
             filters={filters}
           >
-            <Column body={checkboxTemplate}></Column>
             <Column field="id" header="ID" body={phoneTemplate}></Column>
             <Column field="offer" header="Оффер"></Column>
             <Column field="phone" header="Номер телефона"></Column>

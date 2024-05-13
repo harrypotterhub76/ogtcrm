@@ -96,7 +96,7 @@ export const sidebarLinks = [
     ],
   },
   {
-    to: "/sign-in",
+    to: "/login",
     icon: "pi-sign-out",
     name: "Выход",
   },

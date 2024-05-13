@@ -113,11 +113,12 @@ td > div, .p-column-title {
   padding-left: 3rem;
 }
 
-.iconfield-icon {
+.login-input-icon {
   position: absolute;
   top: 50%;
   transform: translateY(-50%) !important;
   z-index: 2;
+  margin-left: 16px;
 }
 
 :root {
@@ -1305,7 +1306,7 @@ td > div, .p-column-title {
     background: #34d399;
   }
   .p-inputswitch.p-inputswitch-checked .p-inputswitch-slider:before {
-    background: rgba(255, 255, 255, 0.87);
+    /* background: rgba(255, 255, 255, 0.87); */
   }
   .p-inputswitch.p-inputswitch-checked:not(.p-disabled):hover
     .p-inputswitch-slider {

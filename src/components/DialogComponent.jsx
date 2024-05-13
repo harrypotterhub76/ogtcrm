@@ -42,7 +42,7 @@ export const DialogComponent = ({
         clearDialogInputObject();
       }}
       className={`w-full ${
-        !type.includes("lead") ? "max-w-25rem" : ""
+        type.includes("lead") || type.includes("offer") ? "" : "max-w-25rem"
       } min-w-25rem`}
       style={{ maxWidth: "700px" }}
       content={({ hide }) => (
@@ -76,7 +76,7 @@ export const DialogComponent = ({
 
           <div
             className={`${
-              type.includes("lead")
+              type.includes("lead") || type.includes("offer")
                 ? "p-dialog-content w-full flex flex-wrap gap-3 justify-content-center"
                 : "p-dialog-content flex flex-column gap-4 "
             }`}
@@ -87,7 +87,7 @@ export const DialogComponent = ({
                   className="w-full flex flex-column gap-2"
                   key={index}
                   style={
-                    type.includes("lead")
+                    type.includes("lead") || type.includes("offer")
                       ? { maxWidth: "calc(50% - 0.5rem)" }
                       : {}
                   }
@@ -152,7 +152,6 @@ export const DialogComponent = ({
                             )
                       }
                       onChange={(e) => {
-                        console.log(e.value);
                         input.key === "offer_start" || input.key === "offer_end"
                           ? handleDialogInputChange(
                               input.key,

@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Card } from "primereact/card";
-import { IconField } from "primereact/iconfield";
-import { InputIcon } from "primereact/inputicon";
+
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Password } from "primereact/password";
@@ -49,17 +48,17 @@ export default function Login() {
           <h1 className="m-0">Логин</h1>
           <p className="m-0">Пожалуйста, введите ваши данные</p>
         </div>
-        <IconField iconPosition="left" className="w-full relative">
-          <InputIcon className="iconfield-icon pi pi-envelope ml-3"></InputIcon>
+        <div iconPosition="left" className="w-full relative">
+          <i className="login-input-icon pi pi-envelope"></i>
           <InputText
             placeholder="Почта"
             className="w-full pl-6"
             value={emailValue}
             onChange={(e) => setEmailValue(e.target.value)}
           />
-        </IconField>
-        <IconField iconPosition="left" className="w-full relative">
-          <InputIcon className="iconfield-icon pi pi-lock ml-3"></InputIcon>
+        </div>
+        <div iconPosition="left" className="w-full relative">
+          <i className="login-input-icon pi pi-lock"></i>
           <Password
             className="w-full flex"
             feedback={false}
@@ -67,7 +66,7 @@ export default function Login() {
             value={passwordValue}
             onChange={(e) => setPasswordValue(e.target.value)}
           />
-        </IconField>
+        </div>
         <Button label="Логин"></Button>
       </Card>
     </>
