@@ -78,6 +78,48 @@ td > div, .p-column-title {
   font-weight: 600;
 }
 
+.login-background {
+  position: relative;
+  z-index: -1;
+}
+
+#root {
+  height: 100%;
+}
+
+.login-card {
+  max-width: 460px;
+}
+
+.login-card .p-card-body {
+  padding: 0;
+}
+
+.login-card .p-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.login-card h1 {
+  color: #fff;
+}
+
+.login-card p {
+  font-size: 14px;
+}
+
+.login-card .p-password-input {
+  padding-left: 3rem;
+}
+
+.iconfield-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%) !important;
+  z-index: 2;
+}
+
 :root {
   --surface-a: #161a1f;
   --surface-b: #111417;
@@ -4463,7 +4505,7 @@ td > div, .p-column-title {
     color: rgba(255, 255, 255, 0.6);
   }
   .p-card .p-card-content {
-    padding: 1.25rem 0;
+    padding: 0 !important;
   }
   .p-card .p-card-footer {
     padding: 1.25rem 0 0 0;
