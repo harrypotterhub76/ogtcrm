@@ -315,71 +315,56 @@ function Leads() {
   //фильтры для FitersComponent
 
   const filtersArray = [
-    {
-      label: "Имя",
-      key: "full_name",
-      type: "text",
-      placeholder: "Имя",
-    },
-    {
-      label: "Домен",
-      key: "domain",
-      type: "text",
-      placeholder: "Домен",
-    },
-    {
-      label: "Email",
-      key: "email",
-      type: "text",
-      placeholder: "Email",
-    },
+    // {
+    //   label: "Имя",
+    //   key: "full_name",
+    //   type: "text",
+    //   placeholder: "Имя",
+    // },
+    // {
+    //   label: "Email",
+    //   key: "email",
+    //   type: "text",
+    //   placeholder: "Email",
+    // },
     {
       label: "Оффер",
       key: "offer",
-      type: "dropdown",
+      type: "multiselect",
       placeholder: "Оффер",
       options: offersOptions,
-      setDropdownValue: setSelectedOfferDialog,
     },
     {
       label: "Воронка",
       key: "funnel",
-      type: "dropdown",
+      type: "multiselect",
       placeholder: "Воронка",
       options: funnelsOptions,
-      setDropdownValue: setSelectedFunnelDialog,
     },
-    {
-      label: "Телефон",
-      key: "phone",
-      type: "text",
-      placeholder: "Телефон",
-    },
-    {
-      label: "IP",
-      key: "ip",
-      type: "text",
-      placeholder: "IP",
-    },
-    {
-      label: "Статус",
-      key: "status",
-      type: "dropdown",
-      placeholder: "Статус",
-      options: statusesCRMOptions,
-    },
+    // {
+    //   label: "Телефон",
+    //   key: "phone",
+    //   type: "text",
+    //   placeholder: "Телефон",
+    // },
+    // {
+    //   label: "Статус",
+    //   key: "status",
+    //   type: "multiselect",
+    //   placeholder: "Статус",
+    //   options: statusesCRMOptions,
+    // },
     {
       label: "Пользователь",
       key: "user",
-      type: "dropdown",
+      type: "multiselect",
       placeholder: "Пользователь",
       options: usersOptions,
-      setDropdownValue: setSelectedUserDialog,
     },
     {
       label: "Гео",
       key: "geo",
-      type: "dropdown",
+      type: "multiselect",
       placeholder: "Гео",
       options: geosOptions,
     },
@@ -389,12 +374,12 @@ function Leads() {
       type: "calendar",
       placeholder: "Дата создания",
     },
-    {
-      label: "Параметры",
-      key: "url_params",
-      type: "text",
-      placeholder: "Параметры",
-    },
+    // {
+    //   label: "Параметры",
+    //   key: "url_params",
+    //   type: "text",
+    //   placeholder: "Параметры",
+    // },
   ];
 
   // Функции подтягиваний данных с бека
