@@ -12,6 +12,7 @@ import { addLocale } from "primereact/api";
 import App from "./App.jsx";
 import { TitleArea } from "./context/TitleContext.jsx";
 import { SidebarArea } from "./context/SidebarContext.jsx";
+import { UserArea } from "./context/userContext.jsx";
 const value = {
   ripple: true,
   unstyled: false,
@@ -65,11 +66,13 @@ addLocale("ru", {
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <PrimeReactProvider value={value}>
-      <TitleArea>
+      <UserArea >
+        <TitleArea>
           <SidebarArea>
             <App />
           </SidebarArea>
-      </TitleArea>
+        </TitleArea>
+      </UserArea>
     </PrimeReactProvider>
   </BrowserRouter>
 );

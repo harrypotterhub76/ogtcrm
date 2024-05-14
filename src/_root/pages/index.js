@@ -14,3 +14,5 @@ export { default as ImportLeads } from "./ImportLeads";
 export { default as ImportHistory } from "./importHistory";
 export { default as LeadsInHold } from "./LeadsInHold";
 export { default as Login } from "./Login";
+export { default as Unauthorized } from "./Unauthorized";
+export { default as NotFound } from "./NotFound";

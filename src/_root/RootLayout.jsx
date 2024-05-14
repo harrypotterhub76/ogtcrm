@@ -40,38 +40,28 @@ function RootLayout() {
 
   return (
     <>
-      {pathname !== "/login" ? (
-        <header className="card flex justify-content-between">
-          <div className="flex align-items-center gap-5">
-            <Button
-              icon="pi pi-bars"
-              rounded
-              text
-              onClick={() => setSidebarVisible(true)}
-            />
-          </div>
-          <SidebarStyled
-            visible={sidebarVisible}
-            setVisible={setSidebarVisible}
-            theme={theme}
+      <header className="card flex justify-content-between">
+        <div className="flex align-items-center gap-5">
+          <Button
+            icon="pi pi-bars"
+            rounded
+            text
+            onClick={() => setSidebarVisible(true)}
           />
+        </div>
+        <SidebarStyled
+          visible={sidebarVisible}
+          setVisible={setSidebarVisible}
+          theme={theme}
+        />
 
-          {/* <InputSwitch
+        {/* <InputSwitch
           checked={checked}
           onChange={(e) => switchThemeHandler(e.value)}
         /> */}
-        </header>
-      ) : (
-        ""
-      )}
+      </header>
 
-      <section
-        className={`${
-          pathname === "/login"
-            ? "h-full flex justify-content-center align-items-center"
-            : ""
-        }`}
-      >
+      <section>
         <Outlet />
       </section>
     </>
