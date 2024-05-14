@@ -226,3 +226,6 @@ export const getImportedLeads = () =>
 
 export const getFilteredLeads = (filtersObject) =>
   axios.post(`http://25.18.88.64:8000/api/leads/filtersLeads`, filtersObject);
+
+export const login = (loginObject) =>
+  axios.post(`http://25.18.88.64:8000/api/login`, loginObject);
