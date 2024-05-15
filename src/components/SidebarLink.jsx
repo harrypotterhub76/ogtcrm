@@ -6,7 +6,7 @@ import { UserContext } from "../context/userContext";
 
 function SidebarLink({ handleHide, link }) {
   const { sidebarModel, setSidebarModel } = useContext(SidebarContext);
-  const { setUser } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   const handleLinkClick = (link) => {
@@ -14,11 +14,17 @@ function SidebarLink({ handleHide, link }) {
       setUser(null);
       localStorage.removeItem("loginData");
     }
+
+    console.log(link);
     handleHide();
     setSidebarModel(link);
     navigate(`${link.to}`);
   };
 
+  if (JSON.parse(user).user.role === "Buyer" && link.adminOnly) {
+    return "";
+  }
+  
   return (
     <li>
       <div

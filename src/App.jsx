@@ -38,6 +38,13 @@ function ProtectedRoute({ user, children }) {
   return children ? children : <Outlet />;
 }
 
+function ProtectedAdminRoute({ user, children }) {
+  if (JSON.parse(user).user.role === "Buyer") {
+    return <Navigate to="/unathorized" replace />;
+  }
+  return children ? children : <Outlet />;
+}
+
 function App() {
   const { user, setUser } = useContext(UserContext);
 
@@ -46,16 +53,19 @@ function App() {
       <Routes>
         <Route element={<RootLayout />}>
           <Route element={<ProtectedRoute user={user} />}>
+            <Route path="/" element={<Dashboard />} />
+            <Route element={<ProtectedAdminRoute user={user} />}>
+              <Route path="/domains" element={<Domains />} />
+              <Route path="/spends" element={<Spends />} />
+              <Route path="/offers" element={<Offers />} />
+              <Route path="/logs" element={<Logs />} />
+            </Route>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/users" element={<Users />} />
-            <Route path="/domains" element={<Domains />} />
             <Route path="/funnels" element={<Funnels />} />
-            <Route path="/spends" element={<Spends />} />
-            <Route path="/offers" element={<Offers />} />
             <Route path="/sources" element={<Sources />} />
             <Route path="/statistics" element={<Statistics />} />
             <Route path="/leads" element={<Leads />} />
-            <Route path="/logs" element={<Logs />} />
             <Route path="/duplicates" element={<Duplicates />} />
             <Route path="/statuses" element={<Statuses />} />
             <Route path="/import-leads" element={<ImportLeads />} />

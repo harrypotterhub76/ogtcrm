@@ -4,7 +4,6 @@ import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { FilterMatchMode } from "primereact/api";
 import { Toast } from "primereact/toast";
-import { InputText } from "primereact/inputtext";
 import {
   addLead,
   editLead,
@@ -25,9 +24,9 @@ import { DialogComponent } from "../../components/DialogComponent";
 import { Dropdown } from "primereact/dropdown";
 import { Card } from "primereact/card";
 import { TitleContext } from "../../context/TitleContext";
-import { Checkbox } from "primereact/checkbox";
 
 import FiltersStyled from "../../components/FiltersComponent";
+import { UserContext } from "../../context/userContext";
 
 function Leads() {
   // Стейты
@@ -66,6 +65,7 @@ function Leads() {
   const isMounted = useRef(false);
 
   const { setTitleModel } = useContext(TitleContext);
+  const { user } = useContext(UserContext);
 
   const addLeadDialogInitialState = {
     full_name: "",
@@ -119,7 +119,7 @@ function Leads() {
     console.log("statusesOptions: ", statusesCRMOptions);
     console.log("funnels: ", funnels);
     console.log("leads: ", leads);
-    console.log('offers:', offers);
+    console.log("offers:", offers);
   }, [
     addLeadDialogInputObject,
     postLeadDialogInputObject,
@@ -696,8 +696,6 @@ function Leads() {
     );
   };
 
-
-
   const popUpContentTemplate = ({
     message,
     acceptBtnRef,
@@ -788,7 +786,7 @@ function Leads() {
 
   const statusTemplate = (rowData) => {
     const parsedArray = JSON.parse(rowData.status);
-    const newestStatus = parsedArray[parsedArray.length - 1].status;
+    // const newestStatus = parsedArray[parsedArray.length - 1].status;
     return (
       <div
         style={{
@@ -802,7 +800,7 @@ function Leads() {
           handleStatusClick(rowData, parsedArray);
         }}
       >
-        {newestStatus}
+        {rowData.newest_status}
       </div>
     );
   };
@@ -938,8 +936,11 @@ function Leads() {
       <ConfirmPopup group="headless" content={popUpContentTemplate} />
 
       <div className="flex flex-column align-items-center justify-content-center">
-        <div className="flex justify-content-between my-5" style={{ width: "90%" }}>
-        <h2 className="m-0">Лиды</h2>
+        <div
+          className="flex justify-content-between my-5"
+          style={{ width: "90%" }}
+        >
+          <h2 className="m-0">Лиды</h2>
         </div>
         <Card style={{ width: "90%" }}>
           <DataTable
@@ -953,10 +954,18 @@ function Leads() {
             filters={filters}
           >
             <Column field="id" header="ID" body={phoneTemplate}></Column>
-            <Column field="offer" header="Оффер"></Column>
-            <Column field="phone" header="Номер телефона"></Column>
+            {JSON.parse(user).user.role === "Admin" && (
+              <Column field="offer" header="Оффер"></Column>
+            )}
+            {JSON.parse(user).user.role === "Admin" && (
+              <Column field="phone" header="Номер телефона"></Column>
+            )}
+
             <Column field="full_name" header="Имя / Фамилия"></Column>
-            <Column field="email" header="Почта"></Column>
+            {JSON.parse(user).user.role === "Admin" && (
+              <Column field="email" header="Почта"></Column>
+            )}
+
             <Column field="geo" header="Гео"></Column>
             <Column field="domain" header="Домен"></Column>
             <Column field="funnel" header="Воронка"></Column>
@@ -986,11 +995,13 @@ function Leads() {
               header="Лид создан"
               body={createdAtTemplate}
             ></Column>
-            <Column
-              field="lead_sent"
-              header="Лид отправлен"
-              body={leadSentTemplate}
-            ></Column>
+            {JSON.parse(user).user.role === "Admin" && (
+              <Column
+                field="lead_sent"
+                header="Лид отправлен"
+                body={leadSentTemplate}
+              ></Column>
+            )}
             <Column
               field="date_deposited"
               header="Дата депозита"

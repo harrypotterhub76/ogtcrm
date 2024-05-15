@@ -6,12 +6,15 @@ import { sidebarLinks } from "../utilities/renderSidebarLinks";
 import SidebarLink from "./SidebarLink";
 import { useRef, useContext } from "react";
 import { SidebarContext } from "../context/SidebarContext";
+import { UserContext } from "../context/userContext";
 
 function SidebarStyled({ visible, setVisible, theme }) {
   const btnRef1 = useRef(null);
   const btnRef2 = useRef(null);
   const btnRef3 = useRef(null);
   const { sidebarModel, setSidebarModel } = useContext(SidebarContext); // Access active link from context
+
+  const { user } = useContext(UserContext);
 
   const handleHide = () => {
     setVisible(false);
