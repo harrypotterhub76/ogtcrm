@@ -315,12 +315,12 @@ function Leads() {
   //фильтры для FitersComponent
 
   const filtersArray = [
-    // {
-    //   label: "Имя",
-    //   key: "full_name",
-    //   type: "text",
-    //   placeholder: "Имя",
-    // },
+    {
+      label: "Имя",
+      key: "idemailphone",
+      type: "text",
+      placeholder: "Id, email or phone",
+    },
     // {
     //   label: "Email",
     //   key: "email",
@@ -373,6 +373,12 @@ function Leads() {
       key: "created_at",
       type: "calendar",
       placeholder: "Дата создания",
+    },
+    {
+      label: "Дата отправки",
+      key: "sent_at",
+      type: "calendar",
+      placeholder: "Дата отправки",
     },
     // {
     //   label: "Параметры",

@@ -5,7 +5,13 @@ import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
 import { MultiSelect } from "primereact/multiselect";
 import { useEffect, useState, useRef } from "react";
-import { getFilteredSpends, getFilteredOffers, getFilteredFunnels, getFilteredDomains, getFilteredLeads } from "../utilities/api";
+import {
+  getFilteredSpends,
+  getFilteredOffers,
+  getFilteredFunnels,
+  getFilteredDomains,
+  getFilteredLeads,
+} from "../utilities/api";
 
 function FiltersStyled({
   visible,
@@ -99,6 +105,7 @@ function FiltersStyled({
           break;
         }
         case "leads": {
+          console.log(filtersObject);
           getFilteredLeads(filtersObject).then((response) => {
             console.log(response);
             setFilteredData(response.data);
@@ -142,62 +149,64 @@ function FiltersStyled({
               {filtersArray.map((filter, index) => {
                 return (
                   <li className="m-0-1" key={index}>
-                    {filter.type === "text" ? (
-                      <InputText
-                        onChange={(e) => {
-                          console.log(e.target.value);
-                          handleFilterChange(filter.key, e.target.value);
-                        }}
-                        style={{ width: "100%" }}
-                        placeholder={filter.placeholder}
-                      />
-                    ) : filter.type === "dropdown" ? (
-                      <Dropdown
-                        value={filtersObject[filter.key]}
-                        onChange={(e) => {
-                          console.log(e.value);
-                          handleFilterChange(filter.key, e.value);
-                        }}
-                        options={filter.options}
-                        placeholder={filter.placeholder}
-                        className="w-full"
-                      />
-                    ) : filter.type === "calendar" ? (
-                      <Calendar
-                        className="w-20rem"
-                        dateFormat="dd-mm-yy"
-                        value={dates}
-                        onChange={(e) => {
-                          console.log(e.value);
-                          setDates(e.value);
-                        }}
-                        selectionMode="range"
-                        placeholder={filter.placeholder}
-                        locale="ru"
-                      />
-                    ) : filter.type === "multiselect" ? (
-                      <MultiSelect
-                        value={filtersObject[filter.key]}
-                        onChange={(e) => {
-                          handleFilterChange(filter.key, e.value);
-                        }}
-                        options={filter.options}
-                        filter
-                        maxSelectedLabels={3}
-                        className="w-full"
-                        placeholder={filter.placeholder}
-                      />
-                    ) : filter.type === "switch" ? (
-                      <filterSwitch
-                        checked={Boolean(filtersObject[filter.key])}
-                        onChange={(e) => {
-                          handleFilterChange(filter.key, Number(e.value));
-                        }}
-                      />
-                    ) : (
-                      <span>Другой тип filter</span>
-                    )}
-                    <p
+                    <div className="flex">
+                      {filter.type === "text" ? (
+                        <InputText
+                          value={filtersObject[filter.key]}
+                          onChange={(e) => {
+                            console.log(e.target.value);
+                            handleFilterChange(filter.key, e.target.value);
+                          }}
+                          style={{ width: "100%" }}
+                          placeholder={filter.placeholder}
+                        />
+                      ) : filter.type === "dropdown" ? (
+                        <Dropdown
+                          value={filtersObject[filter.key]}
+                          onChange={(e) => {
+                            console.log(e.value);
+                            handleFilterChange(filter.key, e.value);
+                          }}
+                          options={filter.options}
+                          placeholder={filter.placeholder}
+                          className="w-full"
+                        />
+                      ) : filter.type === "calendar" ? (
+                        <Calendar
+                          className="w-20rem"
+                          dateFormat="dd-mm-yy"
+                          value={dates}
+                          onChange={(e) => {
+                            console.log(e.value);
+                            setDates(e.value);
+                          }}
+                          selectionMode="range"
+                          placeholder={filter.placeholder}
+                          locale="ru"
+                        />
+                      ) : filter.type === "multiselect" ? (
+                        <MultiSelect
+                          value={filtersObject[filter.key]}
+                          onChange={(e) => {
+                            handleFilterChange(filter.key, e.value);
+                          }}
+                          options={filter.options}
+                          filter
+                          maxSelectedLabels={3}
+                          className="w-full"
+                          placeholder={filter.placeholder}
+                        />
+                      ) : filter.type === "switch" ? (
+                        <filterSwitch
+                          checked={Boolean(filtersObject[filter.key])}
+                          onChange={(e) => {
+                            handleFilterChange(filter.key, Number(e.value));
+                          }}
+                        />
+                      ) : (
+                        <span>Другой тип filter</span>
+                      )}
+                      {/* <p
                       style={{
                         cursor: "pointer",
                         color: "#34d399",
@@ -215,7 +224,23 @@ function FiltersStyled({
                       }}
                     >
                       Обнулить поле {filter.label}
-                    </p>
+                    </p> */}
+
+                      <Button
+                        icon="pi pi-times white"
+                        className="p-button-success"
+                        style={{}}
+                        onClick={() => {
+                          if (filter.key == "created_at") {
+                            setDates([]);
+                            setPostDates({});
+                            handleFilterChange("start_filter", "");
+                            handleFilterChange("end_filter", "");
+                          }
+                          handleFilterChange(filter.key, []);
+                        }}
+                      />
+                    </div>
                   </li>
                 );
               })}
