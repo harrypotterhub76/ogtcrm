@@ -13,7 +13,7 @@ import {
   getOffers,
   getStatusesCRM,
   getUsers,
-  postLead,
+  sendLead,
   postOfferForLead,
 } from "../../utilities/api";
 import { deleteLead } from "../../utilities/api";
@@ -27,6 +27,8 @@ import { TitleContext } from "../../context/TitleContext";
 
 import FiltersStyled from "../../components/FiltersComponent";
 import { UserContext } from "../../context/userContext";
+import PaginatorComponent from "../../components/PaginatorComponent";
+import { Skeleton } from "primereact/skeleton";
 
 function Leads() {
   // Стейты
@@ -91,6 +93,27 @@ function Leads() {
     created_at: "",
     url_params: "",
   };
+
+  const skeletonData = [
+    {
+      id: <Skeleton />,
+      offer: <Skeleton />,
+      phone: <Skeleton />,
+      full_name: <Skeleton />,
+      email: <Skeleton />,
+      geo: <Skeleton />,
+      domain: <Skeleton />,
+      funnel: <Skeleton />,
+      status: <Skeleton />,
+      is_fraud: <Skeleton />,
+      is_deposited: <Skeleton />,
+      user: <Skeleton />,
+      url_params: <Skeleton />,
+      created_at: <Skeleton />,
+      lead_sent: <Skeleton />,
+      date_deposited: <Skeleton />,
+    },
+  ];
 
   const [postLeadDialogInputObject, setPostLeadDialogInputObject] = useState(
     postLeadDialogInitialState
@@ -178,10 +201,6 @@ function Leads() {
     getUsersData();
     setTitleModel("Лиды");
   }, []);
-
-  useEffect(() => {
-    setLoading(false);
-  }, [leads]);
 
   // Инпуты для DialogComponent
   const postLeadDialogInputs = [
@@ -391,7 +410,9 @@ function Leads() {
   // Функции подтягиваний данных с бека
   const renderLeads = () => {
     getLeads().then(function (response) {
-      setLeads(response.data);
+      setLeads(response.data.data);
+      setLoading(false);
+      console.log("response", response.data);
     });
   };
 
@@ -528,7 +549,7 @@ function Leads() {
 
   const handlePostLead = () => {
     if (isAllFieldsFilled(postLeadDialogInputObject)) {
-      postLead(postLeadDialogInputObject)
+      sendLead(postLeadDialogInputObject)
         .then(function (response) {
           setIsLeadDialogVisible(false);
           setIsSendLeadDialogVisible(false);
@@ -672,21 +693,15 @@ function Leads() {
 
   const headerTemplate = () => {
     return (
-      <div className="flex justify-content-between">
+      <div className="flex justify-content-between align-items-center p-0">
         <Button
           icon="pi pi-refresh"
           label=""
           loading={loading}
           onClick={refreshData}
         ></Button>
-        {/* <span className="p-input-icon-left">
-          <i className="pi pi-search" />
-          <InputText
-            value={globalFilterValue}
-            onChange={onGlobalFilterChange}
-            placeholder="Поиск"
-          />
-        </span> */}
+
+        <PaginatorComponent setLeads={setLeads} />
 
         <span className="p-input-icon-left">
           <Button icon="pi pi-filter" onClick={() => setSidebarVisible(true)} />
@@ -950,13 +965,8 @@ function Leads() {
         </div>
         <Card style={{ width: "90%" }}>
           <DataTable
-            value={leads}
-            loading={loading}
-            paginator
+            value={loading ? skeletonData : leads}
             header={headerTemplate}
-            rows={10}
-            rowsPerPageOptions={[5, 10, 25, 50]}
-            paginatorPosition="top"
             filters={filters}
           >
             <Column field="id" header="ID" body={phoneTemplate}></Column>
@@ -978,12 +988,12 @@ function Leads() {
             <Column
               field="status"
               header="Статус"
-              body={statusTemplate}
+              body={loading ? <Skeleton /> : statusTemplate}
             ></Column>
             <Column
               field="is_fraud"
               header="Shave"
-              body={fraudTemplate}
+              body={loading ? <Skeleton /> : fraudTemplate}
             ></Column>
             <Column
               field="is_deposited"
@@ -994,7 +1004,7 @@ function Leads() {
             <Column
               field="url_params"
               header="Параметры"
-              body={URLParamsTemplate}
+              body={loading ? <Skeleton /> : URLParamsTemplate}
             ></Column>
             <Column
               field="created_at"

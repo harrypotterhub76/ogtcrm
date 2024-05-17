@@ -14,7 +14,7 @@ import {
   getOffers,
   getStatusesCRM,
   getUsers,
-  postLead,
+  sendLead,
   postOfferForLead,
 } from "../../utilities/api";
 import { deleteLead } from "../../utilities/api";
@@ -439,7 +439,7 @@ function LeadsInHold() {
 
   const handlePostLead = () => {
     if (isAllFieldsFilled(postLeadDialogInputObject)) {
-      postLead(postLeadDialogInputObject)
+      sendLead(postLeadDialogInputObject)
         .then(function (response) {
           setIsLeadDialogVisible(false);
           setIsSendLeadDialogVisible(false);

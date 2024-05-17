@@ -14,7 +14,7 @@ import {
   getOffers,
   getStatusesCRM,
   getUsers,
-  postLead,
+  sendLead,
 } from "../../utilities/api";
 import { deleteLead } from "../../utilities/api";
 import { ConfirmPopup } from "primereact/confirmpopup";
@@ -427,7 +427,7 @@ function Leads() {
   const handlePostLead = () => {
     console.log(isAllFieldsFilled(postLeadDialogInputObject));
     if (isAllFieldsFilled(postLeadDialogInputObject)) {
-      postLead(postLeadDialogInputObject)
+      sendLead(postLeadDialogInputObject)
         .then(function (response) {
           setIsLeadDialogVisible(false);
           showToast("success", response.data.message);

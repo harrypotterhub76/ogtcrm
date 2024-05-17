@@ -53,7 +53,7 @@ function App() {
       <Routes>
         <Route element={<RootLayout />}>
           <Route element={<ProtectedRoute user={user} />}>
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/" element={<Login />} />
             <Route element={<ProtectedAdminRoute user={user} />}>
               <Route path="/domains" element={<Domains />} />
               <Route path="/spends" element={<Spends />} />

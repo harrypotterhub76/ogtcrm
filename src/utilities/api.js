@@ -108,13 +108,16 @@ export const addSource = (sourceName) =>
     name: sourceName,
   });
 
-export const getLeads = () => axios.get(`http://25.18.88.64:8000/api/leads`);
+export const getLeads = () => axios.post(`http://25.18.88.64:8000/api/leads`);
 
-export const postLead = (dialogInputObject) =>
+export const sendLead = (dialogInputObject) =>
   axios.post(
     `http://25.18.88.64:8000/api/offer/control-send`,
     dialogInputObject
   );
+
+export const postLead = (parametersObject) =>
+  axios.post(`http://25.18.88.64:8000/api/leads`, parametersObject);
 
 export const addLead = (dialogInputObject) =>
   axios.post(`http://25.18.88.64:8000/api/leads/store`, dialogInputObject);
