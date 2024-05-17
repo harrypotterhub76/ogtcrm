@@ -390,13 +390,13 @@ function Leads() {
     {
       label: "Дата создания",
       key: "created_at",
-      type: "calendar",
+      type: "calendar-creation",
       placeholder: "Дата создания",
     },
     {
       label: "Дата отправки",
       key: "sent_at",
-      type: "calendar",
+      type: "calendar-send",
       placeholder: "Дата отправки",
     },
     // {

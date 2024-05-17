@@ -20,46 +20,58 @@ function FiltersStyled({
   setFilteredData,
   type,
 }) {
-  const postDatesInitialState = {
-    stat_start: "",
-    stat_end: "",
-  };
-
   const [filtersObject, setFiltersObject] = useState({});
-  // const datesInitialState = [new Date(), new Date()];
   const [dates, setDates] = useState([]);
-  const [postDates, setPostDates] = useState(postDatesInitialState);
+  const [datesSent, setDatesSent] = useState([]);
 
   useEffect(() => {
     if (Object.keys(dates).length) {
-      formatDatesState(dates);
+      formatDatesState(dates, "create");
     }
-  }, [dates]);
+    if (Object.keys(datesSent).length) {
+      formatDatesState(datesSent, "sent");
+    }
+  }, [dates, datesSent]);
 
   const ref = useRef(0);
 
   // Вспомогательные функции
-  const formatDatesState = (array) => {
-    const formattedPostDates = array.map((date) => {
-      if (date instanceof Date && !isNaN(date)) {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const day = String(date.getDate()).padStart(2, "0");
+  const formatDatesState = (array, type) => {
+    if (type === "create") {
+      const formattedPostDates = array.map((date) => {
+        if (date instanceof Date && !isNaN(date)) {
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, "0");
+          const day = String(date.getDate()).padStart(2, "0");
 
-        return `${year}-${month}-${day}`;
-      } else {
-        return "";
-      }
-    });
-    console.log("formattedPostDates: ", formattedPostDates);
-    if (formattedPostDates[0] !== "" && formattedPostDates[1] !== "")
-      setPostDates({
-        stat_start: formattedPostDates[0],
-        stat_end: formattedPostDates[1],
+          return `${year}-${month}-${day}`;
+        } else {
+          return "";
+        }
       });
 
-    handleFilterChange("start_filter", formattedPostDates[0]);
-    handleFilterChange("end_filter", formattedPostDates[1]);
+      console.log("formattedPostDates: ", formattedPostDates);
+      if (formattedPostDates[0] !== "" && formattedPostDates[1] !== "")
+        handleFilterChange("start_filter", formattedPostDates[0]);
+      handleFilterChange("end_filter", formattedPostDates[1]);
+    } else if (type === "sent") {
+      const formattedPostDates = array.map((date) => {
+        if (date instanceof Date && !isNaN(date)) {
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, "0");
+          const day = String(date.getDate()).padStart(2, "0");
+
+          return `${year}-${month}-${day}`;
+        } else {
+          return "";
+        }
+      });
+
+      console.log("formattedPostDates: ", formattedPostDates);
+      if (formattedPostDates[0] !== "" && formattedPostDates[1] !== "")
+        handleFilterChange("start_send_filter", formattedPostDates[0]);
+      handleFilterChange("end_send_filter", formattedPostDates[1]);
+    }
   };
 
   const handleHide = () => {
@@ -121,6 +133,7 @@ function FiltersStyled({
     if (key === "all") {
       setFiltersObject({});
       setDates({});
+      setDatesSent({});
     }
   };
 
@@ -145,11 +158,11 @@ function FiltersStyled({
             <h2 className="m-0">Фильтры</h2>
           </div>
           <div className="overflow-y-auto">
-            <ul className="list-none p-3">
+            <ul className="list-none p-3 flex flex-column gap-3">
               {filtersArray.map((filter, index) => {
                 return (
                   <li className="m-0-1" key={index}>
-                    <div className="flex">
+                    <div className="p-inputgroup flex max-w-full">
                       {filter.type === "text" ? (
                         <InputText
                           value={filtersObject[filter.key]}
@@ -157,7 +170,7 @@ function FiltersStyled({
                             console.log(e.target.value);
                             handleFilterChange(filter.key, e.target.value);
                           }}
-                          style={{ width: "100%" }}
+                          style={{ width: "85%", maxWidth: "85%" }}
                           placeholder={filter.placeholder}
                         />
                       ) : filter.type === "dropdown" ? (
@@ -171,7 +184,7 @@ function FiltersStyled({
                           placeholder={filter.placeholder}
                           className="w-full"
                         />
-                      ) : filter.type === "calendar" ? (
+                      ) : filter.type === "calendar-creation" ? (
                         <Calendar
                           className="w-20rem"
                           dateFormat="dd-mm-yy"
@@ -183,6 +196,21 @@ function FiltersStyled({
                           selectionMode="range"
                           placeholder={filter.placeholder}
                           locale="ru"
+                          style={{ width: "85%", maxWidth: "85%" }}
+                        />
+                      ) : filter.type === "calendar-send" ? (
+                        <Calendar
+                          className="w-20rem"
+                          dateFormat="dd-mm-yy"
+                          value={datesSent}
+                          onChange={(e) => {
+                            console.log(e.value);
+                            setDatesSent(e.value);
+                          }}
+                          selectionMode="range"
+                          placeholder={filter.placeholder}
+                          locale="ru"
+                          style={{ width: "85%", maxWidth: "85%" }}
                         />
                       ) : filter.type === "multiselect" ? (
                         <MultiSelect
@@ -195,6 +223,7 @@ function FiltersStyled({
                           maxSelectedLabels={3}
                           className="w-full"
                           placeholder={filter.placeholder}
+                          style={{ width: "85%", maxWidth: "85%" }}
                         />
                       ) : filter.type === "switch" ? (
                         <filterSwitch
@@ -202,40 +231,25 @@ function FiltersStyled({
                           onChange={(e) => {
                             handleFilterChange(filter.key, Number(e.value));
                           }}
+                          style={{ width: "85%", maxWidth: "85%" }}
                         />
                       ) : (
                         <span>Другой тип filter</span>
                       )}
-                      {/* <p
-                      style={{
-                        cursor: "pointer",
-                        color: "#34d399",
-                        textDecoration: "underline",
-                        textUnderlineOffset: "5px",
-                      }}
-                      onClick={() => {
-                        if (filter.key == "date") {
-                          setDates([]);
-                          setPostDates({});
-                          handleFilterChange("start_filter", "");
-                          handleFilterChange("end_filter", "");
-                        }
-                        handleFilterChange(filter.key, []);
-                      }}
-                    >
-                      Обнулить поле {filter.label}
-                    </p> */}
 
                       <Button
-                        icon="pi pi-times white"
-                        className="p-button-success"
-                        style={{}}
+                        icon="pi pi-trash pi-filter"
+                        className="p-button-success min-w-10 flex-1"
+                        style={{ width: "40px", minWidth: "40px" }}
                         onClick={() => {
                           if (filter.key == "created_at") {
                             setDates([]);
-                            setPostDates({});
                             handleFilterChange("start_filter", "");
                             handleFilterChange("end_filter", "");
+                          } else if (filter.key == "sent_at") {
+                            setDatesSent([]);
+                            handleFilterChange("start_send_filter", "");
+                            handleFilterChange("end_send_filter", "");
                           }
                           handleFilterChange(filter.key, []);
                         }}
@@ -246,7 +260,9 @@ function FiltersStyled({
               })}
             </ul>
 
-            <Button onClick={() => handleClear("all")}>Обнулить всё</Button>
+            <Button onClick={() => handleClear("all")} className="ml-3">
+              Обнулить всё
+            </Button>
           </div>
         </div>
       )}

@@ -68,6 +68,11 @@ body {
   font-size: 1.2rem;
 }
 
+.pi-filter.pi {
+  color:#111417;
+  font-size: 1.2rem;
+}
+
 td,
 td > div,
 .p-column-title {
