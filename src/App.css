@@ -69,7 +69,8 @@ body {
 }
 
 td,
-td > div, .p-column-title {
+td > div,
+.p-column-title {
   white-space: nowrap;
 }
 
@@ -119,6 +120,21 @@ td > div, .p-column-title {
   transform: translateY(-50%) !important;
   z-index: 2;
   margin-left: 16px;
+}
+
+.dashboard-container {
+  max-width: 90%;
+  margin: 0  auto;
+}
+
+@media (max-width: 1439px) {
+  .dashboard-card.p-card .p-card-body {
+    padding: 0.5rem;
+  }
+
+  .dashboard-container {
+    max-width: 100%;
+  }
 }
 
 :root {
