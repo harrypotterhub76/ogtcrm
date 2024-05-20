@@ -127,6 +127,10 @@ td > div,
   margin-left: 16px;
 }
 
+.button-invisible {
+  visibility: hidden;
+}
+
 .dashboard-container {
   max-width: 90%;
   margin: 0  auto;

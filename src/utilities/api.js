@@ -1,8 +1,8 @@
 // api.js
 import axios from "axios";
 
-export const getFunnels = () =>
-  axios.get(`http://25.18.88.64:8000/api/funnels`);
+export const getFunnels = (parametersObject) =>
+  axios.get(`http://25.18.88.64:8000/api/funnels`, parametersObject);
 
 export const deleteFunnel = (id) =>
   axios.delete(`http://25.18.88.64:8000/api/funnels/${id}`);
@@ -27,8 +27,8 @@ export const editUser = (dialogInputObject, id) =>
 export const deleteUser = (id) =>
   axios.delete(`http://25.18.88.64:8000/api/users/${id}`);
 
-export const getDomains = () =>
-  axios.get(`http://25.18.88.64:8000/api/domains`);
+export const getDomains = (parametersObject) =>
+  axios.get(`http://25.18.88.64:8000/api/domains`,  parametersObject);
 
 export const deleteDomain = (id) =>
   axios.delete(`http://25.18.88.64:8000/api/domains/${id}`);
@@ -221,8 +221,8 @@ export const generatePassword = () =>
     contentType: "application/json",
   });
 
-export const getNoSendLeads = () =>
-  axios.get(`http://25.18.88.64:8000/api/nosend-leads`);
+export const getNoSendLeads = (parametersObject) =>
+  axios.get(`http://25.18.88.64:8000/api/nosend-leads`, parametersObject);
 
 export const getImportedLeads = () =>
   axios.get(`http://25.18.88.64:8000/api/imported-leads`);

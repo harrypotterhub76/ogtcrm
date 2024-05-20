@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Paginator } from "primereact/paginator";
-import { postLead } from "../utilities/api";
 
-export default function PaginatorComponent({ setLeads }) {
+export default function PaginatorComponent({ getData, setData, setLoading }) {
   const [first, setFirst] = useState(0);
-  const [rows, setRows] = useState(10);
+  const [rows, setRows] = useState(5);
   const [page, setPage] = useState(0);
   const [totalRecords, setTotalRecords] = useState(0);
 
   useEffect(() => {
     if (page !== null) {
-      postLead({ perPage: rows, page: page + 1 }).then((response) => {
+      getData({ perPage: rows, page: page + 1 }).then((response) => {
         console.log(response.data);
-        setLeads(response.data.data);
+        setData(response.data.data);
         setTotalRecords(response.data.total);
+        setLoading(false);
       });
     }
   }, [page, rows]);
@@ -22,6 +22,7 @@ export default function PaginatorComponent({ setLeads }) {
     setFirst(event.first);
     setRows(event.rows);
     setPage(event.page);
+    setLoading(true);
   };
   console.log(totalRecords);
   return (

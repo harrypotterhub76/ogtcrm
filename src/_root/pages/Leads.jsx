@@ -15,6 +15,7 @@ import {
   getUsers,
   sendLead,
   postOfferForLead,
+  postLead,
 } from "../../utilities/api";
 import { deleteLead } from "../../utilities/api";
 import { ConfirmPopup } from "primereact/confirmpopup";
@@ -94,27 +95,6 @@ function Leads() {
     url_params: "",
   };
 
-  const skeletonData = [
-    {
-      id: <Skeleton />,
-      offer: <Skeleton />,
-      phone: <Skeleton />,
-      full_name: <Skeleton />,
-      email: <Skeleton />,
-      geo: <Skeleton />,
-      domain: <Skeleton />,
-      funnel: <Skeleton />,
-      status: <Skeleton />,
-      is_fraud: <Skeleton />,
-      is_deposited: <Skeleton />,
-      user: <Skeleton />,
-      url_params: <Skeleton />,
-      created_at: <Skeleton />,
-      lead_sent: <Skeleton />,
-      date_deposited: <Skeleton />,
-    },
-  ];
-
   const [postLeadDialogInputObject, setPostLeadDialogInputObject] = useState(
     postLeadDialogInitialState
   );
@@ -193,7 +173,7 @@ function Leads() {
   }, [isMounted, postLeadDialogInputObject]);
 
   useEffect(() => {
-    renderLeads();
+    // renderLeads();
     getCountriesData();
     getFunnelsData();
     getOffersData();
@@ -701,7 +681,11 @@ function Leads() {
           onClick={refreshData}
         ></Button>
 
-        <PaginatorComponent setLeads={setLeads} />
+        <PaginatorComponent
+          getData={postLead}
+          setData={setLeads}
+          setLoading={setLoading}
+        />
 
         <span className="p-input-icon-left">
           <Button icon="pi pi-filter" onClick={() => setSidebarVisible(true)} />
@@ -998,7 +982,7 @@ function Leads() {
             <Column
               field="is_deposited"
               header="Депозит"
-              body={isDepositedTemplate}
+              body={loading ? <Skeleton /> : isDepositedTemplate}
             ></Column>
             <Column field="user" header="Пользователь"></Column>
             <Column
@@ -1009,24 +993,24 @@ function Leads() {
             <Column
               field="created_at"
               header="Лид создан"
-              body={createdAtTemplate}
+              body={loading ? <Skeleton /> : createdAtTemplate}
             ></Column>
             {JSON.parse(user).user.role === "Admin" && (
               <Column
                 field="lead_sent"
                 header="Лид отправлен"
-                body={leadSentTemplate}
+                body={loading ? <Skeleton /> : leadSentTemplate}
               ></Column>
             )}
             <Column
               field="date_deposited"
               header="Дата депозита"
-              body={dateDepositedTemplate}
+              body={loading ? <Skeleton /> : dateDepositedTemplate}
             ></Column>
             <Column
               field="category"
               header="Действие"
-              body={actionButtonsTemplate}
+              body={loading ? <Skeleton /> : actionButtonsTemplate}
             ></Column>
           </DataTable>
         </Card>
@@ -1036,3 +1020,97 @@ function Leads() {
 }
 
 export default Leads;
+
+
+const skeletonData = [
+  {
+    id: <Skeleton />,
+    offer: <Skeleton />,
+    phone: <Skeleton />,
+    full_name: <Skeleton />,
+    email: <Skeleton />,
+    geo: <Skeleton />,
+    domain: <Skeleton />,
+    funnel: <Skeleton />,
+    status: <Skeleton />,
+    is_fraud: <Skeleton />,
+    is_deposited: <Skeleton />,
+    user: <Skeleton />,
+    url_params: <Skeleton />,
+    created_at: <Skeleton />,
+    lead_sent: <Skeleton />,
+    date_deposited: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    offer: <Skeleton />,
+    phone: <Skeleton />,
+    full_name: <Skeleton />,
+    email: <Skeleton />,
+    geo: <Skeleton />,
+    domain: <Skeleton />,
+    funnel: <Skeleton />,
+    status: <Skeleton />,
+    is_fraud: <Skeleton />,
+    is_deposited: <Skeleton />,
+    user: <Skeleton />,
+    url_params: <Skeleton />,
+    created_at: <Skeleton />,
+    lead_sent: <Skeleton />,
+    date_deposited: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    offer: <Skeleton />,
+    phone: <Skeleton />,
+    full_name: <Skeleton />,
+    email: <Skeleton />,
+    geo: <Skeleton />,
+    domain: <Skeleton />,
+    funnel: <Skeleton />,
+    status: <Skeleton />,
+    is_fraud: <Skeleton />,
+    is_deposited: <Skeleton />,
+    user: <Skeleton />,
+    url_params: <Skeleton />,
+    created_at: <Skeleton />,
+    lead_sent: <Skeleton />,
+    date_deposited: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    offer: <Skeleton />,
+    phone: <Skeleton />,
+    full_name: <Skeleton />,
+    email: <Skeleton />,
+    geo: <Skeleton />,
+    domain: <Skeleton />,
+    funnel: <Skeleton />,
+    status: <Skeleton />,
+    is_fraud: <Skeleton />,
+    is_deposited: <Skeleton />,
+    user: <Skeleton />,
+    url_params: <Skeleton />,
+    created_at: <Skeleton />,
+    lead_sent: <Skeleton />,
+    date_deposited: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    offer: <Skeleton />,
+    phone: <Skeleton />,
+    full_name: <Skeleton />,
+    email: <Skeleton />,
+    geo: <Skeleton />,
+    domain: <Skeleton />,
+    funnel: <Skeleton />,
+    status: <Skeleton />,
+    is_fraud: <Skeleton />,
+    is_deposited: <Skeleton />,
+    user: <Skeleton />,
+    url_params: <Skeleton />,
+    created_at: <Skeleton />,
+    lead_sent: <Skeleton />,
+    date_deposited: <Skeleton />,
+  },
+];

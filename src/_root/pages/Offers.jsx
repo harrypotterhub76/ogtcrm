@@ -22,12 +22,15 @@ import { Chip } from "primereact/chip";
 import { InputSwitch } from "primereact/inputswitch";
 import FiltersStyled from "../../components/FiltersComponent";
 import { TitleContext } from "../../context/TitleContext";
+import { Card } from "primereact/card";
+import { Skeleton } from "primereact/skeleton";
+import PaginatorComponent from "../../components/PaginatorComponent";
 
 function Offers() {
   // Стейты
   const [offers, setOffers] = useState([]);
   const [offersNames, setOffersNames] = useState([]);
-  
+
   const [funnelsOptions, setFunnelsOptions] = useState([]);
   const [geosOptions, setGeosOptions] = useState([]);
   const [sourceOptions, setSourceOptions] = useState([]);
@@ -39,10 +42,7 @@ function Offers() {
   const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
   const [isEditDialogVisible, setIsEditDialogVisible] = useState(false);
 
-  const [globalFilterValue, setGlobalFilterValue] = useState("");
-  const [filters, setFilters] = useState({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-  });
+  const [loading, setLoading] = useState(true);
   const [dialogInputObject, setDialogInputObject] = useState({
     name: "",
     cap: "",
@@ -242,8 +242,8 @@ function Offers() {
       });
       setOffers(updatedOffers);
       setOffersNames(updatedOffers.map((offer) => offer.name));
-
       setActivityChecked(offerActiveArray);
+      setLoading(false);
     });
   };
 
@@ -277,15 +277,15 @@ function Offers() {
     setSelectedOfferID(null);
   };
 
-  // Сеттер фильтра глобального поиска
-  const onGlobalFilterChange = (e) => {
-    const value = e.target.value;
-    let _filters = { ...filters };
-    _filters["global"].value = value;
+  // // Сеттер фильтра глобального поиска
+  // const onGlobalFilterChange = (e) => {
+  //   const value = e.target.value;
+  //   let _filters = { ...filters };
+  //   _filters["global"].value = value;
 
-    setFilters(_filters);
-    setGlobalFilterValue(value);
-  };
+  //   setFilters(_filters);
+  //   setGlobalFilterValue(value);
+  // };
 
   // Обработчики взаимодействия фронта с беком
   const handleAddOffer = ({
@@ -455,16 +455,16 @@ function Offers() {
 
   const headerTemplate = () => {
     return (
-      <div className="flex justify-content-end gap-5">
-        <span className="p-input-icon-left">
-          <i className="pi pi-search" />
-          <InputText
-            value={globalFilterValue}
-            onChange={onGlobalFilterChange}
-            placeholder="Поиск"
-          />
-        </span>
+      <div className="flex justify-content-between align-items-center">
+      <Button icon="pi pi-filter" className="button-invisible" />
 
+      <PaginatorComponent
+        getData={getOffers}
+        setData={setOffers}
+        setLoading={setLoading}
+      />
+
+      <span className="p-input-icon-left">
         <Button icon="pi pi-filter" onClick={() => setSidebarVisible(true)} />
         <FiltersStyled
           visible={sidebarVisible}
@@ -473,7 +473,8 @@ function Offers() {
           type="offers"
           setFilteredData={setOffers}
         />
-      </div>
+      </span>
+    </div>
     );
   };
 
@@ -609,45 +610,96 @@ function Offers() {
             onClick={() => setIsAddDialogVisible(true)}
           />
         </div>
-        <DataTable
-          value={offers}
-          paginator
-          header={headerTemplate}
-          rows={10}
-          showGridlines
-          rowsPerPageOptions={[5, 10, 25, 50]}
-          paginatorPosition="top"
-          filters={filters}
-          style={{ width: "90%" }}
-        >
-          <Column field="id" header="ID"></Column>
-          <Column field="name" header="Оффер"></Column>
-          <Column field="cap" header="Капа"></Column>
-          <Column
-            field="funnels"
-            header="Воронки"
-            body={funnelsTemplate}
-          ></Column>
-          <Column field="geo" header="Гео" body={geoTemplate}></Column>
-          <Column
-            field="source"
-            header="Источники"
-            body={sourcesTemplate}
-          ></Column>
-          <Column body={capTimeTemplate} header="Время капы"></Column>
-          <Column
-            field="active"
-            header="Активность"
-            body={activityTemplate}
-          ></Column>
-          <Column
-            header="Действия"
-            body={(users) => actionButtonsTemplate(users)}
-          ></Column>
-        </DataTable>
+        <Card style={{width: "90%"}}>
+          <DataTable
+            value={loading ? skeletonData : offers}
+            header={headerTemplate}
+            showGridlines
+          >
+            <Column field="id" header="ID"></Column>
+            <Column field="name" header="Оффер"></Column>
+            <Column field="cap" header="Капа"></Column>
+            <Column
+              field="funnels"
+              header="Воронки"
+              body={loading ? <Skeleton /> : funnelsTemplate}
+            ></Column>
+            <Column
+              field="geo"
+              header="Гео"
+              body={loading ? <Skeleton /> : geoTemplate}
+            ></Column>
+            <Column
+              field="source"
+              header="Источники"
+              body={loading ? <Skeleton /> : sourcesTemplate}
+            ></Column>
+            <Column
+              body={loading ? <Skeleton /> : capTimeTemplate}
+              header="Время капы"
+            ></Column>
+            <Column
+              field="active"
+              header="Активность"
+              body={loading ? <Skeleton /> : activityTemplate}
+            ></Column>
+            <Column
+              header="Действия"
+              body={loading ? <Skeleton /> : actionButtonsTemplate}
+            ></Column>
+          </DataTable>
+        </Card>
       </div>
     </>
   );
 }
 
 export default Offers;
+
+const skeletonData = [
+  {
+    id: <Skeleton />,
+    name: <Skeleton />,
+    cap: <Skeleton />,
+    funnels: <Skeleton />,
+    geo: <Skeleton />,
+    source: <Skeleton />,
+    active: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    name: <Skeleton />,
+    cap: <Skeleton />,
+    funnels: <Skeleton />,
+    geo: <Skeleton />,
+    source: <Skeleton />,
+    active: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    name: <Skeleton />,
+    cap: <Skeleton />,
+    funnels: <Skeleton />,
+    geo: <Skeleton />,
+    source: <Skeleton />,
+    active: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    name: <Skeleton />,
+    cap: <Skeleton />,
+    funnels: <Skeleton />,
+    geo: <Skeleton />,
+    source: <Skeleton />,
+    active: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    name: <Skeleton />,
+    cap: <Skeleton />,
+    funnels: <Skeleton />,
+    geo: <Skeleton />,
+    source: <Skeleton />,
+    active: <Skeleton />,
+  },
+];

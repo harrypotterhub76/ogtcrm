@@ -17,6 +17,7 @@ import { DialogComponent } from "../../components/DialogComponent";
 import FiltersStyled from "../../components/FiltersComponent";
 import { TitleContext } from "../../context/TitleContext";
 import { Skeleton } from "primereact/skeleton";
+import PaginatorComponent from "../../components/PaginatorComponent";
 
 function Domains() {
   const [domains, setDomains] = useState([]);
@@ -38,34 +39,6 @@ function Domains() {
   const [dialogInputObject, setDialogInputObject] = useState(
     dialogInputObjectInitialState
   );
-
-  const skeletonData = [
-    {
-      id: <Skeleton />,
-      domain: <Skeleton />,
-      name: <Skeleton />,
-    },
-    {
-      id: <Skeleton />,
-      domain: <Skeleton />,
-      name: <Skeleton />,
-    },
-    {
-      id: <Skeleton />,
-      domain: <Skeleton />,
-      name: <Skeleton />,
-    },
-    {
-      id: <Skeleton />,
-      domain: <Skeleton />,
-      name: <Skeleton />,
-    },
-    {
-      id: <Skeleton />,
-      domain: <Skeleton />,
-      name: <Skeleton />,
-    },
-  ];
 
   const toast = useRef(null);
 
@@ -152,7 +125,7 @@ function Domains() {
   }, [dialogInputObject, users, selectedUser, usersOptions, domainsOptions]);
 
   useEffect(() => {
-    renderDomains();
+    // renderDomains();
     setTitleModel("Домены");
 
     getUsers()
@@ -261,7 +234,15 @@ function Domains() {
 
   const renderHeader = () => {
     return (
-      <div className="flex justify-content-end">
+      <div className="flex justify-content-between align-items-center">
+        <Button icon="pi pi-filter" className="button-invisible" />
+
+        <PaginatorComponent
+          getData={getDomains}
+          setData={setDomains}
+          setLoading={setLoading}
+        />
+
         <span className="p-input-icon-left">
           <Button icon="pi pi-filter" onClick={() => setSidebarVisible(true)} />
           <FiltersStyled
@@ -378,12 +359,8 @@ function Domains() {
       <div style={{ margin: "0 auto" }}>
         <DataTable
           value={loading ? skeletonData : domains}
-          paginator
-          rows={20}
-          rowsPerPageOptions={[20, 50, 100]}
           showGridlines
           tableStyle={{ minWidth: "50rem" }}
-          paginatorPosition="top"
           header={renderHeader()}
         >
           <Column field="id" header="ID" style={{ width: "20%" }}></Column>
@@ -406,3 +383,31 @@ function Domains() {
 }
 
 export default Domains;
+
+const skeletonData = [
+  {
+    id: <Skeleton />,
+    domain: <Skeleton />,
+    name: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    domain: <Skeleton />,
+    name: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    domain: <Skeleton />,
+    name: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    domain: <Skeleton />,
+    name: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    domain: <Skeleton />,
+    name: <Skeleton />,
+  },
+];

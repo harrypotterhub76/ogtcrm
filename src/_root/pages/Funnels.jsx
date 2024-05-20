@@ -9,6 +9,8 @@ import { getFunnels, deleteFunnel, addFunnel } from "../../utilities/api";
 import { DialogComponent } from "../../components/DialogComponent";
 import FiltersStyled from "../../components/FiltersComponent";
 import { TitleContext } from "../../context/TitleContext";
+import { Skeleton } from "primereact/skeleton";
+import PaginatorComponent from "../../components/PaginatorComponent";
 
 function Funnels() {
   const [funnels, setFunnels] = useState([]);
@@ -53,9 +55,10 @@ function Funnels() {
   };
 
   useEffect(() => {
-    renderFunnels();
+    // renderFunnels();
     setTitleModel("Воронки");
-  }, []);
+    console.log("funnels", funnels);
+  }, [funnels]);
 
   const renderFunnels = () => {
     getFunnels()
@@ -117,15 +120,25 @@ function Funnels() {
 
   const renderHeader = () => {
     return (
-      <div className="flex justify-content-end">
-        <Button icon="pi pi-filter" onClick={() => setSidebarVisible(true)} />
-        <FiltersStyled
-          visible={sidebarVisible}
-          setVisible={setSidebarVisible}
-          filtersArray={filtersArray}
-          type="funnels"
-          setFilteredData={setFunnels}
+      <div className="flex justify-content-between align-items-center">
+        <Button icon="pi pi-filter" className="button-invisible" />
+
+        <PaginatorComponent
+          getData={getFunnels}
+          setData={setFunnels}
+          setLoading={setLoading}
         />
+
+        <span className="p-input-icon-left">
+          <Button icon="pi pi-filter" onClick={() => setSidebarVisible(true)} />
+          <FiltersStyled
+            visible={sidebarVisible}
+            setVisible={setSidebarVisible}
+            filtersArray={filtersArray}
+            type="funnels"
+            setFilteredData={setFunnels}
+          />
+        </span>
       </div>
     );
   };
@@ -145,6 +158,15 @@ function Funnels() {
         className="p-button-danger"
         style={{ maxWidth: "48px", margin: "0 auto" }}
       />
+    );
+  };
+
+  const actionSkeletonTemplate = () => {
+    return (
+      <div className="flex gap-3">
+        <Skeleton size="3rem" />
+        <Skeleton size="3rem" />
+      </div>
     );
   };
 
@@ -203,17 +225,9 @@ function Funnels() {
 
       <div style={{ margin: "0 auto" }}>
         <DataTable
-          value={funnels}
-          paginator
-          rows={20}
-          rowsPerPageOptions={[20, 50, 100]}
+          value={loading ? skeletonData : funnels}
           showGridlines
           tableStyle={{ minWidth: "50rem" }}
-          paginatorPosition="both"
-          dataKey="id"
-          // filters={filters}
-          loading={loading}
-          // globalFilterFields={["name"]}
           header={renderHeader()}
           emptyMessage="Воронка не найдена."
         >
@@ -222,7 +236,7 @@ function Funnels() {
           <Column
             field="category"
             header="Действие"
-            body={actionBodyTemplate}
+            body={loading ? actionSkeletonTemplate : actionBodyTemplate}
             style={{ width: "30%" }}
           ></Column>
         </DataTable>
@@ -232,3 +246,26 @@ function Funnels() {
 }
 
 export default Funnels;
+
+const skeletonData = [
+  {
+    id: <Skeleton />,
+    name: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    name: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    name: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    name: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    name: <Skeleton />,
+  },
+];

@@ -17,17 +17,17 @@ import { confirmPopup } from "primereact/confirmpopup";
 import { DialogComponent } from "../../components/DialogComponent";
 import { TitleContext } from "../../context/TitleContext";
 import { Card } from "primereact/card";
+import { Skeleton } from "primereact/skeleton";
+import PaginatorComponent from "../../components/PaginatorComponent";
 
 function Users() {
   const [users, setUsers] = useState(null);
   const [selectedUserID, setSelectedUserID] = useState(null);
   const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
   const [isEditDialogVisible, setIsEditDialogVisible] = useState(false);
-  const [globalFilterValue, setGlobalFilterValue] = useState("");
+  const [loading, setLoading] = useState(true);
   const [confirmedPassword, setConfirmedPassword] = useState("");
-  const [filters, setFilters] = useState({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-  });
+
   const [dialogInputObject, setDialogInputObject] = useState({
     name: "",
     email: "",
@@ -122,7 +122,7 @@ function Users() {
   ];
 
   useEffect(() => {
-    renderUsers();
+    // renderUsers();
     setTitleModel("Пользователи");
   }, []);
 
@@ -182,34 +182,20 @@ function Users() {
         />
       </div>
     );
-  };
+  }
 
-  const onGlobalFilterChange = (e) => {
-    const value = e.target.value;
-    let _filters = { ...filters };
-
-    _filters["global"].value = value;
-
-    setFilters(_filters);
-    setGlobalFilterValue(value);
-  };
-
-  const renderHeader = () => {
+  const headerTemplate = () => {
     return (
-      <div className="flex justify-content-end">
-        <span className="p-input-icon-left">
-          <i className="pi pi-search" />
-          <InputText
-            value={globalFilterValue}
-            onChange={onGlobalFilterChange}
-            placeholder="Поиск"
-          />
-        </span>
+      <div className="flex justify-content-center">
+       
+      <PaginatorComponent
+        getData={getUsers}
+        setData={setUsers}
+        setLoading={setLoading}
+      />
       </div>
     );
   };
-
-  const header = renderHeader();
 
   const showAcceptToast = () => {
     showToast("success", "Пользователь успешно удалён");
@@ -280,6 +266,7 @@ function Users() {
       reject: showRejectToast,
     });
   };
+
   // Функция для сброса состояния DialogInputObject
   const clearDialogInputObject = () => {
     setDialogInputObject({
@@ -363,14 +350,9 @@ function Users() {
         </div>
         <Card style={{width: "90%"}}>
           <DataTable
-            value={users}
-            paginator
-            header={header}
-            rows={10}
+            value={loading ? skeletonData : users}
+            header={headerTemplate}
             showGridlines
-            rowsPerPageOptions={[5, 10, 25, 50]}
-            paginatorPosition="top"
-            filters={filters}
           >
             <Column field="id" header="ID"></Column>
             <Column field="name" header="Имя"></Column>
@@ -378,7 +360,7 @@ function Users() {
             <Column field="role" header="Роль"></Column>
             <Column
               header="Действия"
-              body={(users) => actionButtonsTemplate(users)}
+              body={loading ? <Skeleton /> : actionButtonsTemplate}
             ></Column>
           </DataTable>
         </Card>
@@ -388,3 +370,36 @@ function Users() {
 }
 
 export default Users;
+
+const skeletonData = [
+  {
+    id: <Skeleton />,
+    name: <Skeleton />,
+    email: <Skeleton />,
+    role: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    name: <Skeleton />,
+    email: <Skeleton />,
+    role: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    name: <Skeleton />,
+    email: <Skeleton />,
+    role: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    name: <Skeleton />,
+    email: <Skeleton />,
+    role: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    name: <Skeleton />,
+    email: <Skeleton />,
+    role: <Skeleton />,
+  },
+];

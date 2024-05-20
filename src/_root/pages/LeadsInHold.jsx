@@ -25,6 +25,10 @@ import { DialogComponent } from "../../components/DialogComponent";
 import { Dropdown } from "primereact/dropdown";
 import { Card } from "primereact/card";
 import { TitleContext } from "../../context/TitleContext";
+import FiltersStyled from "../../components/FiltersComponent";
+import PaginatorComponent from "../../components/PaginatorComponent";
+import { Skeleton } from "primereact/skeleton";
+import { UserContext } from "../../context/userContext";
 
 function LeadsInHold() {
   // Стейты
@@ -61,6 +65,8 @@ function LeadsInHold() {
   const [loading, setLoading] = useState(true);
   const isMounted = useRef(false);
   const { setTitleModel } = useContext(TitleContext);
+
+  const { user } = useContext(UserContext);
 
   const addLeadDialogInitialState = {
     full_name: "",
@@ -162,7 +168,7 @@ function LeadsInHold() {
   }, [isMounted, postLeadDialogInputObject]);
 
   useEffect(() => {
-    renderLeads();
+    // renderLeads();
     getCountriesData();
     getFunnelsData();
     getOffersData();
@@ -305,6 +311,7 @@ function LeadsInHold() {
   const renderLeads = () => {
     getNoSendLeads().then(function (response) {
       setLeads(response.data);
+      setLoading(false);
     });
   };
 
@@ -559,6 +566,11 @@ function LeadsInHold() {
     }
   };
 
+  const refreshData = () => {
+    setLoading(true);
+    renderLeads();
+  };
+
   // Шаблоны для DataTable
   const actionButtonsTemplate = (rowData) => {
     return (
@@ -574,14 +586,29 @@ function LeadsInHold() {
 
   const headerTemplate = () => {
     return (
-      <div className="flex justify-content-end">
+      <div className="flex justify-content-between align-items-center p-0">
+        <Button
+          icon="pi pi-refresh"
+          label=""
+          loading={loading}
+          onClick={refreshData}
+        ></Button>
+
+        <PaginatorComponent
+          getData={getNoSendLeads}
+          setData={setLeads}
+          setLoading={setLoading}
+        />
+
         <span className="p-input-icon-left">
-          <i className="pi pi-search" />
-          <InputText
-            value={globalFilterValue}
-            onChange={onGlobalFilterChange}
-            placeholder="Поиск"
-          />
+          <Button icon="pi pi-filter" onClick={() => setSidebarVisible(true)} />
+          {/* <FiltersStyled
+            visible={sidebarVisible}
+            setVisible={setSidebarVisible}
+            filtersArray={filtersArray}
+            type="leads"
+            setFilteredData={setLeads}
+          /> */}
         </span>
       </div>
     );
@@ -792,52 +819,68 @@ function LeadsInHold() {
         </div>
         <Card style={{ width: "90%" }}>
           <DataTable
-            value={leads}
-            loading={loading}
-            resizableColumns
-            paginator
+            value={loading ? skeletonData : leads}
             header={headerTemplate}
-            rows={10}
-            rowsPerPageOptions={[5, 10, 25, 50]}
-            paginatorPosition="top"
             filters={filters}
           >
-            <Column field="id" header="ID" sortable></Column>
-            <Column
-              field="phone"
-              header="Номер телефона"
-              body={phoneTemplate}
-            ></Column>
-            <Column field="full_name" header="Имя/Фамилия"></Column>
-            <Column field="email" header="Почта"></Column>
+            <Column field="id" header="ID" body={phoneTemplate}></Column>
+            {JSON.parse(user).user.role === "Admin" && (
+              <Column field="offer" header="Оффер"></Column>
+            )}
+            {JSON.parse(user).user.role === "Admin" && (
+              <Column field="phone" header="Номер телефона"></Column>
+            )}
+
+            <Column field="full_name" header="Имя / Фамилия"></Column>
+            {JSON.parse(user).user.role === "Admin" && (
+              <Column field="email" header="Почта"></Column>
+            )}
+
             <Column field="geo" header="Гео"></Column>
             <Column field="domain" header="Домен"></Column>
             <Column field="funnel" header="Воронка"></Column>
             <Column
               field="status"
               header="Статус"
-              body={statusTemplate}
+              body={loading ? <Skeleton /> : statusTemplate}
             ></Column>
+            {/* <Column
+              field="is_fraud"
+              header="Shave"
+              body={loading ? <Skeleton /> : fraudTemplate}
+            ></Column> */}
             <Column
               field="is_deposited"
               header="Депозит"
-              body={isDepositedTemplate}
+              body={loading ? <Skeleton /> : isDepositedTemplate}
             ></Column>
             <Column field="user" header="Пользователь"></Column>
             <Column
               field="url_params"
               header="Параметры"
-              body={URLParamsTemplate}
+              body={loading ? <Skeleton /> : URLParamsTemplate}
             ></Column>
             <Column
               field="created_at"
               header="Лид создан"
-              body={createdAtTemplate}
+              body={loading ? <Skeleton /> : createdAtTemplate}
             ></Column>
+            {/* {JSON.parse(user).user.role === "Admin" && (
+              <Column
+                field="lead_sent"
+                header="Лид отправлен"
+                body={loading ? <Skeleton /> : leadSentTemplate}
+              ></Column>
+            )} */}
+            {/* <Column
+              field="date_deposited"
+              header="Дата депозита"
+              body={loading ? <Skeleton /> : dateDepositedTemplate}
+            ></Column> */}
             <Column
               field="category"
               header="Действие"
-              body={actionButtonsTemplate}
+              body={loading ? <Skeleton /> : actionButtonsTemplate}
             ></Column>
           </DataTable>
         </Card>
@@ -847,3 +890,96 @@ function LeadsInHold() {
 }
 
 export default LeadsInHold;
+
+const skeletonData = [
+  {
+    id: <Skeleton />,
+    offer: <Skeleton />,
+    phone: <Skeleton />,
+    full_name: <Skeleton />,
+    email: <Skeleton />,
+    geo: <Skeleton />,
+    domain: <Skeleton />,
+    funnel: <Skeleton />,
+    status: <Skeleton />,
+    is_fraud: <Skeleton />,
+    is_deposited: <Skeleton />,
+    user: <Skeleton />,
+    url_params: <Skeleton />,
+    created_at: <Skeleton />,
+    lead_sent: <Skeleton />,
+    date_deposited: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    offer: <Skeleton />,
+    phone: <Skeleton />,
+    full_name: <Skeleton />,
+    email: <Skeleton />,
+    geo: <Skeleton />,
+    domain: <Skeleton />,
+    funnel: <Skeleton />,
+    status: <Skeleton />,
+    is_fraud: <Skeleton />,
+    is_deposited: <Skeleton />,
+    user: <Skeleton />,
+    url_params: <Skeleton />,
+    created_at: <Skeleton />,
+    lead_sent: <Skeleton />,
+    date_deposited: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    offer: <Skeleton />,
+    phone: <Skeleton />,
+    full_name: <Skeleton />,
+    email: <Skeleton />,
+    geo: <Skeleton />,
+    domain: <Skeleton />,
+    funnel: <Skeleton />,
+    status: <Skeleton />,
+    is_fraud: <Skeleton />,
+    is_deposited: <Skeleton />,
+    user: <Skeleton />,
+    url_params: <Skeleton />,
+    created_at: <Skeleton />,
+    lead_sent: <Skeleton />,
+    date_deposited: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    offer: <Skeleton />,
+    phone: <Skeleton />,
+    full_name: <Skeleton />,
+    email: <Skeleton />,
+    geo: <Skeleton />,
+    domain: <Skeleton />,
+    funnel: <Skeleton />,
+    status: <Skeleton />,
+    is_fraud: <Skeleton />,
+    is_deposited: <Skeleton />,
+    user: <Skeleton />,
+    url_params: <Skeleton />,
+    created_at: <Skeleton />,
+    lead_sent: <Skeleton />,
+    date_deposited: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    offer: <Skeleton />,
+    phone: <Skeleton />,
+    full_name: <Skeleton />,
+    email: <Skeleton />,
+    geo: <Skeleton />,
+    domain: <Skeleton />,
+    funnel: <Skeleton />,
+    status: <Skeleton />,
+    is_fraud: <Skeleton />,
+    is_deposited: <Skeleton />,
+    user: <Skeleton />,
+    url_params: <Skeleton />,
+    created_at: <Skeleton />,
+    lead_sent: <Skeleton />,
+    date_deposited: <Skeleton />,
+  },
+];
