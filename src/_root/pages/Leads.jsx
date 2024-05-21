@@ -16,6 +16,7 @@ import {
   sendLead,
   postOfferForLead,
   postLead,
+  getLeadsPaginationData,
 } from "../../utilities/api";
 import { deleteLead } from "../../utilities/api";
 import { ConfirmPopup } from "primereact/confirmpopup";
@@ -59,6 +60,11 @@ function Leads() {
   const [isStatusDialogVisible, setIsStatusDialogVisible] = useState(false);
   const [isSendLeadDialogVisible, setIsSendLeadDialogVisible] = useState(false);
   const [sidebarVisible, setSidebarVisible] = useState(false);
+
+  const [first, setFirst] = useState(0);
+  const [rows, setRows] = useState(5);
+  const [page, setPage] = useState(0);
+  const [totalRecords, setTotalRecords] = useState(0);
 
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -173,7 +179,6 @@ function Leads() {
   }, [isMounted, postLeadDialogInputObject]);
 
   useEffect(() => {
-    // renderLeads();
     getCountriesData();
     getFunnelsData();
     getOffersData();
@@ -388,9 +393,12 @@ function Leads() {
   ];
 
   // Функции подтягиваний данных с бека
-  const renderLeads = () => {
-    getLeads().then(function (response) {
+  const renderLeads = async () => {
+    getLeadsPaginationData({ perPage: rows, page: page + 1 }).then(function (
+      response
+    ) {
       setLeads(response.data.data);
+      setTotalRecords(response.data.total);
       setLoading(false);
       console.log("response", response.data);
     });
@@ -496,14 +504,14 @@ function Leads() {
   };
 
   // Сеттер фильтра глобального поиска
-  const onGlobalFilterChange = (e) => {
-    const value = e.target.value;
-    let _filters = { ...filters };
-    _filters["global"].value = value;
+  // const onGlobalFilterChange = (e) => {
+  //   const value = e.target.value;
+  //   let _filters = { ...filters };
+  //   _filters["global"].value = value;
 
-    setFilters(_filters);
-    setGlobalFilterValue(value);
-  };
+  //   setFilters(_filters);
+  //   setGlobalFilterValue(value);
+  // };
 
   // Обработчики взаимодействия фронта с беком
   const handleAddLead = () => {
@@ -682,9 +690,15 @@ function Leads() {
         ></Button>
 
         <PaginatorComponent
-          getData={postLead}
-          setData={setLeads}
+          renderFunction={renderLeads}
           setLoading={setLoading}
+          first={first}
+          setFirst={setFirst}
+          rows={rows}
+          setRows={setRows}
+          page={page}
+          setPage={setPage}
+          totalRecords={totalRecords}
         />
 
         <span className="p-input-icon-left">
@@ -1020,7 +1034,6 @@ function Leads() {
 }
 
 export default Leads;
-
 
 const skeletonData = [
   {

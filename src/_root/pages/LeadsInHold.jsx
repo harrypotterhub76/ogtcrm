@@ -6,16 +6,15 @@ import { FilterMatchMode } from "primereact/api";
 import { Toast } from "primereact/toast";
 import { InputText } from "primereact/inputtext";
 import {
-  addLead,
   editLead,
   getCountries,
   getFunnels,
-  getNoSendLeads,
   getOffers,
   getStatusesCRM,
   getUsers,
   sendLead,
   postOfferForLead,
+  getNoSendLeadsPaginationData,
 } from "../../utilities/api";
 import { deleteLead } from "../../utilities/api";
 import { ConfirmPopup } from "primereact/confirmpopup";
@@ -57,6 +56,11 @@ function LeadsInHold() {
     useState(false);
   const [isStatusDialogVisible, setIsStatusDialogVisible] = useState(false);
   const [isSendLeadDialogVisible, setIsSendLeadDialogVisible] = useState(false);
+
+  const [first, setFirst] = useState(0);
+  const [rows, setRows] = useState(5);
+  const [page, setPage] = useState(0);
+  const [totalRecords, setTotalRecords] = useState(0);
 
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -168,13 +172,11 @@ function LeadsInHold() {
   }, [isMounted, postLeadDialogInputObject]);
 
   useEffect(() => {
-    // renderLeads();
     getCountriesData();
     getFunnelsData();
     getOffersData();
     getStatusesCRMData();
     getUsersData();
-    setLoading(false);
     setTitleModel("Неотправленные Лиды");
   }, []);
 
@@ -308,11 +310,15 @@ function LeadsInHold() {
   //   ];
 
   // Функции подтягиваний данных с бека
-  const renderLeads = () => {
-    getNoSendLeads().then(function (response) {
-      setLeads(response.data);
-      setLoading(false);
-    });
+  const renderNoSendLeads = async () => {
+    getNoSendLeadsPaginationData({ perPage: rows, page: page + 1 }).then(
+      function (response) {
+        console.log(response)
+        setLeads(response.data.data);
+        setTotalRecords(response.data.total);
+        setLoading(false);
+      }
+    );
   };
 
   const getOffersData = () => {
@@ -451,7 +457,7 @@ function LeadsInHold() {
           setIsLeadDialogVisible(false);
           setIsSendLeadDialogVisible(false);
           showToast("success", response.data.message);
-          renderLeads();
+          renderNoSendLeads();
         })
         .catch(function (error) {
           console.log(error);
@@ -467,7 +473,7 @@ function LeadsInHold() {
       .then(function (response) {
         showToast("success", response.data.message);
         setLeadDialogType("post-lead");
-        renderLeads();
+        renderNoSendLeads();
       })
       .catch(function (error) {
         console.log(error);
@@ -479,7 +485,7 @@ function LeadsInHold() {
     deleteLead(selectedLeadID)
       .then(function (response) {
         showToast("success", response.data.message);
-        renderLeads();
+        renderNoSendLeads();
       })
       .catch(function (error) {
         showToast("error", response.data.message);
@@ -568,7 +574,7 @@ function LeadsInHold() {
 
   const refreshData = () => {
     setLoading(true);
-    renderLeads();
+    renderNoSendLeads();
   };
 
   // Шаблоны для DataTable
@@ -595,9 +601,15 @@ function LeadsInHold() {
         ></Button>
 
         <PaginatorComponent
-          getData={getNoSendLeads}
-          setData={setLeads}
+          renderFunction={renderNoSendLeads}
           setLoading={setLoading}
+          first={first}
+          setFirst={setFirst}
+          rows={rows}
+          setRows={setRows}
+          page={page}
+          setPage={setPage}
+          totalRecords={totalRecords}
         />
 
         <span className="p-input-icon-left">
@@ -823,12 +835,12 @@ function LeadsInHold() {
             header={headerTemplate}
             filters={filters}
           >
-            <Column field="id" header="ID" body={phoneTemplate}></Column>
-            {JSON.parse(user).user.role === "Admin" && (
+            <Column field="id" header="ID" ></Column>
+            {/* {JSON.parse(user).user.role === "Admin" && (
               <Column field="offer" header="Оффер"></Column>
-            )}
+            )} */}
             {JSON.parse(user).user.role === "Admin" && (
-              <Column field="phone" header="Номер телефона"></Column>
+              <Column field="phone" header="Номер телефона" body={phoneTemplate}></Column>
             )}
 
             <Column field="full_name" header="Имя / Фамилия"></Column>

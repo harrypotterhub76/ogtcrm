@@ -189,7 +189,7 @@ function Users() {
       <div className="flex justify-content-center">
        
       <PaginatorComponent
-        getData={getUsers}
+        renderFunction={getUsers}
         setData={setUsers}
         setLoading={setLoading}
       />

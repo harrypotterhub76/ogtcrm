@@ -238,7 +238,7 @@ function Domains() {
         <Button icon="pi pi-filter" className="button-invisible" />
 
         <PaginatorComponent
-          getData={getDomains}
+          renderFunction={getDomains}
           setData={setDomains}
           setLoading={setLoading}
         />

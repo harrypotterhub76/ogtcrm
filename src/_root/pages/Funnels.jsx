@@ -124,7 +124,7 @@ function Funnels() {
         <Button icon="pi pi-filter" className="button-invisible" />
 
         <PaginatorComponent
-          getData={getFunnels}
+          renderFunction={getFunnels}
           setData={setFunnels}
           setLoading={setLoading}
         />

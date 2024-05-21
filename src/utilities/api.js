@@ -1,8 +1,11 @@
 // api.js
 import axios from "axios";
 
-export const getFunnels = (parametersObject) =>
-  axios.get(`http://25.18.88.64:8000/api/funnels`, parametersObject);
+export const getFunnels = () =>
+  axios.get(`http://25.18.88.64:8000/api/funnels`);
+
+export const getFunnelsPaginationData = (parametersObject) =>
+  axios.post(`http://25.18.88.64:8000/api/funnels`, parametersObject);
 
 export const deleteFunnel = (id) =>
   axios.delete(`http://25.18.88.64:8000/api/funnels/${id}`);
@@ -13,6 +16,9 @@ export const addFunnel = (funnelName) =>
   });
 
 export const getUsers = () => axios.get(`http://25.18.88.64:8000/api/users`);
+
+export const getUsersPaginationData = (parametersObject) =>
+  axios.post(`http://25.18.88.64:8000/api/funnels`, parametersObject);
 
 export const addUser = (dialogInputObject) =>
   axios.post(`http://25.18.88.64:8000/api/users/store`, dialogInputObject);
@@ -28,7 +34,7 @@ export const deleteUser = (id) =>
   axios.delete(`http://25.18.88.64:8000/api/users/${id}`);
 
 export const getDomains = (parametersObject) =>
-  axios.get(`http://25.18.88.64:8000/api/domains`,  parametersObject);
+  axios.get(`http://25.18.88.64:8000/api/domains`, parametersObject);
 
 export const deleteDomain = (id) =>
   axios.delete(`http://25.18.88.64:8000/api/domains/${id}`);
@@ -61,7 +67,10 @@ export const editSpend = (dialogInputObject, id) =>
     dialogInputObject
   );
 
-export const getOffers = () => axios.get(`http://25.18.88.64:8000/api/offers`);
+export const getOffersPaginationData = (parametersObject) =>
+  axios.post(`http://25.18.88.64:8000/api/offers`, parametersObject);
+
+export const getOffers = () => axios.post(`http://25.18.88.64:8000/api/offers`);
 
 export const getCountries = () =>
   axios.get(`http://25.18.88.64:8000/api/country`);
@@ -108,7 +117,10 @@ export const addSource = (sourceName) =>
     name: sourceName,
   });
 
-export const getLeads = () => axios.post(`http://25.18.88.64:8000/api/leads`);
+export const getLeads = () => axios.get(`http://25.18.88.64:8000/api/leads`);
+
+export const getLeadsPaginationData = (parametersObject) =>
+  axios.post(`http://25.18.88.64:8000/api/leads`, parametersObject);
 
 export const sendLead = (dialogInputObject) =>
   axios.post(
@@ -183,8 +195,8 @@ export const postOffersStats = (postDates) =>
 export const postFunnelsStats = (postDates) =>
   axios.post(`http://25.18.88.64:8000/api/leads/funnel-stats`, postDates);
 
-export const getDuplicateLeads = () =>
-  axios.get(`http://25.18.88.64:8000/api/duplicate-leads`);
+export const getDuplicateLeads = (parametersObject) =>
+  axios.get(`http://25.18.88.64:8000/api/duplicate-leads`, parametersObject);
 
 export const getFilteredSpends = (filtersObject) =>
   axios.post(
@@ -221,8 +233,8 @@ export const generatePassword = () =>
     contentType: "application/json",
   });
 
-export const getNoSendLeads = (parametersObject) =>
-  axios.get(`http://25.18.88.64:8000/api/nosend-leads`, parametersObject);
+export const getNoSendLeadsPaginationData = (parametersObject) =>
+  axios.post(`http://25.18.88.64:8000/api/nosend-leads`, parametersObject);
 
 export const getImportedLeads = () =>
   axios.get(`http://25.18.88.64:8000/api/imported-leads`);

@@ -14,6 +14,7 @@ import {
   editOffer,
   editActivity,
   getSources,
+  getOffersPaginationData,
 } from "../../utilities/api";
 import { ConfirmPopup } from "primereact/confirmpopup";
 import { confirmPopup } from "primereact/confirmpopup";
@@ -41,6 +42,11 @@ function Offers() {
 
   const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
   const [isEditDialogVisible, setIsEditDialogVisible] = useState(false);
+
+  const [first, setFirst] = useState(0);
+  const [rows, setRows] = useState(5);
+  const [page, setPage] = useState(0);
+  const [totalRecords, setTotalRecords] = useState(0);
 
   const [loading, setLoading] = useState(true);
   const [dialogInputObject, setDialogInputObject] = useState({
@@ -72,8 +78,9 @@ function Offers() {
   }, [dialogInputObject]);
 
   useEffect(() => {
-    renderOffers();
+    // renderOffers();
     getFunnels().then((response) => {
+      console.log(response)
       const updatedFunnels = response.data.map(({ name }) => name);
       setFunnelsOptions(updatedFunnels);
     });
@@ -220,17 +227,20 @@ function Offers() {
   ];
 
   // Функции подтягиваний данных с бека
-  const renderOffers = () => {
-    getOffers().then(function (response) {
+  const renderOffers = async () => {
+    getOffersPaginationData({ perPage: rows, page: page + 1 }).then(function (
+      response
+    ) {
       const offerActiveArray = [];
-      response.data.forEach((obj) => {
+      console.log(response);
+      response.data.data.forEach((obj) => {
         offerActiveArray.push({
           id: obj.id,
           active: obj.active === 1,
         });
       });
 
-      const updatedOffers = response.data.map((obj) => {
+      const updatedOffers = response.data.data.map((obj) => {
         if (obj.hasOwnProperty("offer_start")) {
           obj.offer_start = obj.offer_start.slice(0, -3);
         }
@@ -240,10 +250,11 @@ function Offers() {
 
         return obj;
       });
+      setTotalRecords(response.data.total);
       setOffers(updatedOffers);
       setOffersNames(updatedOffers.map((offer) => offer.name));
       setActivityChecked(offerActiveArray);
-      setLoading(false);
+      setLoading(false)
     });
   };
 
@@ -456,25 +467,31 @@ function Offers() {
   const headerTemplate = () => {
     return (
       <div className="flex justify-content-between align-items-center">
-      <Button icon="pi pi-filter" className="button-invisible" />
+        <Button icon="pi pi-filter" className="button-invisible" />
 
-      <PaginatorComponent
-        getData={getOffers}
-        setData={setOffers}
-        setLoading={setLoading}
-      />
-
-      <span className="p-input-icon-left">
-        <Button icon="pi pi-filter" onClick={() => setSidebarVisible(true)} />
-        <FiltersStyled
-          visible={sidebarVisible}
-          setVisible={setSidebarVisible}
-          filtersArray={filtersArray}
-          type="offers"
-          setFilteredData={setOffers}
+        <PaginatorComponent
+          renderFunction={renderOffers}
+          setLoading={setLoading}
+          first={first}
+          setFirst={setFirst}
+          rows={rows}
+          setRows={setRows}
+          page={page}
+          setPage={setPage}
+          totalRecords={totalRecords}
         />
-      </span>
-    </div>
+
+        <span className="p-input-icon-left">
+          <Button icon="pi pi-filter" onClick={() => setSidebarVisible(true)} />
+          <FiltersStyled
+            visible={sidebarVisible}
+            setVisible={setSidebarVisible}
+            filtersArray={filtersArray}
+            type="offers"
+            setFilteredData={setOffers}
+          />
+        </span>
+      </div>
     );
   };
 
@@ -557,7 +574,6 @@ function Offers() {
 
   const activityTemplate = (rowData) => {
     const item = activityChecked.find((el) => el.id === rowData.id);
-
     return (
       <InputSwitch
         key={item.id}
@@ -610,7 +626,7 @@ function Offers() {
             onClick={() => setIsAddDialogVisible(true)}
           />
         </div>
-        <Card style={{width: "90%"}}>
+        <Card style={{ width: "90%" }}>
           <DataTable
             value={loading ? skeletonData : offers}
             header={headerTemplate}
