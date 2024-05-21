@@ -62,6 +62,7 @@ function Logs() {
             setDate(e.value);
           }}
           readOnlyInput
+          className="mb-3"
         />
       </div>
       <InputTextarea rows={35} cols={150} value={logs} />
