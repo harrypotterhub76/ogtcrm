@@ -16,6 +16,7 @@ import {
   sendLead,
   postOfferForLead,
   postLead,
+  getSources,
 } from "../../utilities/api";
 import { deleteLead } from "../../utilities/api";
 import { ConfirmPopup } from "primereact/confirmpopup";
@@ -37,12 +38,14 @@ function Leads() {
   const [funnels, setFunnels] = useState({});
   const [offers, setOffers] = useState([]);
   const [users, setUsers] = useState([]);
+  const [sources, setSources] = useState([]);
 
   const [offersOptions, setOffersOptions] = useState([]);
   const [funnelsOptions, setFunnelsOptions] = useState([]);
   const [usersOptions, setUsersOptions] = useState([]);
   const [geosOptions, setGeosOptions] = useState([]);
   const [statusesCRMOptions, setStatusesCRMOptions] = useState([]);
+  const [sourcesOptions, setSourcesOptions] = useState([]);
 
   const [selectedOfferDialog, setSelectedOfferDialog] = useState(null);
   const [selectedFunnelDialog, setSelectedFunnelDialog] = useState(null);
@@ -179,6 +182,7 @@ function Leads() {
     getOffersData();
     getStatusesCRMData();
     getUsersData();
+    getSourcesData();
     setTitleModel("Лиды");
   }, []);
 
@@ -320,12 +324,12 @@ function Leads() {
       type: "text",
       placeholder: "Id, email or phone",
     },
-    // {
-    //   label: "Email",
-    //   key: "email",
-    //   type: "text",
-    //   placeholder: "Email",
-    // },
+    {
+      label: "Параметры",
+      key: "url_params",
+      type: "text",
+      placeholder: "Параметры",
+    },
     {
       label: "Оффер",
       key: "offer",
@@ -340,19 +344,13 @@ function Leads() {
       placeholder: "Воронка",
       options: funnelsOptions,
     },
-    // {
-    //   label: "Телефон",
-    //   key: "phone",
-    //   type: "text",
-    //   placeholder: "Телефон",
-    // },
-    // {
-    //   label: "Статус",
-    //   key: "status",
-    //   type: "multiselect",
-    //   placeholder: "Статус",
-    //   options: statusesCRMOptions,
-    // },
+    {
+      label: "Статус",
+      key: "newest_status",
+      type: "multiselect",
+      placeholder: "Статус",
+      options: statusesCRMOptions,
+    },
     {
       label: "Пользователь",
       key: "user",
@@ -368,6 +366,33 @@ function Leads() {
       options: geosOptions,
     },
     {
+      label: "Источник",
+      key: "source",
+      type: "multiselect",
+      placeholder: "Источник",
+      options: sourcesOptions,
+    },
+    {
+      label: "Депозит",
+      key: "is_deposited",
+      type: "dropdown",
+      placeholder: "Депозит",
+      options: [
+        { name: "Да", value: 1 },
+        { name: "Нет", value: 0 },
+      ],
+    },
+    {
+      label: "Валидность",
+      key: "is_valid",
+      type: "dropdown",
+      placeholder: "Валидность",
+      options: [
+        { name: "Да", value: 1 },
+        { name: "Нет", value: 0 },
+      ],
+    },
+    {
       label: "Дата создания",
       key: "created_at",
       type: "calendar-creation",
@@ -378,6 +403,12 @@ function Leads() {
       key: "sent_at",
       type: "calendar-send",
       placeholder: "Дата отправки",
+    },
+    {
+      label: "Дата депозита",
+      key: "dep_at",
+      type: "calendar-dep",
+      placeholder: "Дата депозита",
     },
     // {
     //   label: "Параметры",
@@ -440,6 +471,13 @@ function Leads() {
         ({ crm_status }) => crm_status
       );
       setStatusesCRMOptions(updatedStatusesCRM);
+    });
+  };
+
+  const getSourcesData = () => {
+    getSources().then((response) => {
+      setSources(response.data);
+      setSourcesOptions(response.data.map(({ name }) => name));
     });
   };
 
@@ -969,6 +1007,7 @@ function Leads() {
             <Column field="geo" header="Гео"></Column>
             <Column field="domain" header="Домен"></Column>
             <Column field="funnel" header="Воронка"></Column>
+            <Column field="source" header="Источник"></Column>
             <Column
               field="status"
               header="Статус"
@@ -1020,7 +1059,6 @@ function Leads() {
 }
 
 export default Leads;
-
 
 const skeletonData = [
   {

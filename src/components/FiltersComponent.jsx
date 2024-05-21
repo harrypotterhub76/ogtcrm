@@ -12,6 +12,7 @@ import {
   getFilteredDomains,
   getFilteredLeads,
 } from "../utilities/api";
+import { InputSwitch } from "primereact/inputswitch";
 
 function FiltersStyled({
   visible,
@@ -23,6 +24,7 @@ function FiltersStyled({
   const [filtersObject, setFiltersObject] = useState({});
   const [dates, setDates] = useState([]);
   const [datesSent, setDatesSent] = useState([]);
+  const [datesDep, setDatesDep] = useState([]);
 
   useEffect(() => {
     if (Object.keys(dates).length) {
@@ -31,7 +33,10 @@ function FiltersStyled({
     if (Object.keys(datesSent).length) {
       formatDatesState(datesSent, "sent");
     }
-  }, [dates, datesSent]);
+    if (Object.keys(datesDep).length) {
+      formatDatesState(datesDep, "dep");
+    }
+  }, [dates, datesSent, datesDep]);
 
   const ref = useRef(0);
 
@@ -71,6 +76,23 @@ function FiltersStyled({
       if (formattedPostDates[0] !== "" && formattedPostDates[1] !== "")
         handleFilterChange("start_send_filter", formattedPostDates[0]);
       handleFilterChange("end_send_filter", formattedPostDates[1]);
+    } else if (type === "dep") {
+      const formattedPostDates = array.map((date) => {
+        if (date instanceof Date && !isNaN(date)) {
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, "0");
+          const day = String(date.getDate()).padStart(2, "0");
+
+          return `${year}-${month}-${day}`;
+        } else {
+          return "";
+        }
+      });
+
+      console.log("formattedPostDates: ", formattedPostDates);
+      if (formattedPostDates[0] !== "" && formattedPostDates[1] !== "")
+        handleFilterChange("start_ftd_filter", formattedPostDates[0]);
+      handleFilterChange("end_ftd_filter", formattedPostDates[1]);
     }
   };
 
@@ -85,6 +107,10 @@ function FiltersStyled({
     }));
     console.log(field, value);
   };
+
+  useEffect(() => {
+    console.log("filtersArray", filtersObject);
+  }, [filtersObject]);
 
   useEffect(() => {
     if (ref.current) {
@@ -134,6 +160,7 @@ function FiltersStyled({
       setFiltersObject({});
       setDates({});
       setDatesSent({});
+      setDatesDep({});
     }
   };
 
@@ -165,7 +192,7 @@ function FiltersStyled({
                     <div className="p-inputgroup flex max-w-full">
                       {filter.type === "text" ? (
                         <InputText
-                          value={filtersObject[filter.key]}
+                          value={filtersObject[filter.key] || ""}
                           onChange={(e) => {
                             console.log(e.target.value);
                             handleFilterChange(filter.key, e.target.value);
@@ -175,14 +202,21 @@ function FiltersStyled({
                         />
                       ) : filter.type === "dropdown" ? (
                         <Dropdown
-                          value={filtersObject[filter.key]}
+                          value={
+                            filtersObject[filter.key] == "0"
+                              ? 0
+                              : filtersObject[filter.key] == "1"
+                              ? 1
+                              : []
+                          }
                           onChange={(e) => {
                             console.log(e.value);
-                            handleFilterChange(filter.key, e.value);
+                            handleFilterChange(filter.key, e.value.toString());
                           }}
                           options={filter.options}
                           placeholder={filter.placeholder}
                           className="w-full"
+                          optionLabel="name"
                         />
                       ) : filter.type === "calendar-creation" ? (
                         <Calendar
@@ -212,6 +246,20 @@ function FiltersStyled({
                           locale="ru"
                           style={{ width: "85%", maxWidth: "85%" }}
                         />
+                      ) : filter.type === "calendar-dep" ? (
+                        <Calendar
+                          className="w-20rem"
+                          dateFormat="dd-mm-yy"
+                          value={datesDep}
+                          onChange={(e) => {
+                            console.log(e.value);
+                            setDatesDep(e.value);
+                          }}
+                          selectionMode="range"
+                          placeholder={filter.placeholder}
+                          locale="ru"
+                          style={{ width: "85%", maxWidth: "85%" }}
+                        />
                       ) : filter.type === "multiselect" ? (
                         <MultiSelect
                           value={filtersObject[filter.key]}
@@ -226,7 +274,7 @@ function FiltersStyled({
                           style={{ width: "85%", maxWidth: "85%" }}
                         />
                       ) : filter.type === "switch" ? (
-                        <filterSwitch
+                        <InputSwitch
                           checked={Boolean(filtersObject[filter.key])}
                           onChange={(e) => {
                             handleFilterChange(filter.key, Number(e.value));
@@ -250,6 +298,10 @@ function FiltersStyled({
                             setDatesSent([]);
                             handleFilterChange("start_send_filter", "");
                             handleFilterChange("end_send_filter", "");
+                          } else if (filter.key == "dep_at") {
+                            setDatesDep([]);
+                            handleFilterChange("start_ftd_filter", "");
+                            handleFilterChange("end_ftd_filter", "");
                           }
                           handleFilterChange(filter.key, []);
                         }}
