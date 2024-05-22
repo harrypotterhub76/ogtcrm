@@ -32,10 +32,14 @@ function Dashboard() {
     });
   };
 
+  useEffect(() => {
+    console.log("offers:", offers);
+  }, [offers])
+
   const renderOffers = () => {
     getOffers()
       .then((response) => {
-        setOffers(response.data);
+        setOffers(response.data.data);
         setLoading(false);
       })
       .catch((error) => {

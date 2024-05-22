@@ -6,7 +6,7 @@ import { FilterMatchMode } from "primereact/api";
 import { Toast } from "primereact/toast";
 import { InputText } from "primereact/inputtext";
 import {
-  getOffers,
+  // getOffers,
   getCountries,
   getFunnels,
   deleteOffer,

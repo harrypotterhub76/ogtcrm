@@ -70,7 +70,7 @@ export const editSpend = (dialogInputObject, id) =>
 export const getOffersPaginationData = (parametersObject) =>
   axios.post(`http://25.18.88.64:8000/api/offers`, parametersObject);
 
-export const getOffers = () => axios.post(`http://25.18.88.64:8000/api/offers`);
+export const getOffers = () => axios.get(`http://25.18.88.64:8000/api/offers`);
 
 export const getCountries = () =>
   axios.get(`http://25.18.88.64:8000/api/country`);
@@ -119,8 +119,8 @@ export const addSource = (sourceName) =>
 
 export const getLeads = () => axios.get(`http://25.18.88.64:8000/api/leads`);
 
-export const getLeadsPaginationData = (parametersObject) =>
-  axios.post(`http://25.18.88.64:8000/api/leads`, parametersObject);
+// export const getLeadsPaginationData = (parametersObject) =>
+//   axios.post(`http://25.18.88.64:8000/api/leads`, parametersObject);
 
 export const sendLead = (dialogInputObject) =>
   axios.post(
@@ -240,7 +240,7 @@ export const getImportedLeads = () =>
   axios.get(`http://25.18.88.64:8000/api/imported-leads`);
 
 export const getFilteredLeads = (filtersObject) =>
-  axios.post(`http://25.18.88.64:8000/api/leads/filtersLeads`, filtersObject);
+  axios.post(`http://25.18.88.64:8000/api/leads`, filtersObject);
 
 export const login = (loginObject) =>
   axios.post(`http://25.18.88.64:8000/api/login`, loginObject);

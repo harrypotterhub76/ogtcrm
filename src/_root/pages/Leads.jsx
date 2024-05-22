@@ -17,7 +17,8 @@ import {
   postOfferForLead,
   postLead,
   getSources,
-  getLeadsPaginationData,
+  getFilteredLeads,
+  // getLeadsPaginationData,
 } from "../../utilities/api";
 import { deleteLead } from "../../utilities/api";
 import { ConfirmPopup } from "primereact/confirmpopup";
@@ -30,7 +31,7 @@ import { TitleContext } from "../../context/TitleContext";
 
 import FiltersStyled from "../../components/FiltersComponent";
 import { UserContext } from "../../context/userContext";
-import PaginatorComponent from "../../components/PaginatorComponent";
+// import PaginatorComponent from "../../components/PaginatorComponent";
 import { Skeleton } from "primereact/skeleton";
 
 function Leads() {
@@ -424,21 +425,20 @@ function Leads() {
   ];
 
   // Функции подтягиваний данных с бека
-  const renderLeads = async () => {
-    getLeadsPaginationData({ perPage: rows, page: page + 1 }).then(function (
-      response
-    ) {
+  const renderLeads = async (obj) => {
+    getFilteredLeads(obj).then(function (response) {
+      console.log(response);  //тут правмильно
       setLeads(response.data.data);
       setTotalRecords(response.data.total);
       setLoading(false);
-      console.log("response", response.data);
+      console.log("leads", response.data.data);
     });
   };
 
   const getOffersData = () => {
     getOffers().then((response) => {
-      const updatedOffers = response.data.map(({ name }) => name);
-      setOffers(response.data);
+      const updatedOffers = response.data.data.map(({ name }) => name);
+      setOffers(response.data.data);
       setOffersOptions(updatedOffers);
     });
   };
@@ -699,6 +699,13 @@ function Leads() {
     }
   };
 
+  const onPageChange = (event) => {
+    setFirst(event.first);
+    setRows(event.rows);
+    setPage(event.page);
+    setLoading(true);
+  };
+
   const refreshData = () => {
     setLoading(true);
     renderLeads();
@@ -727,17 +734,18 @@ function Leads() {
           onClick={refreshData}
         ></Button>
 
-        <PaginatorComponent
-          renderFunction={renderLeads}
-          setLoading={setLoading}
+        {/* <PaginatorComponent
+          renderFunction={() => renderLeads({ perPage: rows, page: page + 1 })}
           first={first}
-          setFirst={setFirst}
           rows={rows}
-          setRows={setRows}
           page={page}
-          setPage={setPage}
           totalRecords={totalRecords}
-        />
+          onPageChange={onPageChange}
+          setFirst={setFirst}
+          setRows={setRows}
+          setPage={setPage}
+          setLoading={setLoading}
+        /> */}
 
         <span className="p-input-icon-left">
           <Button icon="pi pi-filter" onClick={() => setSidebarVisible(true)} />
@@ -746,7 +754,11 @@ function Leads() {
             setVisible={setSidebarVisible}
             filtersArray={filtersArray}
             type="leads"
-            setFilteredData={setLeads}
+            renderData={renderLeads}
+            setDataFinal={setLeads}
+            first={first}
+            rows={rows}
+            page={page}
           />
         </span>
       </div>

@@ -18,8 +18,11 @@ function FiltersStyled({
   visible,
   setVisible,
   filtersArray,
-  setFilteredData,
+  renderData,
   type,
+  rows,
+  page,
+  setDataFinal
 }) {
   const [filtersObject, setFiltersObject] = useState({});
   const [dates, setDates] = useState([]);
@@ -105,12 +108,17 @@ function FiltersStyled({
       ...prevState,
       [field]: value,
     }));
-    console.log(field, value);
+    console.log(field, value, rows, page);
   };
 
   useEffect(() => {
     console.log("filtersArray", filtersObject);
   }, [filtersObject]);
+
+  useEffect(() => {
+    handleFilterChange('rows', rows);
+    handleFilterChange('page', page);
+  }, [rows, page]);
 
   useEffect(() => {
     if (ref.current) {
@@ -144,10 +152,11 @@ function FiltersStyled({
         }
         case "leads": {
           console.log(filtersObject);
-          getFilteredLeads(filtersObject).then((response) => {
-            console.log(response);
-            setFilteredData(response.data);
-          });
+          renderData(filtersObject);
+          // getFilteredLeads(filtersObject).then((response) => {
+          //   console.log(response);
+          //   // setDataFinal(response.data.data);
+          // });
           break;
         }
       }
