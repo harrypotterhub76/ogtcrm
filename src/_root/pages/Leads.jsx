@@ -9,13 +9,11 @@ import {
   editLead,
   getCountries,
   getFunnels,
-  getLeads,
   getOffers,
   getStatusesCRM,
   getUsers,
   sendLead,
   postOfferForLead,
-  postLead,
   getSources,
   getFilteredLeads,
   // getLeadsPaginationData,
@@ -31,9 +29,7 @@ import { TitleContext } from "../../context/TitleContext";
 
 import FiltersStyled from "../../components/FiltersComponent";
 import { UserContext } from "../../context/userContext";
-// import PaginatorComponent from "../../components/PaginatorComponent";
 import { Skeleton } from "primereact/skeleton";
-import PaginatorComponent from "../../components/PaginatorComponent";
 import { Paginator } from "primereact/paginator";
 
 function Leads() {
@@ -42,7 +38,6 @@ function Leads() {
   const [funnels, setFunnels] = useState({});
   const [offers, setOffers] = useState([]);
   const [users, setUsers] = useState([]);
-  const [sources, setSources] = useState([]);
 
   const [offersOptions, setOffersOptions] = useState([]);
   const [funnelsOptions, setFunnelsOptions] = useState([]);
@@ -486,7 +481,6 @@ function Leads() {
 
   const getSourcesData = () => {
     getSources().then((response) => {
-      setSources(response.data);
       setSourcesOptions(response.data.map(({ name }) => name));
     });
   };

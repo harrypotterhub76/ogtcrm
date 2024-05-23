@@ -15,6 +15,7 @@ import {
   sendLead,
   postOfferForLead,
   getNoSendLeadsPaginationData,
+  getSources,
 } from "../../utilities/api";
 import { deleteLead } from "../../utilities/api";
 import { ConfirmPopup } from "primereact/confirmpopup";
@@ -25,9 +26,9 @@ import { Dropdown } from "primereact/dropdown";
 import { Card } from "primereact/card";
 import { TitleContext } from "../../context/TitleContext";
 import FiltersStyled from "../../components/FiltersComponent";
-import PaginatorComponent from "../../components/PaginatorComponent";
 import { Skeleton } from "primereact/skeleton";
 import { UserContext } from "../../context/userContext";
+import { Paginator } from "primereact/paginator";
 
 function LeadsInHold() {
   // Стейты
@@ -41,6 +42,7 @@ function LeadsInHold() {
   const [usersOptions, setUsersOptions] = useState([]);
   const [geosOptions, setGeosOptions] = useState([]);
   const [statusesCRMOptions, setStatusesCRMOptions] = useState([]);
+  const [sourcesOptions, setSourcesOptions] = useState([]);
 
   const [selectedOfferDialog, setSelectedOfferDialog] = useState(null);
   const [selectedFunnelDialog, setSelectedFunnelDialog] = useState(null);
@@ -56,6 +58,7 @@ function LeadsInHold() {
     useState(false);
   const [isStatusDialogVisible, setIsStatusDialogVisible] = useState(false);
   const [isSendLeadDialogVisible, setIsSendLeadDialogVisible] = useState(false);
+  const [sidebarVisible, setSidebarVisible] = useState(false);
 
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(5);
@@ -177,6 +180,7 @@ function LeadsInHold() {
     getOffersData();
     getStatusesCRMData();
     getUsersData();
+    getSourcesData();
     setTitleModel("Неотправленные Лиды");
   }, []);
 
@@ -309,16 +313,65 @@ function LeadsInHold() {
   //     },
   //   ];
 
+  //фильтры для FitersComponent
+
+  const filtersArray = [
+    {
+      label: "Имя",
+      key: "idemailphone",
+      type: "text",
+      placeholder: "Id, email or phone",
+    },
+    {
+      label: "Параметры",
+      key: "url_params",
+      type: "text",
+      placeholder: "Параметры",
+    },
+    {
+      label: "Воронка",
+      key: "funnel",
+      type: "multiselect",
+      placeholder: "Воронка",
+      options: funnelsOptions,
+    },
+    {
+      label: "Пользователь",
+      key: "user",
+      type: "multiselect",
+      placeholder: "Пользователь",
+      options: usersOptions,
+    },
+    {
+      label: "Гео",
+      key: "geo",
+      type: "multiselect",
+      placeholder: "Гео",
+      options: geosOptions,
+    },
+    {
+      label: "Источник",
+      key: "source",
+      type: "multiselect",
+      placeholder: "Источник",
+      options: sourcesOptions,
+    },
+    {
+      label: "Дата создания",
+      key: "created_at",
+      type: "calendar-creation",
+      placeholder: "Дата создания",
+    },
+  ];
+
   // Функции подтягиваний данных с бека
-  const renderNoSendLeads = async () => {
-    getNoSendLeadsPaginationData({ perPage: rows, page: page + 1 }).then(
-      function (response) {
-        console.log(response)
-        setLeads(response.data.data);
-        setTotalRecords(response.data.total);
-        setLoading(false);
-      }
-    );
+  const renderNoSendLeads = async (obj) => {
+    getNoSendLeadsPaginationData(obj).then(function (response) {
+      console.log(response);
+      setLeads(response.data.data);
+      setTotalRecords(response.data.total);
+      setLoading(false);
+    });
   };
 
   const getOffersData = () => {
@@ -366,8 +419,14 @@ function LeadsInHold() {
     });
   };
 
+  const getSourcesData = () => {
+    getSources().then((response) => {
+      setSourcesOptions(response.data.map(({ name }) => name));
+    });
+  };
+
   // Обработчики кликов по данным таблицы
-  const handlePhoneClick = (rowData) => {
+  const handleIdClick = (rowData) => {
     const parsedStatusArray = JSON.parse(rowData.status);
     const newestStatusObject = parsedStatusArray[parsedStatusArray.length - 1];
     setIsLeadDialogVisible(true);
@@ -416,16 +475,6 @@ function LeadsInHold() {
       : showToast("info", "Удаление лида отменено"),
       hide();
     setSelectedLeadID(null);
-  };
-
-  // Сеттер фильтра глобального поиска
-  const onGlobalFilterChange = (e) => {
-    const value = e.target.value;
-    let _filters = { ...filters };
-    _filters["global"].value = value;
-
-    setFilters(_filters);
-    setGlobalFilterValue(value);
   };
 
   // Обработчики взаимодействия фронта с беком
@@ -572,6 +621,13 @@ function LeadsInHold() {
     }
   };
 
+  const onPageChange = (event) => {
+    setFirst(event.first);
+    setRows(event.rows);
+    setPage(event.page);
+    setLoading(true);
+  };
+
   const refreshData = () => {
     setLoading(true);
     renderNoSendLeads();
@@ -600,27 +656,26 @@ function LeadsInHold() {
           onClick={refreshData}
         ></Button>
 
-        <PaginatorComponent
-          renderFunction={renderNoSendLeads}
-          setLoading={setLoading}
+        <Paginator
           first={first}
-          setFirst={setFirst}
           rows={rows}
-          setRows={setRows}
-          page={page}
-          setPage={setPage}
           totalRecords={totalRecords}
+          rowsPerPageOptions={[1, 2, 5, 10]}
+          onPageChange={onPageChange}
         />
 
         <span className="p-input-icon-left">
           <Button icon="pi pi-filter" onClick={() => setSidebarVisible(true)} />
-          {/* <FiltersStyled
+          <FiltersStyled
             visible={sidebarVisible}
             setVisible={setSidebarVisible}
             filtersArray={filtersArray}
             type="leads"
-            setFilteredData={setLeads}
-          /> */}
+            renderData={renderNoSendLeads}
+            first={first}
+            rows={rows}
+            page={page}
+          />
         </span>
       </div>
     );
@@ -728,10 +783,10 @@ function LeadsInHold() {
           textUnderlineOffset: "5px",
         }}
         onClick={() => {
-          handlePhoneClick(rowData);
+          handleIdClick(rowData);
         }}
       >
-        {rowData.phone}
+        {rowData.id}
       </div>
     );
   };
@@ -835,12 +890,12 @@ function LeadsInHold() {
             header={headerTemplate}
             filters={filters}
           >
-            <Column field="id" header="ID" ></Column>
+            <Column field="id" header="ID" body={phoneTemplate}></Column>
             {/* {JSON.parse(user).user.role === "Admin" && (
               <Column field="offer" header="Оффер"></Column>
             )} */}
             {JSON.parse(user).user.role === "Admin" && (
-              <Column field="phone" header="Номер телефона" body={phoneTemplate}></Column>
+              <Column field="phone" header="Номер телефона"></Column>
             )}
 
             <Column field="full_name" header="Имя / Фамилия"></Column>
@@ -851,6 +906,7 @@ function LeadsInHold() {
             <Column field="geo" header="Гео"></Column>
             <Column field="domain" header="Домен"></Column>
             <Column field="funnel" header="Воронка"></Column>
+            <Column field="source" header="Источник"></Column>
             <Column
               field="status"
               header="Статус"
