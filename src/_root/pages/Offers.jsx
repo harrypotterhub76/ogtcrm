@@ -26,6 +26,7 @@ import { TitleContext } from "../../context/TitleContext";
 import { Card } from "primereact/card";
 import { Skeleton } from "primereact/skeleton";
 import PaginatorComponent from "../../components/PaginatorComponent";
+import { Paginator } from "primereact/paginator";
 
 function Offers() {
   // Стейты
@@ -80,7 +81,7 @@ function Offers() {
   useEffect(() => {
     // renderOffers();
     getFunnels().then((response) => {
-      console.log(response)
+      console.log(response);
       const updatedFunnels = response.data.map(({ name }) => name);
       setFunnelsOptions(updatedFunnels);
     });
@@ -227,10 +228,8 @@ function Offers() {
   ];
 
   // Функции подтягиваний данных с бека
-  const renderOffers = async () => {
-    getOffersPaginationData({ perPage: rows, page: page + 1 }).then(function (
-      response
-    ) {
+  const renderOffers = async (obj) => {
+    getOffersPaginationData(obj).then(function (response) {
       const offerActiveArray = [];
       console.log(response);
       response.data.data.forEach((obj) => {
@@ -254,7 +253,7 @@ function Offers() {
       setOffers(updatedOffers);
       setOffersNames(updatedOffers.map((offer) => offer.name));
       setActivityChecked(offerActiveArray);
-      setLoading(false)
+      setLoading(false);
     });
   };
 
@@ -446,6 +445,13 @@ function Offers() {
     setActivityChecked(updatedActivityChecked);
   };
 
+  const onPageChange = (event) => {
+    setFirst(event.first);
+    setRows(event.rows);
+    setPage(event.page);
+    setLoading(true);
+  };
+
   // Шаблоны для DataTable
   const actionButtonsTemplate = (rowData) => {
     return (
@@ -469,16 +475,12 @@ function Offers() {
       <div className="flex justify-content-between align-items-center">
         <Button icon="pi pi-filter" className="button-invisible" />
 
-        <PaginatorComponent
-          renderFunction={renderOffers}
-          setLoading={setLoading}
+        <Paginator
           first={first}
-          setFirst={setFirst}
           rows={rows}
-          setRows={setRows}
-          page={page}
-          setPage={setPage}
           totalRecords={totalRecords}
+          rowsPerPageOptions={[1, 2, 5, 10]}
+          onPageChange={onPageChange}
         />
 
         <span className="p-input-icon-left">
@@ -489,6 +491,10 @@ function Offers() {
             filtersArray={filtersArray}
             type="offers"
             setFilteredData={setOffers}
+            renderData={renderOffers}
+            first={first}
+            rows={rows}
+            page={page}
           />
         </span>
       </div>
