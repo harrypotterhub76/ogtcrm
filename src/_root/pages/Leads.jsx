@@ -1104,6 +1104,7 @@ const skeletonData = [
     created_at: <Skeleton />,
     lead_sent: <Skeleton />,
     date_deposited: <Skeleton />,
+    source: <Skeleton />,
   },
   {
     id: <Skeleton />,
@@ -1122,6 +1123,7 @@ const skeletonData = [
     created_at: <Skeleton />,
     lead_sent: <Skeleton />,
     date_deposited: <Skeleton />,
+    source: <Skeleton />,
   },
   {
     id: <Skeleton />,
@@ -1140,6 +1142,7 @@ const skeletonData = [
     created_at: <Skeleton />,
     lead_sent: <Skeleton />,
     date_deposited: <Skeleton />,
+    source: <Skeleton />,
   },
   {
     id: <Skeleton />,
@@ -1158,6 +1161,7 @@ const skeletonData = [
     created_at: <Skeleton />,
     lead_sent: <Skeleton />,
     date_deposited: <Skeleton />,
+    source: <Skeleton />,
   },
   {
     id: <Skeleton />,
@@ -1176,5 +1180,6 @@ const skeletonData = [
     created_at: <Skeleton />,
     lead_sent: <Skeleton />,
     date_deposited: <Skeleton />,
+    source: <Skeleton />,
   },
 ];
