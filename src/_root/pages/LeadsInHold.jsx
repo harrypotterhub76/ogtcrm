@@ -58,6 +58,7 @@ function LeadsInHold() {
   const [isStatusDialogVisible, setIsStatusDialogVisible] = useState(false);
   const [isSendLeadDialogVisible, setIsSendLeadDialogVisible] = useState(false);
   const [sidebarVisible, setSidebarVisible] = useState(false);
+  const [filtersObjectForRefresh, setFiltersObjectForRefresh] = useState({});
 
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(5);
@@ -629,7 +630,7 @@ function LeadsInHold() {
 
   const refreshData = () => {
     setLoading(true);
-    renderNoSendLeads();
+    renderNoSendLeads(filtersObjectForRefresh);
   };
 
   // Шаблоны для DataTable
@@ -669,6 +670,7 @@ function LeadsInHold() {
             visible={sidebarVisible}
             setVisible={setSidebarVisible}
             filtersArray={filtersArray}
+            setFiltersObjectForRefresh={setFiltersObjectForRefresh}
             type="leads"
             renderData={renderNoSendLeads}
             first={first}

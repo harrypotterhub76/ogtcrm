@@ -61,6 +61,7 @@ function Leads() {
   const [rows, setRows] = useState(5);
   const [page, setPage] = useState(0);
   const [totalRecords, setTotalRecords] = useState(0);
+  const [filtersObjectForRefresh, setFiltersObjectForRefresh] = useState({});
 
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -631,7 +632,7 @@ function Leads() {
 
   const refreshData = () => {
     setLoading(true);
-    renderDuplicateLeads();
+    renderDuplicateLeads(filtersObjectForRefresh);
   };
 
   // Шаблоны для DataTable
@@ -671,6 +672,7 @@ function Leads() {
             visible={sidebarVisible}
             setVisible={setSidebarVisible}
             filtersArray={filtersArray}
+            setFiltersObjectForRefresh={setFiltersObjectForRefresh}
             type="leads"
             renderData={renderDuplicateLeads}
             first={first}

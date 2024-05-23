@@ -68,6 +68,7 @@ function Leads() {
   const [rows, setRows] = useState(5);
   const [page, setPage] = useState(0);
   const [totalRecords, setTotalRecords] = useState(0);
+  const [filtersObjectForRefresh, setFiltersObjectForRefresh] = useState({});
 
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -536,7 +537,7 @@ function Leads() {
       created_at: formatTimestampForCalendar(rowData.created_at),
       url_params: rowData.url_params,
       source: rowData.source,
-      external_id:rowData.external_id
+      external_id: rowData.external_id,
     });
   };
 
@@ -745,7 +746,7 @@ function Leads() {
 
   const refreshData = () => {
     setLoading(true);
-    renderLeads();
+    renderLeads(filtersObjectForRefresh);
   };
 
   // Шаблоны для DataTable
@@ -785,6 +786,7 @@ function Leads() {
             visible={sidebarVisible}
             setVisible={setSidebarVisible}
             filtersArray={filtersArray}
+            setFiltersObjectForRefresh={setFiltersObjectForRefresh}
             type="leads"
             renderData={renderLeads}
             setDataFinal={setLeads}
