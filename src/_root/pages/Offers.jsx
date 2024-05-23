@@ -38,7 +38,6 @@ function Offers() {
   const [sourceOptions, setSourceOptions] = useState([]);
   const [offersOptions, setOffersOptions] = useState([]);
 
-
   const [activityChecked, setActivityChecked] = useState([]);
   const [capControlChecked, setCapControlChecked] = useState([]);
   const [selectedOfferID, setSelectedOfferID] = useState(null);
@@ -406,6 +405,7 @@ function Offers() {
     editCapControl(id, cap_control)
       .then((response) => {
         showToast("success", response.data.message);
+        renderOffers();
         console.log(response);
       })
       .catch((err) => {
@@ -413,7 +413,6 @@ function Offers() {
         console.log(err);
       });
   };
-
 
   // Функция для сброса состояния DialogInputObject
   const clearDialogInputObject = () => {
@@ -605,10 +604,12 @@ function Offers() {
     );
   };
 
-  const capTimeTemplate = (obj) => {
+  const capTimeTemplate = (rowData) => {
     return (
       <div className="flex flex-column">
-        {obj["offer_start"]} - {obj["offer_end"]}
+        {rowData.cap_control
+          ? `${rowData["offer_start"]} - ${rowData["offer_end"]}`
+          : "−−:−− − −−:−−"}
       </div>
     );
   };
@@ -618,7 +619,7 @@ function Offers() {
     return (
       <InputSwitch
         key={item.id}
-        checked={item.active}
+        checked={item.cap_control}
         onChange={(e) => handleToggleCapControl(item.id, e.value)}
       />
     );

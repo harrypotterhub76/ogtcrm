@@ -136,8 +136,17 @@ td > div,
   margin: 0  auto;
 }
 
-.p-toast-message-content {
-  background-color: ;
+.p-toast-message {
+  background-color: #34d399;
+}
+
+.p-toast-detail {
+  color: #000;
+  font-weight: 600;
+}
+
+.p-toast-icon-close > * {
+  color: #000;
 }
 
 @media (max-width: 1439px) {
