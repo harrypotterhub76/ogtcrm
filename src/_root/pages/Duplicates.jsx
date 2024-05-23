@@ -25,6 +25,7 @@ import FiltersStyled from "../../components/FiltersComponent";
 import { TitleContext } from "../../context/TitleContext";
 import { Card } from "primereact/card";
 import { Paginator } from "primereact/paginator";
+
 import { Skeleton } from "primereact/skeleton";
 import { UserContext } from "../../context/userContext";
 
@@ -766,7 +767,7 @@ function Leads() {
 
   const statusTemplate = (rowData) => {
     const parsedArray = JSON.parse(rowData.status);
-    const newestStatus = parsedArray[parsedArray.length - 1].status;
+    // const newestStatus = parsedArray[parsedArray.length - 1].status;
     return (
       <div
         style={{
@@ -779,7 +780,7 @@ function Leads() {
           handleStatusClick(rowData, parsedArray);
         }}
       >
-        {newestStatus}
+        {rowData.newest_status}
       </div>
     );
   };
@@ -897,8 +898,7 @@ function Leads() {
         </div>
         <Card style={{ width: "90%" }}>
           <DataTable
-            value={duplicateLeads}
-            loading={loading}
+            value={loading ? skeletonData : duplicateLeads}
             header={headerTemplate}
             rows={10}
             filters={filters}
@@ -914,39 +914,24 @@ function Leads() {
             <Column
               field="status"
               header="Статус"
-              body={statusTemplate}
+              body={loading ? <Skeleton /> : statusTemplate}
             ></Column>
 
-            <Column
-              field="is_deposited"
-              header="Депозит"
-              body={isDepositedTemplate}
-            ></Column>
             <Column field="user" header="Пользователь"></Column>
             <Column
               field="url_params"
               header="Параметры"
-              body={URLParamsTemplate}
+              body={loading ? <Skeleton /> : URLParamsTemplate}
             ></Column>
             <Column
               field="created_at"
               header="Лид создан"
-              body={createdAtTemplate}
-            ></Column>
-            <Column
-              field="lead_sent"
-              header="Лид отправлен"
-              body={leadSentTemplate}
-            ></Column>
-            <Column
-              field="date_deposited"
-              header="Дата депозита"
-              body={dateDepositedTemplate}
+              body={loading ? <Skeleton /> : createdAtTemplate}
             ></Column>
             <Column
               field="category"
               header="Действие"
-              body={actionButtonsTemplate}
+              body={loading ? <Skeleton /> : actionButtonsTemplate}
             ></Column>
           </DataTable>
         </Card>
@@ -956,3 +941,102 @@ function Leads() {
 }
 
 export default Leads;
+
+
+const skeletonData = [
+  {
+    id: <Skeleton />,
+    offer: <Skeleton />,
+    phone: <Skeleton />,
+    full_name: <Skeleton />,
+    email: <Skeleton />,
+    geo: <Skeleton />,
+    domain: <Skeleton />,
+    funnel: <Skeleton />,
+    status: <Skeleton />,
+    is_fraud: <Skeleton />,
+    is_deposited: <Skeleton />,
+    user: <Skeleton />,
+    url_params: <Skeleton />,
+    created_at: <Skeleton />,
+    lead_sent: <Skeleton />,
+    date_deposited: <Skeleton />,
+    source: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    offer: <Skeleton />,
+    phone: <Skeleton />,
+    full_name: <Skeleton />,
+    email: <Skeleton />,
+    geo: <Skeleton />,
+    domain: <Skeleton />,
+    funnel: <Skeleton />,
+    status: <Skeleton />,
+    is_fraud: <Skeleton />,
+    is_deposited: <Skeleton />,
+    user: <Skeleton />,
+    url_params: <Skeleton />,
+    created_at: <Skeleton />,
+    lead_sent: <Skeleton />,
+    date_deposited: <Skeleton />,
+    source: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    offer: <Skeleton />,
+    phone: <Skeleton />,
+    full_name: <Skeleton />,
+    email: <Skeleton />,
+    geo: <Skeleton />,
+    domain: <Skeleton />,
+    funnel: <Skeleton />,
+    status: <Skeleton />,
+    is_fraud: <Skeleton />,
+    is_deposited: <Skeleton />,
+    user: <Skeleton />,
+    url_params: <Skeleton />,
+    created_at: <Skeleton />,
+    lead_sent: <Skeleton />,
+    date_deposited: <Skeleton />,
+    source: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    offer: <Skeleton />,
+    phone: <Skeleton />,
+    full_name: <Skeleton />,
+    email: <Skeleton />,
+    geo: <Skeleton />,
+    domain: <Skeleton />,
+    funnel: <Skeleton />,
+    status: <Skeleton />,
+    is_fraud: <Skeleton />,
+    is_deposited: <Skeleton />,
+    user: <Skeleton />,
+    url_params: <Skeleton />,
+    created_at: <Skeleton />,
+    lead_sent: <Skeleton />,
+    date_deposited: <Skeleton />,
+    source: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    offer: <Skeleton />,
+    phone: <Skeleton />,
+    full_name: <Skeleton />,
+    email: <Skeleton />,
+    geo: <Skeleton />,
+    domain: <Skeleton />,
+    funnel: <Skeleton />,
+    status: <Skeleton />,
+    is_fraud: <Skeleton />,
+    is_deposited: <Skeleton />,
+    user: <Skeleton />,
+    url_params: <Skeleton />,
+    created_at: <Skeleton />,
+    lead_sent: <Skeleton />,
+    date_deposited: <Skeleton />,
+    source: <Skeleton />,
+  },
+];
