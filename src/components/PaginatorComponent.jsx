@@ -31,7 +31,7 @@ export default function PaginatorComponent({
         first={first}
         rows={rows}
         totalRecords={totalRecords}
-        rowsPerPageOptions={[1, 2, 5, 10]}
+        rowsPerPageOptions={[20, 50, 100]}
         onPageChange={onPageChange}
       />
     </div>

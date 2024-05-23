@@ -33,6 +33,8 @@ import FiltersStyled from "../../components/FiltersComponent";
 import { UserContext } from "../../context/userContext";
 // import PaginatorComponent from "../../components/PaginatorComponent";
 import { Skeleton } from "primereact/skeleton";
+import PaginatorComponent from "../../components/PaginatorComponent";
+import { Paginator } from "primereact/paginator";
 
 function Leads() {
   // Стейты
@@ -427,7 +429,7 @@ function Leads() {
   // Функции подтягиваний данных с бека
   const renderLeads = async (obj) => {
     getFilteredLeads(obj).then(function (response) {
-      console.log(response);  //тут правмильно
+      console.log(response); //тут правильно
       setLeads(response.data.data);
       setTotalRecords(response.data.total);
       setLoading(false);
@@ -734,18 +736,13 @@ function Leads() {
           onClick={refreshData}
         ></Button>
 
-        {/* <PaginatorComponent
-          renderFunction={() => renderLeads({ perPage: rows, page: page + 1 })}
+        <Paginator
           first={first}
           rows={rows}
-          page={page}
           totalRecords={totalRecords}
+          rowsPerPageOptions={[1, 2, 5, 10]}
           onPageChange={onPageChange}
-          setFirst={setFirst}
-          setRows={setRows}
-          setPage={setPage}
-          setLoading={setLoading}
-        /> */}
+        />
 
         <span className="p-input-icon-left">
           <Button icon="pi pi-filter" onClick={() => setSidebarVisible(true)} />
@@ -1006,11 +1003,14 @@ function Leads() {
 
       <div className="flex flex-column align-items-center justify-content-center">
         <div
-          className="flex justify-content-between my-5"
+          className="flex justify-content-between my-5 mb-0"
           style={{ width: "90%" }}
         >
           <h2 className="m-0">Лиды</h2>
         </div>
+        <p className="" style={{ width: "90%" }}>
+          Общее количество: {totalRecords}
+        </p>
         <Card style={{ width: "90%" }}>
           <DataTable
             value={loading ? skeletonData : leads}

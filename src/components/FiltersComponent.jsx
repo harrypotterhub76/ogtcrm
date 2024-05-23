@@ -22,7 +22,6 @@ function FiltersStyled({
   type,
   rows,
   page,
-  setDataFinal
 }) {
   const [filtersObject, setFiltersObject] = useState({});
   const [dates, setDates] = useState([]);
@@ -116,50 +115,13 @@ function FiltersStyled({
   }, [filtersObject]);
 
   useEffect(() => {
-    handleFilterChange('rows', rows);
-    handleFilterChange('page', page);
+    handleFilterChange('perPage', rows);
+    handleFilterChange('page', page + 1);
   }, [rows, page]);
 
   useEffect(() => {
     if (ref.current) {
-      switch (type) {
-        case "spends": {
-          getFilteredSpends(filtersObject).then((response) => {
-            setFilteredData(response.data);
-          });
-          break;
-        }
-        case "offers": {
-          getFilteredOffers(filtersObject).then((response) => {
-            console.log(response);
-            setFilteredData(response.data);
-          });
-          break;
-        }
-        case "funnels": {
-          getFilteredFunnels(filtersObject).then((response) => {
-            console.log(response);
-            setFilteredData(response.data);
-          });
-          break;
-        }
-        case "domains": {
-          getFilteredDomains(filtersObject).then((response) => {
-            console.log(response);
-            setFilteredData(response.data);
-          });
-          break;
-        }
-        case "leads": {
-          console.log(filtersObject);
-          renderData(filtersObject);
-          // getFilteredLeads(filtersObject).then((response) => {
-          //   console.log(response);
-          //   // setDataFinal(response.data.data);
-          // });
-          break;
-        }
-      }
+      renderData(filtersObject);
     }
     ref.current++;
   }, [filtersObject]);

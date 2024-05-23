@@ -5,12 +5,18 @@ import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
 import { Toast } from "primereact/toast";
-import { getFunnels, deleteFunnel, addFunnel } from "../../utilities/api";
+import {
+  getFunnels,
+  deleteFunnel,
+  addFunnel,
+  getFunnelsPaginationData,
+} from "../../utilities/api";
 import { DialogComponent } from "../../components/DialogComponent";
 import FiltersStyled from "../../components/FiltersComponent";
 import { TitleContext } from "../../context/TitleContext";
 import { Skeleton } from "primereact/skeleton";
 import PaginatorComponent from "../../components/PaginatorComponent";
+import { Paginator } from "primereact/paginator";
 
 function Funnels() {
   const [funnels, setFunnels] = useState([]);
@@ -21,6 +27,11 @@ function Funnels() {
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [funnelsNames, setFunnelsNames] = useState([]);
   const { setTitleModel } = useContext(TitleContext);
+
+  const [first, setFirst] = useState(0);
+  const [rows, setRows] = useState(5);
+  const [page, setPage] = useState(0);
+  const [totalRecords, setTotalRecords] = useState(0);
 
   const inputs = [
     {
@@ -60,11 +71,13 @@ function Funnels() {
     console.log("funnels", funnels);
   }, [funnels]);
 
-  const renderFunnels = () => {
-    getFunnels()
+  const renderFunnels = async (obj) => {
+    getFunnelsPaginationData(obj)
       .then((response) => {
-        setFunnels(response.data);
-        setFunnelsNames(response.data.map((funnel) => funnel.name));
+        console.log(response)
+        setFunnels(response.data.data);
+        setFunnelsNames(response.data.data.map((funnel) => funnel.name));
+        setTotalRecords(response.data.total);
         setLoading(false);
       })
       .catch((error) => {
@@ -123,10 +136,12 @@ function Funnels() {
       <div className="flex justify-content-between align-items-center">
         <Button icon="pi pi-filter" className="button-invisible" />
 
-        <PaginatorComponent
-          renderFunction={getFunnels}
-          setData={setFunnels}
-          setLoading={setLoading}
+        <Paginator
+          first={first}
+          rows={rows}
+          totalRecords={totalRecords}
+          rowsPerPageOptions={[1, 2, 5, 10]}
+          onPageChange={onPageChange}
         />
 
         <span className="p-input-icon-left">
@@ -135,8 +150,12 @@ function Funnels() {
             visible={sidebarVisible}
             setVisible={setSidebarVisible}
             filtersArray={filtersArray}
-            type="funnels"
-            setFilteredData={setFunnels}
+            type="leads"
+            renderData={renderFunnels}
+            setDataFinal={setFunnels}
+            first={first}
+            rows={rows}
+            page={page}
           />
         </span>
       </div>
@@ -148,6 +167,13 @@ function Funnels() {
     setDialogInputObject({
       name: "",
     });
+  };
+
+  const onPageChange = (event) => {
+    setFirst(event.first);
+    setRows(event.rows);
+    setPage(event.page);
+    setLoading(true);
   };
 
   const actionBodyTemplate = (rowData) => {
@@ -202,8 +228,11 @@ function Funnels() {
           </div>
         )}
       />
+      <h2 className="m-0">Воронки</h2>
       <div className="flex justify-content-between items-center mb-5">
-        <h2 className="m-0">Воронки</h2>
+        <p className="" style={{ width: "90%" }}>
+          Общее количество: {totalRecords}
+        </p>
         <Button
           label="Создать"
           icon="pi pi-plus"

@@ -11,6 +11,7 @@ import {
   addUser,
   editUser,
   generatePassword,
+  getUsersPaginationData,
 } from "../../utilities/api";
 import { ConfirmPopup } from "primereact/confirmpopup";
 import { confirmPopup } from "primereact/confirmpopup";
@@ -18,7 +19,7 @@ import { DialogComponent } from "../../components/DialogComponent";
 import { TitleContext } from "../../context/TitleContext";
 import { Card } from "primereact/card";
 import { Skeleton } from "primereact/skeleton";
-import PaginatorComponent from "../../components/PaginatorComponent";
+import { Paginator } from "primereact/paginator";
 
 function Users() {
   const [users, setUsers] = useState(null);
@@ -27,6 +28,11 @@ function Users() {
   const [isEditDialogVisible, setIsEditDialogVisible] = useState(false);
   const [loading, setLoading] = useState(true);
   const [confirmedPassword, setConfirmedPassword] = useState("");
+
+  const [first, setFirst] = useState(0);
+  const [rows, setRows] = useState(20);
+  const [page, setPage] = useState(0);
+  const [totalRecords, setTotalRecords] = useState(0);
 
   const [dialogInputObject, setDialogInputObject] = useState({
     name: "",
@@ -122,7 +128,7 @@ function Users() {
   ];
 
   useEffect(() => {
-    // renderUsers();
+    renderUsers();
     setTitleModel("Пользователи");
   }, []);
 
@@ -130,10 +136,18 @@ function Users() {
     console.log(dialogInputObject);
   }, [dialogInputObject]);
 
+  useEffect(() => {
+    renderUsers();
+  }, [page, rows]);
+
   const renderUsers = () => {
-    getUsers().then(function (response) {
-      setUsers(response.data);
-      console.log(response.data);
+    getUsersPaginationData({ perPage: rows, page: page + 1 }).then(function (
+      response
+    ) {
+      setUsers(response.data.data);
+      setTotalRecords(response.data.total);
+      setLoading(false);
+      console.log(response);
     });
   };
 
@@ -182,17 +196,18 @@ function Users() {
         />
       </div>
     );
-  }
+  };
 
   const headerTemplate = () => {
     return (
       <div className="flex justify-content-center">
-       
-      <PaginatorComponent
-        renderFunction={getUsers}
-        setData={setUsers}
-        setLoading={setLoading}
-      />
+        <Paginator
+          first={first}
+          rows={rows}
+          totalRecords={totalRecords}
+          rowsPerPageOptions={[20, 50, 100]}
+          onPageChange={onPageChange}
+        />
       </div>
     );
   };
@@ -277,6 +292,14 @@ function Users() {
     });
     setSelectedUserID(null);
   };
+
+  const onPageChange = (event) => {
+    setFirst(event.first);
+    setRows(event.rows);
+    setPage(event.page);
+    setLoading(true);
+  };
+
   const popUpContent = ({ message, acceptBtnRef, rejectBtnRef, hide }) => {
     return (
       <div className="border-round p-3">
@@ -348,7 +371,7 @@ function Users() {
             onClick={() => setIsAddDialogVisible(true)}
           />
         </div>
-        <Card style={{width: "90%"}}>
+        <Card style={{ width: "90%" }}>
           <DataTable
             value={loading ? skeletonData : users}
             header={headerTemplate}

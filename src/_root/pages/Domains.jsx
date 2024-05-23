@@ -12,12 +12,13 @@ import {
   addDomain,
   editDomain,
   getUsers,
+  getDomainsPaginationData,
 } from "../../utilities/api";
 import { DialogComponent } from "../../components/DialogComponent";
 import FiltersStyled from "../../components/FiltersComponent";
 import { TitleContext } from "../../context/TitleContext";
 import { Skeleton } from "primereact/skeleton";
-import PaginatorComponent from "../../components/PaginatorComponent";
+import { Paginator } from "primereact/paginator";
 
 function Domains() {
   const [domains, setDomains] = useState([]);
@@ -30,6 +31,11 @@ function Domains() {
   const [currentRowData, setCurrentRowData] = useState(null);
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [domainsUsers, setDomainsUsers] = useState([]);
+
+  const [first, setFirst] = useState(0);
+  const [rows, setRows] = useState(5);
+  const [page, setPage] = useState(0);
+  const [totalRecords, setTotalRecords] = useState(0);
 
   const [loading, setLoading] = useState(true);
   const { setTitleModel } = useContext(TitleContext);
@@ -139,13 +145,14 @@ function Domains() {
       });
   }, []);
 
-  const renderDomains = () => {
-    getDomains()
+  const renderDomains = async (obj) => {
+    getDomainsPaginationData(obj)
       .then((response) => {
-        setDomains(response.data);
-        setDomainsUsers(response.data.map((funnel) => funnel.name));
-
-        setDomainsOptions(response.data.map(({ domain }) => domain));
+        console.log(response);
+        setDomains(response.data.data);
+        setDomainsUsers(response.data.data.map((funnel) => funnel.name));
+        setDomainsOptions(response.data.data.map(({ domain }) => domain));
+        setTotalRecords(response.data.total);
         setLoading(false);
       })
       .catch((error) => {
@@ -232,15 +239,24 @@ function Domains() {
     return filteredArray[0].id;
   };
 
+  const onPageChange = (event) => {
+    setFirst(event.first);
+    setRows(event.rows);
+    setPage(event.page);
+    setLoading(true);
+  };
+
   const renderHeader = () => {
     return (
       <div className="flex justify-content-between align-items-center">
         <Button icon="pi pi-filter" className="button-invisible" />
 
-        <PaginatorComponent
-          renderFunction={getDomains}
-          setData={setDomains}
-          setLoading={setLoading}
+        <Paginator
+          first={first}
+          rows={rows}
+          totalRecords={totalRecords}
+          rowsPerPageOptions={[1, 2, 5, 10]}
+          onPageChange={onPageChange}
         />
 
         <span className="p-input-icon-left">
@@ -250,7 +266,11 @@ function Domains() {
             setVisible={setSidebarVisible}
             filtersArray={filtersArray}
             type="domains"
-            setFilteredData={setDomains}
+            renderData={renderDomains}
+            setDataFinal={setDomains}
+            first={first}
+            rows={rows}
+            page={page}
           />
         </span>
       </div>
@@ -325,8 +345,11 @@ function Domains() {
           </div>
         )}
       />
+      <h2 className="m-0">Домены</h2>
       <div className="flex justify-content-between items-center mb-5">
-        <h2 className="m-0">Домены</h2>
+        <p className="" style={{ width: "90%" }}>
+          Общее количество: {totalRecords}
+        </p>
         <Button
           label="Создать"
           icon="pi pi-plus"
