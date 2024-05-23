@@ -115,8 +115,8 @@ function FiltersStyled({
   }, [filtersObject]);
 
   useEffect(() => {
-    handleFilterChange('perPage', rows);
-    handleFilterChange('page', page + 1);
+    handleFilterChange("perPage", rows);
+    handleFilterChange("page", page + 1);
   }, [rows, page]);
 
   useEffect(() => {
@@ -126,13 +126,11 @@ function FiltersStyled({
     ref.current++;
   }, [filtersObject]);
 
-  const handleClear = (key) => {
-    if (key === "all") {
-      setFiltersObject({});
-      setDates({});
-      setDatesSent({});
-      setDatesDep({});
-    }
+  const handleClear = () => {
+    setFiltersObject({ perPage: rows, page: page + 1 });
+    setDates({});
+    setDatesSent({});
+    setDatesDep({});
   };
 
   return (
@@ -283,7 +281,7 @@ function FiltersStyled({
               })}
             </ul>
 
-            <Button onClick={() => handleClear("all")} className="ml-3">
+            <Button onClick={() => handleClear()} className="ml-3">
               Обнулить всё
             </Button>
           </div>

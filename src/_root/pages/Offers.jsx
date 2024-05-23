@@ -16,6 +16,7 @@ import {
   getSources,
   getOffersPaginationData,
   editCapControl,
+  getOffers,
 } from "../../utilities/api";
 import { ConfirmPopup } from "primereact/confirmpopup";
 import { confirmPopup } from "primereact/confirmpopup";
@@ -26,18 +27,17 @@ import FiltersStyled from "../../components/FiltersComponent";
 import { TitleContext } from "../../context/TitleContext";
 import { Card } from "primereact/card";
 import { Skeleton } from "primereact/skeleton";
-import PaginatorComponent from "../../components/PaginatorComponent";
 import { Paginator } from "primereact/paginator";
 import { Checkbox } from "primereact/checkbox";
 
 function Offers() {
   // Стейты
   const [offers, setOffers] = useState([]);
-  const [offersNames, setOffersNames] = useState([]);
-
   const [funnelsOptions, setFunnelsOptions] = useState([]);
   const [geosOptions, setGeosOptions] = useState([]);
   const [sourceOptions, setSourceOptions] = useState([]);
+  const [offersOptions, setOffersOptions] = useState([]);
+
 
   const [activityChecked, setActivityChecked] = useState([]);
   const [capControlChecked, setCapControlChecked] = useState([]);
@@ -82,7 +82,12 @@ function Offers() {
   }, [dialogInputObject]);
 
   useEffect(() => {
-    // renderOffers();
+    getOffers().then((response) => {
+      console.log(response);
+      const updatedOffers = response.data.data.map(({ name }) => name);
+      setOffersOptions(updatedOffers);
+    });
+
     getFunnels().then((response) => {
       console.log(response);
       const updatedFunnels = response.data.map(({ name }) => name);
@@ -205,7 +210,7 @@ function Offers() {
       key: "name",
       type: "multiselect",
       placeholder: "Введите название оффера",
-      options: offersNames,
+      options: offersOptions,
     },
     {
       label: "Воронки",
@@ -259,7 +264,6 @@ function Offers() {
       });
       setTotalRecords(response.data.total);
       setOffers(updatedOffers);
-      setOffersNames(updatedOffers.map((offer) => offer.name));
       setActivityChecked(offerActiveArray);
       setCapControlChecked(offerCapControlArray);
       setLoading(false);
