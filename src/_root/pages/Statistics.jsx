@@ -33,44 +33,9 @@ function Statistics() {
   const [postDates, setPostDates] = useState(postDatesInitialState);
   const [expandedRows, setExpandedRows] = useState(null);
   const { setTitleModel } = useContext(TitleContext);
-  const [loading, setLoading] = useState(true);
-
-  const leadsSkeletonData = [
-    {
-      name: <Skeleton />,
-      total_leads_count: <Skeleton />,
-      valid_leads_count: <Skeleton />,
-      invalid_leads_count: <Skeleton />,
-      invalid_leads_percentage: <Skeleton />,
-      deposited_count: <Skeleton />,
-      conversion_rate: <Skeleton />,
-      total_spend: <Skeleton />,
-      cpl: <Skeleton />,
-    },
-   
-  ];
-
-  const offersSkeletonData = [
-    {
-      offer: <Skeleton />,
-      total_leads_count: <Skeleton />,
-      valid_leads_count: <Skeleton />,
-      deposited_count: <Skeleton />,
-      conversion_rate: <Skeleton />,
-    },
-   
-  ];
-
-  const funnelsSkeletonData = [
-    {
-      funnel: <Skeleton />,
-      total_leads_count: <Skeleton />,
-      valid_leads_count: <Skeleton />,
-      deposited_count: <Skeleton />,
-      conversion_rate: <Skeleton />,
-    },
-   
-  ];
+  const [loadingLeads, setLoadingLeads] = useState(true);
+  const [loadingOffers, setLoadingOffers] = useState(true);
+  const [loadingFunnels, setLoadingFunnels] = useState(true);
 
   // useEffect'ы для рендера, вывода логов
   useEffect(() => {
@@ -90,7 +55,6 @@ function Statistics() {
       getLeadsStatsData();
       getOffersStatsData();
       getFunnelsStatsData();
-      setLoading(false);
     }
     setTitleModel("Аналитика");
   }, [postDates]);
@@ -98,23 +62,28 @@ function Statistics() {
   const getLeadsStatsData = () => {
     postLeadsStats(postDates).then((response) => {
       setLeadsStats(response.data);
+      setLoadingLeads(false);
     });
   };
 
   const getOffersStatsData = () => {
     postOffersStats(postDates).then((response) => {
       setOffersStats(response.data);
+      setLoadingOffers(false);
     });
   };
 
   const getFunnelsStatsData = () => {
     postFunnelsStats(postDates).then((response) => {
       setFunnelsStats(response.data);
+      setLoadingFunnels(false);
     });
   };
 
   const handleDateButtonClick = (option) => {
-    setLoading(true);
+    setLoadingLeads(true);
+    setLoadingOffers(true);
+    setLoadingFunnels(true);
     switch (option) {
       case "today":
         setDates(datesInitialState);
@@ -296,13 +265,14 @@ function Statistics() {
       </div>
       <Card className="my-2" style={{ width: "90%" }}>
         <DataTable
-          value={loading ? leadsSkeletonData : leadsStats}
+          value={loadingLeads ? leadsSkeletonData : leadsStats}
           rows={10}
           expandedRows={expandedRows}
           onRowToggle={(e) => setExpandedRows(e.data)}
           rowExpansionTemplate={rowExpansionTemplate}
           className="mb-5 w-full"
           style={{ maxWidth: "90%" }}
+          emptyMessage="Нет данных"
         >
           <Column style={{ width: "5rem" }} expander={allowExpansion} />
           <Column field="name" header="Юзер"></Column>
@@ -319,11 +289,12 @@ function Statistics() {
 
       <Card className="my-2" style={{ width: "90%" }}>
         <DataTable
-          value={loading ? offersSkeletonData : offersStats}
+          value={loadingOffers ? offersSkeletonData : offersStats}
           rows={10}
           // showGridlines
           className="mb-5 w-full"
           style={{ maxWidth: "90%" }}
+          emptyMessage="Нет данных"
         >
           <Column field="offer" header="Оффер"></Column>
           <Column field="total_leads_count" header="Тотал"></Column>
@@ -335,11 +306,12 @@ function Statistics() {
 
       <Card className="my-2" style={{ width: "90%" }}>
         <DataTable
-          value={loading ? funnelsSkeletonData : funnelsStats}
+          value={loadingFunnels ? funnelsSkeletonData : funnelsStats}
           rows={10}
           // showGridlines
           className="mb-5 w-full"
           style={{ maxWidth: "90%" }}
+          emptyMessage="Нет данных"
         >
           <Column field="funnel" header="Воронка"></Column>
           <Column field="total_leads_count" header="Тотал"></Column>
@@ -353,3 +325,143 @@ function Statistics() {
 }
 
 export default Statistics;
+
+const leadsSkeletonData = [
+  {
+    name: <Skeleton />,
+    total_leads_count: <Skeleton />,
+    valid_leads_count: <Skeleton />,
+    invalid_leads_count: <Skeleton />,
+    invalid_leads_percentage: <Skeleton />,
+    deposited_count: <Skeleton />,
+    conversion_rate: <Skeleton />,
+    total_spend: <Skeleton />,
+    cpl: <Skeleton />,
+  },
+  {
+    name: <Skeleton />,
+    total_leads_count: <Skeleton />,
+    valid_leads_count: <Skeleton />,
+    invalid_leads_count: <Skeleton />,
+    invalid_leads_percentage: <Skeleton />,
+    deposited_count: <Skeleton />,
+    conversion_rate: <Skeleton />,
+    total_spend: <Skeleton />,
+    cpl: <Skeleton />,
+  },
+  {
+    name: <Skeleton />,
+    total_leads_count: <Skeleton />,
+    valid_leads_count: <Skeleton />,
+    invalid_leads_count: <Skeleton />,
+    invalid_leads_percentage: <Skeleton />,
+    deposited_count: <Skeleton />,
+    conversion_rate: <Skeleton />,
+    total_spend: <Skeleton />,
+    cpl: <Skeleton />,
+  },
+  {
+    name: <Skeleton />,
+    total_leads_count: <Skeleton />,
+    valid_leads_count: <Skeleton />,
+    invalid_leads_count: <Skeleton />,
+    invalid_leads_percentage: <Skeleton />,
+    deposited_count: <Skeleton />,
+    conversion_rate: <Skeleton />,
+    total_spend: <Skeleton />,
+    cpl: <Skeleton />,
+  },
+  {
+    name: <Skeleton />,
+    total_leads_count: <Skeleton />,
+    valid_leads_count: <Skeleton />,
+    invalid_leads_count: <Skeleton />,
+    invalid_leads_percentage: <Skeleton />,
+    deposited_count: <Skeleton />,
+    conversion_rate: <Skeleton />,
+    total_spend: <Skeleton />,
+    cpl: <Skeleton />,
+  },
+];
+
+const offersSkeletonData = [
+  {
+    offer: <Skeleton />,
+    total_leads_count: <Skeleton />,
+    valid_leads_count: <Skeleton />,
+    deposited_count: <Skeleton />,
+    conversion_rate: <Skeleton />,
+  },
+
+  {
+    offer: <Skeleton />,
+    total_leads_count: <Skeleton />,
+    valid_leads_count: <Skeleton />,
+    deposited_count: <Skeleton />,
+    conversion_rate: <Skeleton />,
+  },
+
+  {
+    offer: <Skeleton />,
+    total_leads_count: <Skeleton />,
+    valid_leads_count: <Skeleton />,
+    deposited_count: <Skeleton />,
+    conversion_rate: <Skeleton />,
+  },
+
+  {
+    offer: <Skeleton />,
+    total_leads_count: <Skeleton />,
+    valid_leads_count: <Skeleton />,
+    deposited_count: <Skeleton />,
+    conversion_rate: <Skeleton />,
+  },
+
+  {
+    offer: <Skeleton />,
+    total_leads_count: <Skeleton />,
+    valid_leads_count: <Skeleton />,
+    deposited_count: <Skeleton />,
+    conversion_rate: <Skeleton />,
+  },
+];
+
+const funnelsSkeletonData = [
+  {
+    funnel: <Skeleton />,
+    total_leads_count: <Skeleton />,
+    valid_leads_count: <Skeleton />,
+    deposited_count: <Skeleton />,
+    conversion_rate: <Skeleton />,
+  },
+
+  {
+    funnel: <Skeleton />,
+    total_leads_count: <Skeleton />,
+    valid_leads_count: <Skeleton />,
+    deposited_count: <Skeleton />,
+    conversion_rate: <Skeleton />,
+  },
+
+  {
+    funnel: <Skeleton />,
+    total_leads_count: <Skeleton />,
+    valid_leads_count: <Skeleton />,
+    deposited_count: <Skeleton />,
+    conversion_rate: <Skeleton />,
+  },
+  {
+    funnel: <Skeleton />,
+    total_leads_count: <Skeleton />,
+    valid_leads_count: <Skeleton />,
+    deposited_count: <Skeleton />,
+    conversion_rate: <Skeleton />,
+  },
+  {
+    funnel: <Skeleton />,
+    total_leads_count: <Skeleton />,
+    valid_leads_count: <Skeleton />,
+    deposited_count: <Skeleton />,
+    conversion_rate: <Skeleton />,
+  },
+];

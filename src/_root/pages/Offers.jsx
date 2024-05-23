@@ -396,8 +396,10 @@ function Offers() {
         console.log(response);
       })
       .catch((err) => {
-        showToast("error", response.data.message);
-        console.log(err);
+        if (err.response.status === 400) {
+          showToast("error", err.response.data.message);
+          renderOffers()
+        }
       });
   };
 
@@ -409,8 +411,8 @@ function Offers() {
         console.log(response);
       })
       .catch((err) => {
-        showToast("error", response.data.message);
-        console.log(err);
+        showToast("error", err.response.data.message);
+        console.log("err", err);
       });
   };
 

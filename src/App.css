@@ -136,19 +136,6 @@ td > div,
   margin: 0  auto;
 }
 
-.p-toast-message {
-  background-color: #34d399;
-}
-
-.p-toast-detail {
-  color: #000;
-  font-weight: 600;
-}
-
-.p-toast-icon-close > * {
-  color: #000;
-}
-
 @media (max-width: 1439px) {
   .dashboard-card.p-card .p-card-body {
     padding: 0.5rem;
@@ -6534,7 +6521,7 @@ td > div,
     margin-left: 0.5rem;
   }
 
-  .p-toast {
+  /* .p-toast {
     opacity: 0.9;
   }
   .p-toast .p-toast-message {
@@ -6619,7 +6606,7 @@ td > div,
   .p-toast .p-toast-message.p-toast-message-error .p-toast-message-icon,
   .p-toast .p-toast-message.p-toast-message-error .p-toast-icon-close {
     color: #ff5757;
-  }
+  } */
 
   .p-galleria .p-galleria-close {
     margin: 0.5rem;
