@@ -143,6 +143,10 @@ function Domains() {
         console.log(error);
         showToast("error", "Ошибка при загрузке пользователей");
       });
+
+    getDomains().then((response) => {
+      setDomainsOptions(response.data.map(({ domain }) => domain));
+    });
   }, []);
 
   const renderDomains = async (obj) => {
@@ -151,7 +155,6 @@ function Domains() {
         console.log(response);
         setDomains(response.data.data);
         setDomainsUsers(response.data.data.map((funnel) => funnel.name));
-        setDomainsOptions(response.data.data.map(({ domain }) => domain));
         setTotalRecords(response.data.total);
         setLoading(false);
       })
