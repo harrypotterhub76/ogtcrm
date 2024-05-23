@@ -10,6 +10,7 @@ import {
   deleteFunnel,
   addFunnel,
   getFunnelsPaginationData,
+  editFunnel,
 } from "../../utilities/api";
 import { DialogComponent } from "../../components/DialogComponent";
 import FiltersStyled from "../../components/FiltersComponent";
@@ -19,14 +20,25 @@ import PaginatorComponent from "../../components/PaginatorComponent";
 import { Paginator } from "primereact/paginator";
 
 function Funnels() {
+  const dialogInputObjectInitialState = {
+    name: "",
+    link: "",
+  };
   const [funnels, setFunnels] = useState([]);
-  const [popupCreateVisible, setPopupCreateVisible] = useState(false);
-  const [dialogInputObject, setDialogInputObject] = useState({ name: "" });
+  const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
+  const [isEditDialogVisible, setIsEditDialogVisible] = useState(false);
+  const [addDialogInputObject, setAddDialogInputObject] = useState(
+    dialogInputObjectInitialState
+  );
+  const [editDialogInputObject, setEditDialogInputObject] = useState(
+    dialogInputObjectInitialState
+  );
   const [currentRowData, setCurrentRowData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [funnelsNames, setFunnelsNames] = useState([]);
   const { setTitleModel } = useContext(TitleContext);
+  const [selectedFunnelID, setSelectedFunnelID] = useState(null);
 
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(5);
@@ -39,6 +51,13 @@ function Funnels() {
       key: "name",
       type: "text",
       placeholder: "Название воронки",
+      options: [],
+    },
+    {
+      label: "Превью",
+      key: "link",
+      type: "text",
+      placeholder: "Ссылка на превью",
       options: [],
     },
   ];
@@ -74,7 +93,7 @@ function Funnels() {
   const renderFunnels = async (obj) => {
     getFunnelsPaginationData(obj)
       .then((response) => {
-        console.log(response)
+        console.log(response);
         setFunnels(response.data.data);
         setFunnelsNames(response.data.data.map((funnel) => funnel.name));
         setTotalRecords(response.data.total);
@@ -86,7 +105,16 @@ function Funnels() {
       });
   };
 
-  const confirmDeleteFunnel = (event, rowData) => {
+  const handleEditActionClick = (rowData) => {
+    setEditDialogInputObject({
+      name: rowData.name,
+      link: rowData.link,
+    });
+    setIsEditDialogVisible(true);
+    setSelectedFunnelID(rowData.id);
+  };
+
+  const handleDeleteActionClick = (event, rowData) => {
     setCurrentRowData(rowData);
     confirmPopup({
       group: "headless",
@@ -117,17 +145,31 @@ function Funnels() {
     }
   };
 
-  const addNewFunnel = () => {
-    addFunnel(dialogInputObject.name)
+  const handleAddFunnel = () => {
+    addFunnel(addDialogInputObject)
       .then(function (response) {
         showToast("success", response.data.message);
-        setPopupCreateVisible(false);
-        setDialogInputObject({ name: "" });
+        setIsAddDialogVisible(false);
+        setAddDialogInputObject(dialogInputObjectInitialState);
         renderFunnels();
       })
       .catch(function (error) {
         showToast("error", error.response.data.message);
-        setDialogInputObject({ name: "" });
+        setAddDialogInputObject(dialogInputObjectInitialState);
+      });
+  };
+
+  const handleEditFunnel = () => {
+    editFunnel(editDialogInputObject, selectedFunnelID)
+      .then(function (response) {
+        showToast("success", response.data.message);
+        setIsEditDialogVisible(false);
+        setEditDialogInputObject(dialogInputObjectInitialState);
+        renderFunnels();
+      })
+      .catch(function (error) {
+        showToast("error", error.response.data.message);
+        setEditDialogInputObject(dialogInputObjectInitialState);
       });
   };
 
@@ -164,7 +206,7 @@ function Funnels() {
 
   // Функция для сброса состояния DialogInputObject
   const clearDialogInputObject = () => {
-    setDialogInputObject({
+    setAddDialogInputObject({
       name: "",
     });
   };
@@ -176,14 +218,20 @@ function Funnels() {
     setLoading(true);
   };
 
-  const actionBodyTemplate = (rowData) => {
+  const actionButtonsTemplate = (rowData) => {
     return (
-      <Button
-        onClick={(e) => confirmDeleteFunnel(e, rowData)}
-        icon="pi pi-trash"
-        className="p-button-danger"
-        style={{ maxWidth: "48px", margin: "0 auto" }}
-      />
+      <div className="flex gap-3">
+        <Button
+          icon="pi pi-pencil"
+          severity="success"
+          onClick={(e) => handleEditActionClick(rowData)}
+        />
+        <Button
+          icon="pi pi-trash"
+          severity="danger"
+          onClick={(e) => handleDeleteActionClick(e, rowData)}
+        />
+      </div>
     );
   };
 
@@ -193,6 +241,23 @@ function Funnels() {
         <Skeleton size="3rem" />
         <Skeleton size="3rem" />
       </div>
+    );
+  };
+
+  const linkTemplate = (rowData) => {
+    return (
+      <a
+        href={rowData.link}
+        target="_blank"
+        style={{
+          cursor: "pointer",
+          color: "#34d399",
+          textDecoration: "underline",
+          textUnderlineOffset: "5px",
+        }}
+      >
+        {rowData.link}
+      </a>
     );
   };
 
@@ -236,18 +301,30 @@ function Funnels() {
         <Button
           label="Создать"
           icon="pi pi-plus"
-          onClick={setPopupCreateVisible}
+          onClick={setIsAddDialogVisible}
         />
 
         <DialogComponent
           type="add"
-          isDialogVisible={popupCreateVisible}
-          setIsDialogVisible={setPopupCreateVisible}
+          isDialogVisible={isAddDialogVisible}
+          setIsDialogVisible={setIsAddDialogVisible}
           header={"Добавить воронку"}
-          dialogInputObject={dialogInputObject}
-          setDialogInputObject={setDialogInputObject}
+          dialogInputObject={addDialogInputObject}
+          setDialogInputObject={setAddDialogInputObject}
           inputs={inputs}
-          handleAdd={addNewFunnel}
+          handleAdd={handleAddFunnel}
+          clearDialogInputObject={clearDialogInputObject}
+        />
+
+        <DialogComponent
+          type="edit"
+          isDialogVisible={isEditDialogVisible}
+          setIsDialogVisible={setIsEditDialogVisible}
+          header={"Редактировать воронку"}
+          dialogInputObject={editDialogInputObject}
+          setDialogInputObject={setEditDialogInputObject}
+          inputs={inputs}
+          handleEdit={handleEditFunnel}
           clearDialogInputObject={clearDialogInputObject}
         />
       </div>
@@ -262,10 +339,11 @@ function Funnels() {
         >
           <Column field="id" header="ID" style={{ width: "30%" }}></Column>
           <Column field="name" header="Воронка"></Column>
+          <Column field="link" header="Превью" body={linkTemplate}></Column>
           <Column
             field="category"
             header="Действие"
-            body={loading ? actionSkeletonTemplate : actionBodyTemplate}
+            body={loading ? actionSkeletonTemplate : actionButtonsTemplate}
             style={{ width: "30%" }}
           ></Column>
         </DataTable>
@@ -280,21 +358,26 @@ const skeletonData = [
   {
     id: <Skeleton />,
     name: <Skeleton />,
+    link: <Skeleton />,
   },
   {
     id: <Skeleton />,
     name: <Skeleton />,
+    link: <Skeleton />,
   },
   {
     id: <Skeleton />,
     name: <Skeleton />,
+    link: <Skeleton />,
   },
   {
     id: <Skeleton />,
     name: <Skeleton />,
+    link: <Skeleton />,
   },
   {
     id: <Skeleton />,
     name: <Skeleton />,
+    link: <Skeleton />,
   },
 ];

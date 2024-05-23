@@ -10,11 +10,15 @@ export const getFunnelsPaginationData = (parametersObject) =>
 export const deleteFunnel = (id) =>
   axios.delete(`http://25.18.88.64:8000/api/funnels/${id}`);
 
-export const addFunnel = (funnelName) =>
-  axios.post(`http://25.18.88.64:8000/api/funnels/store`, {
-    name: funnelName,
-  });
+export const addFunnel = (dialogInputObject) =>
+  axios.post(`http://25.18.88.64:8000/api/funnels/store`, dialogInputObject);
 
+  export const editFunnel = (dialogInputObject, id) =>
+    axios.put(`http://25.18.88.64:8000/api/funnels/update/${id}`, {
+      name: dialogInputObject.name,
+      link: dialogInputObject.link,
+    });
+  
 export const getUsers = () => axios.get(`http://25.18.88.64:8000/api/users`);
 
 export const getUsersPaginationData = (parametersObject) =>
@@ -70,10 +74,10 @@ export const editSpend = (dialogInputObject, id) =>
     dialogInputObject
   );
 
+export const getOffers = () => axios.get(`http://25.18.88.64:8000/api/offers`);
+
 export const getOffersPaginationData = (parametersObject) =>
   axios.post(`http://25.18.88.64:8000/api/offers`, parametersObject);
-
-export const getOffers = () => axios.get(`http://25.18.88.64:8000/api/offers`);
 
 export const getCountries = () =>
   axios.get(`http://25.18.88.64:8000/api/country`);
