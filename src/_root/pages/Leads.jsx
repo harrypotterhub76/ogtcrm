@@ -41,6 +41,7 @@ function Leads() {
   const [sources, setSources] = useState([]);
 
   const [offersOptions, setOffersOptions] = useState([]);
+  const [activeOffersOptions, setActiveOffersOptions] = useState([]);
   const [funnelsOptions, setFunnelsOptions] = useState([]);
   const [usersOptions, setUsersOptions] = useState([]);
   const [geosOptions, setGeosOptions] = useState([]);
@@ -69,13 +70,7 @@ function Leads() {
   const [page, setPage] = useState(0);
   const [totalRecords, setTotalRecords] = useState(0);
   const [filtersObjectForRefresh, setFiltersObjectForRefresh] = useState({});
-
-  const [filters, setFilters] = useState({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-  });
   const [loading, setLoading] = useState(true);
-
-  const isMounted = useRef(false);
 
   const { setTitleModel } = useContext(TitleContext);
   const { user } = useContext(UserContext);
@@ -135,6 +130,8 @@ function Leads() {
     console.log("funnels: ", funnels);
     console.log("leads: ", leads);
     console.log("offers:", offers);
+    console.log("offersOptions:", offersOptions);
+    console.log("activeOffersOptions:", activeOffersOptions);
   }, [
     addLeadDialogInputObject,
     postLeadDialogInputObject,
@@ -189,13 +186,6 @@ function Leads() {
   }, [selectedSource]);
 
   useEffect(() => {
-    if (isMounted.current) {
-      getOffersOptionsData();
-    }
-    isMounted.current = true;
-  }, [isMounted, postLeadDialogInputObject]);
-
-  useEffect(() => {
     getCountriesData();
     getFunnelsData();
     getOffersData();
@@ -204,6 +194,12 @@ function Leads() {
     getSourcesData();
     setTitleModel("Лиды");
   }, []);
+
+  useEffect(() => {
+    if (postLeadDialogInputObject.funnel && postLeadDialogInputObject.geo) {
+      getOffersOptionsData();
+    }
+  }, [postLeadDialogInputObject]);
 
   // Инпуты для DialogComponent
   const postLeadDialogInputs = [
@@ -463,57 +459,93 @@ function Leads() {
   };
 
   const getOffersData = () => {
-    getOffers().then((response) => {
-      const updatedOffers = response.data.data.map(({ name }) => name);
-      setOffers(response.data.data);
-      setOffersOptions(updatedOffers);
-    });
+    getOffers()
+      .then((response) => {
+        const updatedOffers = response.data.data.map(({ name }) => name);
+        setOffers(response.data.data);
+        setOffersOptions(updatedOffers);
+      })
+      .catch((error) => {
+        console.log(error);
+        showToast("error", "Ошибка при загрузке офферов");
+      });
   };
   const getOffersOptionsData = () => {
     postOfferForLead({
       funnel: postLeadDialogInputObject.funnel,
       geo: postLeadDialogInputObject.geo,
-    }).then((response) => {
-      const updatedOffers = response.data.map(({ name }) => name);
-      setOffersOptions(updatedOffers);
-    });
+    })
+      .then((response) => {
+        console.log(response);
+        const updatedOffers = response.data.map(({ name }) => name);
+        setActiveOffersOptions(updatedOffers);
+      })
+      .catch((error) => {
+        console.log(error);
+        showToast("error", "Ошибка при загрузке активных офферов");
+      });
   };
   const getFunnelsData = () => {
-    getFunnels().then((response) => {
-      const updatedFunnels = response.data.map(({ name }) => name);
-      setFunnels(response.data);
-      setFunnelsOptions(updatedFunnels);
-    });
+    getFunnels()
+      .then((response) => {
+        const updatedFunnels = response.data.map(({ name }) => name);
+        setFunnels(response.data);
+        setFunnelsOptions(updatedFunnels);
+      })
+      .catch((error) => {
+        console.log(error);
+        showToast("error", "Ошибка при загрузке воронок");
+      });
   };
 
   const getCountriesData = () => {
-    getCountries().then((response) => {
-      const updatedGeos = response.data.map(({ iso }) => iso);
-      setGeosOptions(updatedGeos);
-    });
+    getCountries()
+      .then((response) => {
+        const updatedGeos = response.data.map(({ iso }) => iso);
+        setGeosOptions(updatedGeos);
+      })
+      .catch((error) => {
+        console.log(error);
+        showToast("error", "Ошибка при загрузке гео");
+      });
   };
 
   const getUsersData = () => {
-    getUsers().then((response) => {
-      setUsers(response.data);
-      setUsersOptions(response.data.map(({ name }) => name));
-    });
+    getUsers()
+      .then((response) => {
+        setUsers(response.data);
+        setUsersOptions(response.data.map(({ name }) => name));
+      })
+      .catch((error) => {
+        console.log(error);
+        showToast("error", "Ошибка при загрузке пользователей");
+      });
   };
 
   const getStatusesCRMData = () => {
-    getStatusesCRM().then((response) => {
-      const updatedStatusesCRM = response.data.map(
-        ({ crm_status }) => crm_status
-      );
-      setStatusesCRMOptions(updatedStatusesCRM);
-    });
+    getStatusesCRM()
+      .then((response) => {
+        const updatedStatusesCRM = response.data.map(
+          ({ crm_status }) => crm_status
+        );
+        setStatusesCRMOptions(updatedStatusesCRM);
+      })
+      .catch((error) => {
+        console.log(error);
+        showToast("error", "Ошибка при загрузке статусов");
+      });
   };
 
   const getSourcesData = () => {
-    getSources().then((response) => {
-      setSources(response.data);
-      setSourcesOptions(response.data.map(({ name }) => name));
-    });
+    getSources()
+      .then((response) => {
+        setSources(response.data);
+        setSourcesOptions(response.data.map(({ name }) => name));
+      })
+      .catch((error) => {
+        console.log(error);
+        showToast("error", "Ошибка при загрузке источников");
+      });
   };
 
   // Обработчики кликов по данным таблицы
@@ -570,16 +602,6 @@ function Leads() {
       hide();
     setSelectedLeadID(null);
   };
-
-  // Сеттер фильтра глобального поиска
-  // const onGlobalFilterChange = (e) => {
-  //   const value = e.target.value;
-  //   let _filters = { ...filters };
-  //   _filters["global"].value = value;
-
-  //   setFilters(_filters);
-  //   setGlobalFilterValue(value);
-  // };
 
   // Обработчики взаимодействия фронта с беком
   const handleAddLead = () => {
@@ -659,6 +681,7 @@ function Leads() {
     setSelectedFunnelDialog(null);
     setSelectedUserDialog(null);
     setSelectedURLParams(null);
+    setActiveOffersOptions(null);
   };
 
   // Рендер плажки на удаление данных из DataTable
@@ -999,9 +1022,10 @@ function Leads() {
           onChange={(e) => {
             setSelectedOfferDialog(e.value);
           }}
-          options={offersOptions}
-          placeholder={"Офферы"}
+          options={activeOffersOptions}
+          placeholder="Офферы"
           className="w-full mb-5"
+          emptyMessage="Нет активных офферов"
         />
         <Button label="Отправить" onClick={handlePostLead} />
       </Dialog>
@@ -1052,7 +1076,6 @@ function Leads() {
           <DataTable
             value={loading ? skeletonData : leads}
             header={headerTemplate}
-            filters={filters}
           >
             <Column field="id" header="ID" body={phoneTemplate}></Column>
             {JSON.parse(user).user.role === "Admin" && (

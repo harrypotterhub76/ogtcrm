@@ -127,7 +127,7 @@ export const DialogComponent = ({
                       value={dialogInputObject[input.key]}
                       onChange={(e) => {
                         console.log(e.value);
-                        console.log(input.setDropdownValue ? 1 : 0)
+                        console.log(input.setDropdownValue ? 1 : 0);
                         input.setDropdownValue
                           ? input.setDropdownValue(e.value)
                           : handleDialogInputChange(input.key, e.value);
@@ -212,7 +212,7 @@ export const DialogComponent = ({
                 label={
                   type.includes("add")
                     ? "Добавить"
-                    : type === "edit" ||
+                    : type.includes("edit") ||
                       (type === "lead" && leadDialogType === "edit-lead")
                     ? "Редактировать"
                     : "Отправить"
