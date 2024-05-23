@@ -126,6 +126,8 @@ export const DialogComponent = ({
                     <Dropdown
                       value={dialogInputObject[input.key]}
                       onChange={(e) => {
+                        console.log(e.value);
+                        console.log(input.setDropdownValue ? 1 : 0)
                         input.setDropdownValue
                           ? input.setDropdownValue(e.value)
                           : handleDialogInputChange(input.key, e.value);

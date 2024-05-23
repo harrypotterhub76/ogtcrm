@@ -38,6 +38,7 @@ function Leads() {
   const [funnels, setFunnels] = useState({});
   const [offers, setOffers] = useState([]);
   const [users, setUsers] = useState([]);
+  const [sources, setSources] = useState([]);
 
   const [offersOptions, setOffersOptions] = useState([]);
   const [funnelsOptions, setFunnelsOptions] = useState([]);
@@ -52,6 +53,7 @@ function Leads() {
   const [selectedURLParams, setSelectedURLParams] = useState([]);
   const [selectedStatuses, setSelectedStatuses] = useState([]);
   const [selectedLeadID, setSelectedLeadID] = useState(null);
+  const [selectedSource, setSelectedSource] = useState(null);
 
   const [isLeadDialogVisible, setIsLeadDialogVisible] = useState(false);
   const [leadDialogType, setLeadDialogType] = useState("post-lead");
@@ -100,6 +102,7 @@ function Leads() {
     geo: [],
     created_at: "",
     url_params: "",
+    source: "",
   };
 
   const [postLeadDialogInputObject, setPostLeadDialogInputObject] = useState(
@@ -171,6 +174,17 @@ function Leads() {
     }
     console.log("selectedFunnelDialog", selectedUserDialog);
   }, [selectedUserDialog]);
+
+  useEffect(() => {
+    if (selectedSource) {
+      setPostLeadDialogInputObject((prevState) => ({
+        ...prevState,
+        source: selectedSource,
+        source_id: getSelectedSourceID(selectedSource),
+      }));
+    }
+    console.log("selectedSource", selectedSource);
+  }, [selectedSource]);
 
   useEffect(() => {
     if (isMounted.current) {
@@ -262,6 +276,14 @@ function Leads() {
       key: "url_params",
       type: "text",
       placeholder: "Параметры",
+    },
+    {
+      label: "Источник",
+      key: "source",
+      type: "dropdown",
+      placeholder: "Источник",
+      options: sourcesOptions,
+      setDropdownValue: setSelectedSource,
     },
   ];
 
@@ -481,6 +503,7 @@ function Leads() {
 
   const getSourcesData = () => {
     getSources().then((response) => {
+      setSources(response.data);
       setSourcesOptions(response.data.map(({ name }) => name));
     });
   };
@@ -491,6 +514,7 @@ function Leads() {
     const newestStatusObject = parsedStatusArray[parsedStatusArray.length - 1];
     setIsLeadDialogVisible(true);
     setSelectedLeadID(rowData.id);
+    setSelectedSource(rowData.source);
     setSelectedFunnelDialog(rowData.funnel);
     setSelectedUserDialog(rowData.user);
     setPostLeadDialogInputObject({
@@ -504,6 +528,7 @@ function Leads() {
       geo: rowData.geo,
       created_at: formatTimestampForCalendar(rowData.created_at),
       url_params: rowData.url_params,
+      source: rowData.source,
     });
   };
 
@@ -588,8 +613,11 @@ function Leads() {
   };
 
   const handleEditLead = () => {
+    console.log(postLeadDialogInputObject);
     editLead(postLeadDialogInputObject, selectedLeadID)
       .then(function (response) {
+        console.log(response);
+        console.log(postLeadDialogInputObject);
         showToast("success", response.data.message);
         setLeadDialogType("post-lead");
         renderLeads();
@@ -649,6 +677,11 @@ function Leads() {
 
   const getSelectedUserID = (name) => {
     const filteredArray = users.filter((obj) => obj.name === name);
+    return filteredArray[0].id;
+  };
+
+  const getSelectedSourceID = (name) => {
+    const filteredArray = sources.filter((obj) => obj.name === name);
     return filteredArray[0].id;
   };
 
