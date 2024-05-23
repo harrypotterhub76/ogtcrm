@@ -41,10 +41,9 @@ export default function NoFound() {
       </svg>
 
       <div className="h-full flex flex-column justify-content-center align-items-center z-5 relative">
-        <p className="text-900 font-bold text-8xl m-0 text-center">
+        <p className="text-900 font-bold text-6xl m-0 text-center">
         404 | Страница не найдена
         </p>
-        <p className="text-2xl">Здесь ничего нет</p>
       </div>
     </div>
   );

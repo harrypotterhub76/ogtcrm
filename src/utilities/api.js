@@ -13,12 +13,12 @@ export const deleteFunnel = (id) =>
 export const addFunnel = (dialogInputObject) =>
   axios.post(`http://25.18.88.64:8000/api/funnels/store`, dialogInputObject);
 
-  export const editFunnel = (dialogInputObject, id) =>
-    axios.put(`http://25.18.88.64:8000/api/funnels/update/${id}`, {
-      name: dialogInputObject.name,
-      link: dialogInputObject.link,
-    });
-  
+export const editFunnel = (dialogInputObject, id) =>
+  axios.put(`http://25.18.88.64:8000/api/funnels/update/${id}`, {
+    name: dialogInputObject.name,
+    link: dialogInputObject.link,
+  });
+
 export const getUsers = () => axios.get(`http://25.18.88.64:8000/api/users`);
 
 export const getUsersPaginationData = (parametersObject) =>
@@ -111,6 +111,12 @@ export const editActivity = (id, active) =>
   axios.put(`http://25.18.88.64:8000/api/offers/activity`, {
     id,
     active,
+  });
+
+export const editCapControl = (id, cap_control) =>
+  axios.put(`http://25.18.88.64:8000/api/offers/cap_control`, {
+    id,
+    cap_control,
   });
 
 export const getSources = () =>

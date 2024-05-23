@@ -136,6 +136,10 @@ td > div,
   margin: 0  auto;
 }
 
+.p-toast-message-content {
+  background-color: ;
+}
+
 @media (max-width: 1439px) {
   .dashboard-card.p-card .p-card-body {
     padding: 0.5rem;
