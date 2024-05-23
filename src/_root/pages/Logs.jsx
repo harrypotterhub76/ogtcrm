@@ -26,8 +26,13 @@ function Logs() {
       console.log(formattedDate);
       getLogs(formattedDate)
         .then((response) => {
-          const formattedLogs = response.data.map((log) => log.response_text);
-          setLogs(formattedLogs.join("\n\n"));
+          console.log(response.data);
+          const formattedLogs = response.data.message
+            ? response.data.message
+            : response.data.map((log) => log.response_text).join("\n\n");
+          console.log("logs:", formattedLogs);
+
+          setLogs(formattedLogs);
         })
         .catch((error) => {
           console.log(error);
