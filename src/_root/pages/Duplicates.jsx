@@ -4,7 +4,6 @@ import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { FilterMatchMode } from "primereact/api";
 import { Toast } from "primereact/toast";
-import { InputText } from "primereact/inputtext";
 import {
   addLead,
   editLead,
@@ -15,14 +14,19 @@ import {
   getStatusesCRM,
   getUsers,
   sendLead,
+  getSources,
 } from "../../utilities/api";
 import { deleteLead } from "../../utilities/api";
 import { ConfirmPopup } from "primereact/confirmpopup";
 import { confirmPopup } from "primereact/confirmpopup";
 import { Dialog } from "primereact/dialog";
 import { DialogComponent } from "../../components/DialogComponent";
+import FiltersStyled from "../../components/FiltersComponent";
 import { TitleContext } from "../../context/TitleContext";
 import { Card } from "primereact/card";
+import { Paginator } from "primereact/paginator";
+import { Skeleton } from "primereact/skeleton";
+import { UserContext } from "../../context/userContext";
 
 function Leads() {
   // Стейты
@@ -36,6 +40,7 @@ function Leads() {
   const [usersOptions, setUsersOptions] = useState([]);
   const [geosOptions, setGeosOptions] = useState([]);
   const [statusesCRMOptions, setStatusesCRMOptions] = useState([]);
+  const [sourcesOptions, setSourcesOptions] = useState([]);
 
   const [selectedOfferDialog, setSelectedOfferDialog] = useState(null);
   const [selectedFunnelDialog, setSelectedFunnelDialog] = useState(null);
@@ -50,13 +55,22 @@ function Leads() {
   const [isParameterDialogVisible, setIsParameterDialogVisible] =
     useState(false);
   const [isStatusDialogVisible, setIsStatusDialogVisible] = useState(false);
+  const [sidebarVisible, setSidebarVisible] = useState(false);
+
+  const [first, setFirst] = useState(0);
+  const [rows, setRows] = useState(5);
+  const [page, setPage] = useState(0);
+  const [totalRecords, setTotalRecords] = useState(0);
 
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
   const [globalFilterValue, setGlobalFilterValue] = useState("");
   const [loading, setLoading] = useState(true);
+  const isMounted = useRef(false);
   const { setTitleModel } = useContext(TitleContext);
+
+  const { user } = useContext(UserContext);
 
   const addLeadDialogInitialState = {
     full_name: "",
@@ -148,6 +162,13 @@ function Leads() {
     }
     console.log("selectedFunnelDialog", selectedUserDialog);
   }, [selectedUserDialog]);
+
+  useEffect(() => {
+    if (isMounted.current) {
+      getOffersOptionsData();
+    }
+    isMounted.current = true;
+  }, [isMounted, postLeadDialogInputObject]);
 
   useEffect(() => {
     renderDuplicateLeads();
@@ -297,20 +318,85 @@ function Leads() {
     },
   ];
 
+  //фильтры для FitersComponent
+
+  const filtersArray = [
+    {
+      label: "Имя",
+      key: "idemailphone",
+      type: "text",
+      placeholder: "Id, email or phone",
+    },
+    {
+      label: "Параметры",
+      key: "url_params",
+      type: "text",
+      placeholder: "Параметры",
+    },
+    {
+      label: "Воронка",
+      key: "funnel",
+      type: "multiselect",
+      placeholder: "Воронка",
+      options: funnelsOptions,
+    },
+    {
+      label: "Пользователь",
+      key: "user",
+      type: "multiselect",
+      placeholder: "Пользователь",
+      options: usersOptions,
+    },
+    {
+      label: "Гео",
+      key: "geo",
+      type: "multiselect",
+      placeholder: "Гео",
+      options: geosOptions,
+    },
+    {
+      label: "Источник",
+      key: "source",
+      type: "multiselect",
+      placeholder: "Источник",
+      options: sourcesOptions,
+    },
+    {
+      label: "Дата создания",
+      key: "created_at",
+      type: "calendar-creation",
+      placeholder: "Дата создания",
+    },
+  ];
+
   // Функции подтягиваний данных с бека
-  const renderDuplicateLeads = () => {
-    getDuplicateLeads().then(function (response) {
-      setDuplicateLeads(response.data);
+  const renderDuplicateLeads = async (obj) => {
+    getDuplicateLeads(obj).then(function (response) {
+      console.log(response);
+      setDuplicateLeads(response.data.data);
+      setTotalRecords(response.data.total);
+      setLoading(false);
     });
   };
 
   const getOffersData = () => {
     getOffers().then((response) => {
-      const updatedOffers = response.data.map(({ name }) => name);
-      setOffers(response.data);
+      const updatedOffers = response.data.data.map(({ name }) => name);
+      setOffers(response.data.data);
       setOffersOptions(updatedOffers);
     });
   };
+
+  const getOffersOptionsData = () => {
+    postOfferForLead({
+      funnel: postLeadDialogInputObject.funnel,
+      geo: postLeadDialogInputObject.geo,
+    }).then((response) => {
+      const updatedOffers = response.data.map(({ name }) => name);
+      setOffersOptions(updatedOffers);
+    });
+  };
+
   const getFunnelsData = () => {
     getFunnels().then((response) => {
       const updatedFunnels = response.data.map(({ name }) => name);
@@ -389,16 +475,6 @@ function Leads() {
       : showToast("info", "Удаление лида отменено"),
       hide();
     setSelectedLeadID(null);
-  };
-
-  // Сеттер фильтра глобального поиска
-  const onGlobalFilterChange = (e) => {
-    const value = e.target.value;
-    let _filters = { ...filters };
-    _filters["global"].value = value;
-
-    setFilters(_filters);
-    setGlobalFilterValue(value);
   };
 
   // Обработчики взаимодействия фронта с беком
@@ -546,6 +622,18 @@ function Leads() {
     }
   };
 
+  const onPageChange = (event) => {
+    setFirst(event.first);
+    setRows(event.rows);
+    setPage(event.page);
+    setLoading(true);
+  };
+
+  const refreshData = () => {
+    setLoading(true);
+    renderDuplicateLeads();
+  };
+
   // Шаблоны для DataTable
   const actionButtonsTemplate = (rowData) => {
     return (
@@ -561,13 +649,33 @@ function Leads() {
 
   const headerTemplate = () => {
     return (
-      <div className="flex justify-content-end">
+      <div className="flex justify-content-between align-items-center p-0">
+        <Button
+          icon="pi pi-refresh"
+          label=""
+          loading={loading}
+          onClick={refreshData}
+        ></Button>
+
+        <Paginator
+          first={first}
+          rows={rows}
+          totalRecords={totalRecords}
+          rowsPerPageOptions={[1, 2, 5, 10]}
+          onPageChange={onPageChange}
+        />
+
         <span className="p-input-icon-left">
-          <i className="pi pi-search" />
-          <InputText
-            value={globalFilterValue}
-            onChange={onGlobalFilterChange}
-            placeholder="Поиск"
+          <Button icon="pi pi-filter" onClick={() => setSidebarVisible(true)} />
+          <FiltersStyled
+            visible={sidebarVisible}
+            setVisible={setSidebarVisible}
+            filtersArray={filtersArray}
+            type="leads"
+            renderData={renderDuplicateLeads}
+            first={first}
+            rows={rows}
+            page={page}
           />
         </span>
       </div>
@@ -789,11 +897,8 @@ function Leads() {
           <DataTable
             value={duplicateLeads}
             loading={loading}
-            paginator
             header={headerTemplate}
             rows={10}
-            rowsPerPageOptions={[5, 10, 25, 50]}
-            paginatorPosition="top"
             filters={filters}
           >
             <Column field="id" header="ID" body={phoneTemplate}></Column>
@@ -809,7 +914,7 @@ function Leads() {
               header="Статус"
               body={statusTemplate}
             ></Column>
-          
+
             <Column
               field="is_deposited"
               header="Депозит"

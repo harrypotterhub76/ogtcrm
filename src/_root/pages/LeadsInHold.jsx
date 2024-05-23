@@ -4,7 +4,6 @@ import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { FilterMatchMode } from "primereact/api";
 import { Toast } from "primereact/toast";
-import { InputText } from "primereact/inputtext";
 import {
   editLead,
   getCountries,

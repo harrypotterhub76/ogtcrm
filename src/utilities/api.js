@@ -209,7 +209,7 @@ export const postFunnelsStats = (postDates) =>
   axios.post(`http://25.18.88.64:8000/api/leads/funnel-stats`, postDates);
 
 export const getDuplicateLeads = (parametersObject) =>
-  axios.get(`http://25.18.88.64:8000/api/duplicate-leads`, parametersObject);
+  axios.post(`http://25.18.88.64:8000/api/duplicate-leads`, parametersObject);
 
 export const getFilteredSpends = (filtersObject) =>
   axios.post(
