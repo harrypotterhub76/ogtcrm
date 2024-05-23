@@ -87,15 +87,17 @@ function Funnels() {
   useEffect(() => {
     // renderFunnels();
     setTitleModel("Воронки");
+    getFunnels().then((response) => {
+      setFunnelsNames(response.data.map(({ name }) => name));
+    });
     console.log("funnels", funnels);
-  }, [funnels]);
+  }, []);
 
   const renderFunnels = async (obj) => {
     getFunnelsPaginationData(obj)
       .then((response) => {
         console.log(response);
         setFunnels(response.data.data);
-        setFunnelsNames(response.data.data.map((funnel) => funnel.name));
         setTotalRecords(response.data.total);
         setLoading(false);
       })
@@ -130,6 +132,7 @@ function Funnels() {
   const rejectDeletion = () => {
     showToast("info", "Удаление воронки отменено");
   };
+
 
   const deleteSelectedFunnel = () => {
     if (currentRowData) {
