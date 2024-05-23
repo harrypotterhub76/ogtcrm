@@ -15,6 +15,7 @@ import {
   editActivity,
   getSources,
   getOffersPaginationData,
+  editCapControl,
 } from "../../utilities/api";
 import { ConfirmPopup } from "primereact/confirmpopup";
 import { confirmPopup } from "primereact/confirmpopup";
@@ -27,6 +28,7 @@ import { Card } from "primereact/card";
 import { Skeleton } from "primereact/skeleton";
 import PaginatorComponent from "../../components/PaginatorComponent";
 import { Paginator } from "primereact/paginator";
+import { Checkbox } from "primereact/checkbox";
 
 function Offers() {
   // Стейты
@@ -38,6 +40,7 @@ function Offers() {
   const [sourceOptions, setSourceOptions] = useState([]);
 
   const [activityChecked, setActivityChecked] = useState([]);
+  const [capControlChecked, setCapControlChecked] = useState([]);
   const [selectedOfferID, setSelectedOfferID] = useState(null);
   const [sidebarVisible, setSidebarVisible] = useState(false);
 
@@ -231,11 +234,16 @@ function Offers() {
   const renderOffers = async (obj) => {
     getOffersPaginationData(obj).then(function (response) {
       const offerActiveArray = [];
+      const offerCapControlArray = [];
       console.log(response);
       response.data.data.forEach((obj) => {
         offerActiveArray.push({
           id: obj.id,
           active: obj.active === 1,
+        });
+        offerCapControlArray.push({
+          id: obj.id,
+          cap_control: obj.cap_control === 1,
         });
       });
 
@@ -253,6 +261,7 @@ function Offers() {
       setOffers(updatedOffers);
       setOffersNames(updatedOffers.map((offer) => offer.name));
       setActivityChecked(offerActiveArray);
+      setCapControlChecked(offerCapControlArray);
       setLoading(false);
     });
   };
@@ -389,6 +398,19 @@ function Offers() {
       });
   };
 
+  const handleEditCapControl = (id, cap_control) => {
+    editCapControl(id, cap_control)
+      .then((response) => {
+        showToast("success", response.data.message);
+        console.log(response);
+      })
+      .catch((err) => {
+        showToast("error", response.data.message);
+        console.log(err);
+      });
+  };
+
+
   // Функция для сброса состояния DialogInputObject
   const clearDialogInputObject = () => {
     setDialogInputObject({
@@ -443,6 +465,15 @@ function Offers() {
     );
     handleEditActivity(id, transformedActive);
     setActivityChecked(updatedActivityChecked);
+  };
+
+  const handleToggleCapControl = (id, value) => {
+    const transformedCapControl = value ? 1 : 0;
+    const updatedCapControlChecked = capControlChecked.map((item) =>
+      item.id === id ? { ...item, cap_control: value } : item
+    );
+    handleEditCapControl(id, transformedCapControl);
+    setCapControlChecked(updatedCapControlChecked);
   };
 
   const onPageChange = (event) => {
@@ -578,6 +609,17 @@ function Offers() {
     );
   };
 
+  const capControlTemplate = (rowData) => {
+    const item = capControlChecked.find((el) => el.id === rowData.id);
+    return (
+      <InputSwitch
+        key={item.id}
+        checked={item.active}
+        onChange={(e) => handleToggleCapControl(item.id, e.value)}
+      />
+    );
+  };
+
   const activityTemplate = (rowData) => {
     const item = activityChecked.find((el) => el.id === rowData.id);
     return (
@@ -659,6 +701,11 @@ function Offers() {
             <Column
               body={loading ? <Skeleton /> : capTimeTemplate}
               header="Время капы"
+            ></Column>
+            <Column
+              field="cap_control"
+              header="Управление капой"
+              body={loading ? <Skeleton /> : capControlTemplate}
             ></Column>
             <Column
               field="active"

@@ -194,7 +194,6 @@ function Funnels() {
             filtersArray={filtersArray}
             type="leads"
             renderData={renderFunnels}
-            setDataFinal={setFunnels}
             first={first}
             rows={rows}
             page={page}
