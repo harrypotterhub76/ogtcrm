@@ -5,13 +5,6 @@ import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
 import { MultiSelect } from "primereact/multiselect";
 import { useEffect, useState, useRef } from "react";
-import {
-  getFilteredSpends,
-  getFilteredOffers,
-  getFilteredFunnels,
-  getFilteredDomains,
-  getFilteredLeads,
-} from "../utilities/api";
 import { InputSwitch } from "primereact/inputswitch";
 
 function FiltersStyled({
@@ -22,6 +15,7 @@ function FiltersStyled({
   type,
   rows,
   page,
+  setFiltersObjectForRefresh,
 }) {
   const [filtersObject, setFiltersObject] = useState({});
   const [dates, setDates] = useState([]);
@@ -124,6 +118,8 @@ function FiltersStyled({
       renderData(filtersObject);
     }
     ref.current++;
+
+    if (setFiltersObjectForRefresh) setFiltersObjectForRefresh(filtersObject);
   }, [filtersObject]);
 
   const handleClear = () => {
