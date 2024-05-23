@@ -103,6 +103,7 @@ function Leads() {
     created_at: "",
     url_params: "",
     source: "",
+    external_id: "",
   };
 
   const [postLeadDialogInputObject, setPostLeadDialogInputObject] = useState(
@@ -284,6 +285,12 @@ function Leads() {
       placeholder: "Источник",
       options: sourcesOptions,
       setDropdownValue: setSelectedSource,
+    },
+    {
+      label: "ID Брокера",
+      key: "external_id",
+      type: "text",
+      placeholder: "ID Брокера",
     },
   ];
 
@@ -529,6 +536,7 @@ function Leads() {
       created_at: formatTimestampForCalendar(rowData.created_at),
       url_params: rowData.url_params,
       source: rowData.source,
+      external_id:rowData.external_id
     });
   };
 
