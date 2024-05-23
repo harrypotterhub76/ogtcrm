@@ -118,7 +118,7 @@ function Domains() {
       key: "name",
       type: "multiselect",
       placeholder: "Выберите пользователя",
-      options: domainsUsers,
+      options: usersOptions,
     },
   ];
 
