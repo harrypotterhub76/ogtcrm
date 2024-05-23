@@ -660,7 +660,7 @@ function Offers() {
         type="edit offer"
         isDialogVisible={isEditDialogVisible}
         setIsDialogVisible={setIsEditDialogVisible}
-        header="Изменить оффер"
+        header="Редактировать оффер"
         dialogInputObject={dialogInputObject}
         setDialogInputObject={setDialogInputObject}
         inputs={editDialogInputs}
