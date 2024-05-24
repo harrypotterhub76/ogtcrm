@@ -437,12 +437,6 @@ function Leads() {
       type: "calendar-dep",
       placeholder: "Дата депозита",
     },
-    // {
-    //   label: "Параметры",
-    //   key: "url_params",
-    //   type: "text",
-    //   placeholder: "Параметры",
-    // },
   ];
 
   // Функции подтягиваний данных с бека
@@ -614,7 +608,7 @@ function Leads() {
           }
           showToast("success", response.data.message);
           setIsAddDialogVisible(false);
-          renderLeads();
+          renderLeads(filtersObjectForRefresh);
         })
         .catch(function (error) {
           console.log(error);
@@ -632,7 +626,7 @@ function Leads() {
           setIsLeadDialogVisible(false);
           setIsSendLeadDialogVisible(false);
           showToast("success", response.data.message);
-          renderLeads();
+          renderLeads(filtersObjectForRefresh);
         })
         .catch(function (error) {
           console.log(error);
@@ -651,7 +645,7 @@ function Leads() {
         console.log(postLeadDialogInputObject);
         showToast("success", response.data.message);
         setLeadDialogType("post-lead");
-        renderLeads();
+        renderLeads(filtersObjectForRefresh);
       })
       .catch(function (error) {
         console.log(error);
@@ -663,7 +657,7 @@ function Leads() {
     deleteLead(selectedLeadID)
       .then(function (response) {
         showToast("success", response.data.message);
-        renderLeads();
+        renderLeads(filtersObjectForRefresh);
       })
       .catch(function (error) {
         showToast("error", response.data.message);
