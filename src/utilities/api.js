@@ -249,7 +249,7 @@ export const generatePassword = () =>
     contentType: "application/json",
   });
 
-export const getNoSendLeadsPaginationData = (parametersObject) =>
+export const getLeadsInHoldPaginationData = (parametersObject) =>
   axios.post(`http://25.18.88.64:8000/api/nosend-leads`, parametersObject);
 
 export const getImportedLeads = () =>

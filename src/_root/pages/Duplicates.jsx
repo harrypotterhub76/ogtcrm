@@ -15,6 +15,7 @@ import {
   getUsers,
   sendLead,
   getSources,
+  postOfferForLead,
 } from "../../utilities/api";
 import { deleteLead } from "../../utilities/api";
 import { ConfirmPopup } from "primereact/confirmpopup";
@@ -124,12 +125,14 @@ function Leads() {
     console.log("leadDialogType: ", leadDialogType);
     console.log("statusesOptions: ", statusesCRMOptions);
     console.log("funnels: ", funnels);
+    console.log("duplicateLeads: ", duplicateLeads);
   }, [
     addLeadDialogInputObject,
     postLeadDialogInputObject,
     leadDialogType,
     statusesCRMOptions,
     funnels,
+    duplicateLeads
   ]);
 
   useEffect(() => {
@@ -173,13 +176,11 @@ function Leads() {
   }, [isMounted, postLeadDialogInputObject]);
 
   useEffect(() => {
-    renderDuplicateLeads();
     getCountriesData();
     getFunnelsData();
     getOffersData();
     getStatusesCRMData();
     getUsersData();
-    setLoading(false);
     setTitleModel("Системные дубликаты");
   }, []);
 
@@ -431,7 +432,7 @@ function Leads() {
   };
 
   // Обработчики кликов по данным таблицы
-  const handlePhoneClick = (rowData) => {
+  const handleIDClick = (rowData) => {
     const parsedStatusArray = JSON.parse(rowData.status);
     const newestStatusObject = parsedStatusArray[parsedStatusArray.length - 1];
     setIsLeadDialogVisible(true);
@@ -785,7 +786,7 @@ function Leads() {
     );
   };
 
-  const phoneTemplate = (rowData) => {
+  const IDTemplate = (rowData) => {
     return (
       <div
         style={{
@@ -795,10 +796,10 @@ function Leads() {
           textUnderlineOffset: "5px",
         }}
         onClick={() => {
-          handlePhoneClick(rowData);
+          handleIDClick(rowData);
         }}
       >
-        {rowData.phone}
+        {rowData.id}
       </div>
     );
   };
@@ -829,7 +830,7 @@ function Leads() {
           setIsParameterDialogVisible(false);
         }}
       >
-        <DataTable value={selectedURLParams} stripedRows showGridlines>
+        <DataTable value={selectedURLParams} showGridlines>
           <Column field="parameter" header="Параметр"></Column>
           <Column field="value" header="Значение"></Column>
         </DataTable>
@@ -846,7 +847,7 @@ function Leads() {
           setIsStatusDialogVisible(false);
         }}
       >
-        <DataTable value={selectedStatuses} stripedRows showGridlines>
+        <DataTable value={selectedStatuses}  showGridlines>
           <Column field="time" header="Время"></Column>
           <Column field="status" header="Статус"></Column>
         </DataTable>
@@ -890,11 +891,11 @@ function Leads() {
           style={{ width: "90%" }}
         >
           <h2 className="m-0">Системные дубликаты</h2>
-          <Button
+          {/* <Button
             label="Добавить"
             icon="pi pi-plus"
             onClick={() => setIsAddDialogVisible(true)}
-          />
+          /> */}
         </div>
         <Card style={{ width: "90%" }}>
           <DataTable
@@ -903,8 +904,7 @@ function Leads() {
             rows={10}
             filters={filters}
           >
-            <Column field="id" header="ID" body={phoneTemplate}></Column>
-            <Column field="offer" header="Оффер"></Column>
+            <Column field="id" header="ID" body={IDTemplate}></Column>
             <Column field="phone" header="Номер телефона"></Column>
             <Column field="full_name" header="Имя / Фамилия"></Column>
             <Column field="email" header="Почта"></Column>

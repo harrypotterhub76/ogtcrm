@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef, useReducer, useContext } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
-import { FilterMatchMode } from "primereact/api";
 import { Toast } from "primereact/toast";
 import {
+  addLead,
   editLead,
   getCountries,
   getFunnels,
@@ -13,8 +13,9 @@ import {
   getUsers,
   sendLead,
   postOfferForLead,
-  getNoSendLeadsPaginationData,
   getSources,
+  getFilteredLeads,
+  getLeadsInHoldPaginationData,
 } from "../../utilities/api";
 import { deleteLead } from "../../utilities/api";
 import { ConfirmPopup } from "primereact/confirmpopup";
@@ -24,19 +25,22 @@ import { DialogComponent } from "../../components/DialogComponent";
 import { Dropdown } from "primereact/dropdown";
 import { Card } from "primereact/card";
 import { TitleContext } from "../../context/TitleContext";
+
 import FiltersStyled from "../../components/FiltersComponent";
-import { Skeleton } from "primereact/skeleton";
 import { UserContext } from "../../context/UserContext";
+import { Skeleton } from "primereact/skeleton";
 import { Paginator } from "primereact/paginator";
 
 function LeadsInHold() {
   // Стейты
-  const [leads, setLeads] = useState([]);
+  const [leadsInHold, setLeadsInHold] = useState([]);
   const [funnels, setFunnels] = useState({});
   const [offers, setOffers] = useState([]);
   const [users, setUsers] = useState([]);
+  const [sources, setSources] = useState([]);
 
   const [offersOptions, setOffersOptions] = useState([]);
+  const [activeOffersOptions, setActiveOffersOptions] = useState([]);
   const [funnelsOptions, setFunnelsOptions] = useState([]);
   const [usersOptions, setUsersOptions] = useState([]);
   const [geosOptions, setGeosOptions] = useState([]);
@@ -49,30 +53,25 @@ function LeadsInHold() {
   const [selectedURLParams, setSelectedURLParams] = useState([]);
   const [selectedStatuses, setSelectedStatuses] = useState([]);
   const [selectedLeadID, setSelectedLeadID] = useState(null);
+  const [selectedSource, setSelectedSource] = useState(null);
 
   const [isLeadDialogVisible, setIsLeadDialogVisible] = useState(false);
   const [leadDialogType, setLeadDialogType] = useState("post-lead");
-  //   const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
+  const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
   const [isParameterDialogVisible, setIsParameterDialogVisible] =
     useState(false);
   const [isStatusDialogVisible, setIsStatusDialogVisible] = useState(false);
   const [isSendLeadDialogVisible, setIsSendLeadDialogVisible] = useState(false);
   const [sidebarVisible, setSidebarVisible] = useState(false);
-  const [filtersObjectForRefresh, setFiltersObjectForRefresh] = useState({});
 
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(5);
   const [page, setPage] = useState(0);
   const [totalRecords, setTotalRecords] = useState(0);
-
-  const [filters, setFilters] = useState({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-  });
-  const [globalFilterValue, setGlobalFilterValue] = useState("");
+  const [filtersObjectForRefresh, setFiltersObjectForRefresh] = useState({});
   const [loading, setLoading] = useState(true);
-  const isMounted = useRef(false);
-  const { setTitleModel } = useContext(TitleContext);
 
+  const { setTitleModel } = useContext(TitleContext);
   const { user } = useContext(UserContext);
 
   const addLeadDialogInitialState = {
@@ -98,6 +97,8 @@ function LeadsInHold() {
     geo: [],
     created_at: "",
     url_params: "",
+    source: "",
+    external_id: "",
   };
 
   const [postLeadDialogInputObject, setPostLeadDialogInputObject] = useState(
@@ -126,12 +127,17 @@ function LeadsInHold() {
     console.log("leadDialogType: ", leadDialogType);
     console.log("statusesOptions: ", statusesCRMOptions);
     console.log("funnels: ", funnels);
+    console.log("leads: ", leadsInHold);
+    console.log("offers:", offers);
+    console.log("offersOptions:", offersOptions);
+    console.log("activeOffersOptions:", activeOffersOptions);
   }, [
     addLeadDialogInputObject,
     postLeadDialogInputObject,
     leadDialogType,
     statusesCRMOptions,
     funnels,
+    leadsInHold,
   ]);
 
   useEffect(() => {
@@ -168,11 +174,15 @@ function LeadsInHold() {
   }, [selectedUserDialog]);
 
   useEffect(() => {
-    if (isMounted.current) {
-      getOffersOptionsData();
+    if (selectedSource) {
+      setPostLeadDialogInputObject((prevState) => ({
+        ...prevState,
+        source: selectedSource,
+        source_id: getSelectedSourceID(selectedSource),
+      }));
     }
-    isMounted.current = true;
-  }, [isMounted, postLeadDialogInputObject]);
+    console.log("selectedSource", selectedSource);
+  }, [selectedSource]);
 
   useEffect(() => {
     getCountriesData();
@@ -181,8 +191,14 @@ function LeadsInHold() {
     getStatusesCRMData();
     getUsersData();
     getSourcesData();
-    setTitleModel("Неотправленные Лиды");
+    setTitleModel("Лиды");
   }, []);
+
+  useEffect(() => {
+    if (postLeadDialogInputObject.funnel && postLeadDialogInputObject.geo) {
+      getOffersOptionsData();
+    }
+  }, [postLeadDialogInputObject]);
 
   // Инпуты для DialogComponent
   const postLeadDialogInputs = [
@@ -258,60 +274,74 @@ function LeadsInHold() {
       type: "text",
       placeholder: "Параметры",
     },
+    {
+      label: "Источник",
+      key: "source",
+      type: "dropdown",
+      placeholder: "Источник",
+      options: sourcesOptions,
+      setDropdownValue: setSelectedSource,
+    },
+    {
+      label: "ID Брокера",
+      key: "external_id",
+      type: "text",
+      placeholder: "ID Брокера",
+    },
   ];
 
-  //   const addLeadDialogInputs = [
-  //     {
-  //       label: "Имя",
-  //       key: "full_name",
-  //       type: "text",
-  //       placeholder: "Имя",
-  //     },
-  //     {
-  //       label: "Домен",
-  //       key: "domain",
-  //       type: "text",
-  //       placeholder: "Домен",
-  //     },
-  //     {
-  //       label: "Email",
-  //       key: "email",
-  //       type: "text",
-  //       placeholder: "Email",
-  //     },
-  //     {
-  //       label: "Воронка",
-  //       key: "funnel",
-  //       type: "dropdown",
-  //       placeholder: "Воронка",
-  //       options: funnelsOptions,
-  //     },
-  //     {
-  //       label: "Телефон",
-  //       key: "phone",
-  //       type: "text",
-  //       placeholder: "Телефон",
-  //     },
-  //     {
-  //       label: "IP",
-  //       key: "ip",
-  //       type: "text",
-  //       placeholder: "IP",
-  //     },
-  //     {
-  //       label: "Гео",
-  //       key: "geo",
-  //       type: "dropdown",
-  //       placeholder: "Гео",
-  //       options: geosOptions,
-  //     },
-  //     {
-  //       label: "Параметры",
-  //       key: "url_params",
-  //       type: "text",
-  //       placeholder: "Параметры",
-  //     },
-  //   ];
+  const addLeadDialogInputs = [
+    {
+      label: "Имя",
+      key: "full_name",
+      type: "text",
+      placeholder: "Имя",
+    },
+    {
+      label: "Домен",
+      key: "domain",
+      type: "text",
+      placeholder: "Домен",
+    },
+    {
+      label: "Email",
+      key: "email",
+      type: "text",
+      placeholder: "Email",
+    },
+    {
+      label: "Воронка",
+      key: "funnel",
+      type: "dropdown",
+      placeholder: "Воронка",
+      options: funnelsOptions,
+    },
+    {
+      label: "Телефон",
+      key: "phone",
+      type: "text",
+      placeholder: "Телефон",
+    },
+    {
+      label: "IP",
+      key: "ip",
+      type: "text",
+      placeholder: "IP",
+    },
+    {
+      label: "Гео",
+      key: "geo",
+      type: "dropdown",
+      placeholder: "Гео",
+      options: geosOptions,
+    },
+    {
+      label: "Параметры",
+      key: "url_params",
+      type: "text",
+      placeholder: "Параметры",
+    },
+  ];
 
   //фильтры для FitersComponent
 
@@ -365,64 +395,104 @@ function LeadsInHold() {
   ];
 
   // Функции подтягиваний данных с бека
-  const renderNoSendLeads = async (obj) => {
-    getNoSendLeadsPaginationData(obj).then(function (response) {
-      console.log(response);
-      setLeads(response.data.data);
+  const renderLeadsInHold = async (obj) => {
+    getLeadsInHoldPaginationData(obj).then(function (response) {
+      setLeadsInHold(response.data.data);
       setTotalRecords(response.data.total);
       setLoading(false);
     });
   };
 
   const getOffersData = () => {
-    getOffers().then((response) => {
-      setOffers(response.data);
-    });
+    getOffers()
+      .then((response) => {
+        const updatedOffers = response.data.data.map(({ name }) => name);
+        setOffers(response.data.data);
+        setOffersOptions(updatedOffers);
+      })
+      .catch((error) => {
+        console.log(error);
+        showToast("error", "Ошибка при загрузке офферов");
+      });
   };
   const getOffersOptionsData = () => {
     postOfferForLead({
       funnel: postLeadDialogInputObject.funnel,
       geo: postLeadDialogInputObject.geo,
-    }).then((response) => {
-      const updatedOffers = response.data.map(({ name }) => name);
-      setOffersOptions(updatedOffers);
-    });
+    })
+      .then((response) => {
+        console.log(response);
+        if (response.data.message !== "Нет активных офферов") {
+          const updatedOffers = response.data.map(({ name }) => name);
+          setActiveOffersOptions(updatedOffers);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        showToast("error", "Ошибка при загрузке активных офферов");
+      });
   };
   const getFunnelsData = () => {
-    getFunnels().then((response) => {
-      const updatedFunnels = response.data.map(({ name }) => name);
-      setFunnels(response.data);
-      setFunnelsOptions(updatedFunnels);
-    });
+    getFunnels()
+      .then((response) => {
+        const updatedFunnels = response.data.map(({ name }) => name);
+        setFunnels(response.data);
+        setFunnelsOptions(updatedFunnels);
+      })
+      .catch((error) => {
+        console.log(error);
+        showToast("error", "Ошибка при загрузке воронок");
+      });
   };
 
   const getCountriesData = () => {
-    getCountries().then((response) => {
-      const updatedGeos = response.data.map(({ iso }) => iso);
-      setGeosOptions(updatedGeos);
-    });
+    getCountries()
+      .then((response) => {
+        const updatedGeos = response.data.map(({ iso }) => iso);
+        setGeosOptions(updatedGeos);
+      })
+      .catch((error) => {
+        console.log(error);
+        showToast("error", "Ошибка при загрузке гео");
+      });
   };
 
   const getUsersData = () => {
-    getUsers().then((response) => {
-      setUsers(response.data);
-      setUsersOptions(response.data.map(({ name }) => name));
-    });
+    getUsers()
+      .then((response) => {
+        setUsers(response.data);
+        setUsersOptions(response.data.map(({ name }) => name));
+      })
+      .catch((error) => {
+        console.log(error);
+        showToast("error", "Ошибка при загрузке пользователей");
+      });
   };
 
   const getStatusesCRMData = () => {
-    getStatusesCRM().then((response) => {
-      const updatedStatusesCRM = response.data.map(
-        ({ crm_status }) => crm_status
-      );
-      setStatusesCRMOptions(updatedStatusesCRM);
-    });
+    getStatusesCRM()
+      .then((response) => {
+        const updatedStatusesCRM = response.data.map(
+          ({ crm_status }) => crm_status
+        );
+        setStatusesCRMOptions(updatedStatusesCRM);
+      })
+      .catch((error) => {
+        console.log(error);
+        showToast("error", "Ошибка при загрузке статусов");
+      });
   };
 
   const getSourcesData = () => {
-    getSources().then((response) => {
-      setSourcesOptions(response.data.map(({ name }) => name));
-    });
+    getSources()
+      .then((response) => {
+        setSources(response.data);
+        setSourcesOptions(response.data.map(({ name }) => name));
+      })
+      .catch((error) => {
+        console.log(error);
+        showToast("error", "Ошибка при загрузке источников");
+      });
   };
 
   // Обработчики кликов по данным таблицы
@@ -431,6 +501,7 @@ function LeadsInHold() {
     const newestStatusObject = parsedStatusArray[parsedStatusArray.length - 1];
     setIsLeadDialogVisible(true);
     setSelectedLeadID(rowData.id);
+    setSelectedSource(rowData.source);
     setSelectedFunnelDialog(rowData.funnel);
     setSelectedUserDialog(rowData.user);
     setPostLeadDialogInputObject({
@@ -444,6 +515,8 @@ function LeadsInHold() {
       geo: rowData.geo,
       created_at: formatTimestampForCalendar(rowData.created_at),
       url_params: rowData.url_params,
+      source: rowData.source,
+      external_id: rowData.external_id,
     });
   };
 
@@ -478,26 +551,6 @@ function LeadsInHold() {
   };
 
   // Обработчики взаимодействия фронта с беком
-  //   const handleAddLead = () => {
-  //     if (isAllFieldsFilled(addLeadDialogInputObject)) {
-  //       addLead(addLeadDialogInputObject)
-  //         .then(function (response) {
-  //           if (response.data.message === "Dublicate System") {
-  //             showToast("success", response.data.message);
-  //             return;
-  //           }
-  //           showToast("success", response.data.message);
-  //           setIsAddDialogVisible(false);
-  //           renderLeads();
-  //         })
-  //         .catch(function (error) {
-  //           console.log(error);
-  //           showToast("error", response.data.message);
-  //         });
-  //     } else {
-  //       showToast("error", "Пожалуйста, введите все поля");
-  //     }
-  //   };
 
   const handlePostLead = () => {
     if (isAllFieldsFilled(postLeadDialogInputObject)) {
@@ -506,7 +559,7 @@ function LeadsInHold() {
           setIsLeadDialogVisible(false);
           setIsSendLeadDialogVisible(false);
           showToast("success", response.data.message);
-          renderNoSendLeads();
+          refreshData();
         })
         .catch(function (error) {
           console.log(error);
@@ -518,11 +571,14 @@ function LeadsInHold() {
   };
 
   const handleEditLead = () => {
+    console.log(postLeadDialogInputObject);
     editLead(postLeadDialogInputObject, selectedLeadID)
       .then(function (response) {
+        console.log(response);
+        console.log(postLeadDialogInputObject);
         showToast("success", response.data.message);
         setLeadDialogType("post-lead");
-        renderNoSendLeads();
+        refreshData();
       })
       .catch(function (error) {
         console.log(error);
@@ -534,7 +590,7 @@ function LeadsInHold() {
     deleteLead(selectedLeadID)
       .then(function (response) {
         showToast("success", response.data.message);
-        renderNoSendLeads();
+        refreshData();
       })
       .catch(function (error) {
         showToast("error", response.data.message);
@@ -546,8 +602,13 @@ function LeadsInHold() {
   const clearDialogInputObject = () => {
     setAddLeadDialogInputObject(addLeadDialogInitialState);
     setPostLeadDialogInputObject(postLeadDialogInitialState);
-    setSelectedLeadID(null);
     setLeadDialogType("post-lead");
+    setSelectedLeadID(null);
+    setSelectedOfferDialog(null);
+    setSelectedFunnelDialog(null);
+    setSelectedUserDialog(null);
+    setSelectedURLParams(null);
+    setActiveOffersOptions(null);
   };
 
   // Рендер плажки на удаление данных из DataTable
@@ -575,6 +636,11 @@ function LeadsInHold() {
 
   const getSelectedUserID = (name) => {
     const filteredArray = users.filter((obj) => obj.name === name);
+    return filteredArray[0].id;
+  };
+
+  const getSelectedSourceID = (name) => {
+    const filteredArray = sources.filter((obj) => obj.name === name);
     return filteredArray[0].id;
   };
 
@@ -630,7 +696,7 @@ function LeadsInHold() {
 
   const refreshData = () => {
     setLoading(true);
-    renderNoSendLeads(filtersObjectForRefresh);
+    renderLeadsInHold(filtersObjectForRefresh);
   };
 
   // Шаблоны для DataTable
@@ -672,7 +738,8 @@ function LeadsInHold() {
             filtersArray={filtersArray}
             setFiltersObjectForRefresh={setFiltersObjectForRefresh}
             type="leads"
-            renderData={renderNoSendLeads}
+            renderData={renderLeadsInHold}
+            setDataFinal={setLeadsInHold}
             first={first}
             rows={rows}
             page={page}
@@ -756,11 +823,12 @@ function LeadsInHold() {
 
   const statusTemplate = (rowData) => {
     const parsedArray = JSON.parse(rowData.status);
-    const newestStatus = parsedArray[parsedArray.length - 1].status;
+    // const newestStatus = parsedArray[parsedArray.length - 1].status;
     return (
       <div
         style={{
           cursor: "pointer",
+          // color: rowData.is_valid ? "#34d399" : "#ff6666",
           color: "#34d399",
           textDecoration: "underline",
           textUnderlineOffset: "5px",
@@ -769,7 +837,7 @@ function LeadsInHold() {
           handleStatusClick(rowData, parsedArray);
         }}
       >
-        {newestStatus}
+        {rowData.newest_status}
       </div>
     );
   };
@@ -818,7 +886,7 @@ function LeadsInHold() {
           setIsParameterDialogVisible(false);
         }}
       >
-        <DataTable value={selectedURLParams} stripedRows showGridlines>
+        <DataTable value={selectedURLParams} showGridlines>
           <Column field="parameter" header="Параметр"></Column>
           <Column field="value" header="Значение"></Column>
         </DataTable>
@@ -835,7 +903,7 @@ function LeadsInHold() {
           setIsStatusDialogVisible(false);
         }}
       >
-        <DataTable value={selectedStatuses} stripedRows showGridlines>
+        <DataTable value={selectedStatuses} showGridlines>
           <Column field="time" header="Время"></Column>
           <Column field="status" header="Статус"></Column>
         </DataTable>
@@ -843,6 +911,7 @@ function LeadsInHold() {
 
       <Dialog
         header="Выбрать оффер"
+        draggable={false}
         visible={isSendLeadDialogVisible}
         style={{ maxWidth: "calc(50% - 0.5rem)" }}
         onHide={() => setIsSendLeadDialogVisible(false)}
@@ -852,9 +921,10 @@ function LeadsInHold() {
           onChange={(e) => {
             setSelectedOfferDialog(e.value);
           }}
-          options={offersOptions}
-          placeholder={"Офферы"}
+          options={activeOffersOptions}
+          placeholder="Офферы"
           className="w-full mb-5"
+          emptyMessage="Нет активных офферов"
         />
         <Button label="Отправить" onClick={handlePostLead} />
       </Dialog>
@@ -880,16 +950,18 @@ function LeadsInHold() {
 
       <div className="flex flex-column align-items-center justify-content-center">
         <div
-          className="flex justify-content-between my-5"
+          className="flex justify-content-between my-5 mb-0"
           style={{ width: "90%" }}
         >
-          <h2 className="m-0">Неотправленные Лиды</h2>
+          <h2 className="m-0">Неотправленные лиды</h2>
         </div>
+        <p className="" style={{ width: "90%" }}>
+          Общее количество: {totalRecords}
+        </p>
         <Card style={{ width: "90%" }}>
           <DataTable
-            value={loading ? skeletonData : leads}
+            value={loading ? skeletonData : leadsInHold}
             header={headerTemplate}
-            filters={filters}
           >
             <Column field="id" header="ID" body={phoneTemplate}></Column>
             {/* {JSON.parse(user).user.role === "Admin" && (
@@ -978,6 +1050,7 @@ const skeletonData = [
     created_at: <Skeleton />,
     lead_sent: <Skeleton />,
     date_deposited: <Skeleton />,
+    source: <Skeleton />,
   },
   {
     id: <Skeleton />,
@@ -996,6 +1069,7 @@ const skeletonData = [
     created_at: <Skeleton />,
     lead_sent: <Skeleton />,
     date_deposited: <Skeleton />,
+    source: <Skeleton />,
   },
   {
     id: <Skeleton />,
@@ -1014,6 +1088,7 @@ const skeletonData = [
     created_at: <Skeleton />,
     lead_sent: <Skeleton />,
     date_deposited: <Skeleton />,
+    source: <Skeleton />,
   },
   {
     id: <Skeleton />,
@@ -1032,6 +1107,7 @@ const skeletonData = [
     created_at: <Skeleton />,
     lead_sent: <Skeleton />,
     date_deposited: <Skeleton />,
+    source: <Skeleton />,
   },
   {
     id: <Skeleton />,
@@ -1050,5 +1126,6 @@ const skeletonData = [
     created_at: <Skeleton />,
     lead_sent: <Skeleton />,
     date_deposited: <Skeleton />,
+    source: <Skeleton />,
   },
 ];
