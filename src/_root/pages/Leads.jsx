@@ -184,12 +184,12 @@ function Leads() {
   }, [selectedSource]);
 
   useEffect(() => {
-    // getCountriesData();
-    // getFunnelsData();
-    // getOffersData();
-    // getStatusesCRMData();
-    // getUsersData();
-    // getSourcesData();
+    getCountriesData();
+    getFunnelsData();
+    getOffersData();
+    getStatusesCRMData();
+    getUsersData();
+    getSourcesData();
     setTitleModel("Лиды");
   }, []);
 

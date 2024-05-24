@@ -8,6 +8,7 @@ import { Chart } from "primereact/chart";
 import { TitleContext } from "../../context/TitleContext";
 import { Card } from "primereact/card";
 import { UserContext } from "../../context/UserContext";
+import { Skeleton } from "primereact/skeleton";
 
 function Dashboard() {
   const [value, setValue] = useState(10);
@@ -38,7 +39,8 @@ function Dashboard() {
 
   useEffect(() => {
     console.log("offers:", offers);
-  }, [offers]);
+    console.log("stats:", stats);
+  }, [offers, stats]);
 
   const renderOffers = () => {
     getOffers()
@@ -196,17 +198,14 @@ function Dashboard() {
                 <div>
                   <span className="block text-500 font-medium mb-3">Лиды</span>
                   <div className="text-900 font-medium text-xl">
-                    {stats.leads_count}
+                    {"leads_count" in stats ? stats.leads_count : <Skeleton />}
                   </div>
                 </div>
                 <div
                   className="flex align-items-center justify-content-center bg-green-100 border-round"
                   style={{ width: "2.5rem", height: "2.5rem" }}
                 >
-                  <i
-                    className="pi pi-user
- text-green-500 text-xl"
-                  ></i>
+                  <i className="pi pi-user text-green-500 text-xl"></i>
                 </div>
               </div>
             </Card>
@@ -219,7 +218,7 @@ function Dashboard() {
                     Валиды
                   </span>
                   <div className="text-900 font-medium text-xl">
-                    {stats.valid}
+                    {"valid" in stats ? stats.valid : <Skeleton />}
                   </div>
                 </div>
                 <div
@@ -239,7 +238,7 @@ function Dashboard() {
                     Невалиды
                   </span>
                   <div className="text-900 font-medium text-xl">
-                    {stats.no_valid}
+                    {"no_valid" in stats ? stats.no_valid : <Skeleton />}
                   </div>
                 </div>
                 <div
@@ -257,7 +256,11 @@ function Dashboard() {
                 <div>
                   <span className="block text-500 font-medium mb-3">FTD</span>
                   <div className="text-900 font-medium text-xl">
-                    {stats.deposited_leads_count}
+                    {"deposited_leads_count" in stats ? (
+                      stats.deposited_leads_count
+                    ) : (
+                      <Skeleton />
+                    )}
                   </div>
                 </div>
                 <div
@@ -276,7 +279,7 @@ function Dashboard() {
                 <div>
                   <span className="block text-500 font-medium mb-3">CR</span>
                   <div className="text-900 font-medium text-xl">
-                    {stats.cr}%
+                    {"cr" in stats ? `${stats.cr}%` : <Skeleton />}
                   </div>
                 </div>
                 <div
@@ -296,7 +299,7 @@ function Dashboard() {
                     Затраты
                   </span>
                   <div className="text-900 font-medium text-xl">
-                    {stats.today_spend_summary}$
+                  {"today_spend_summary" in stats ? `${stats.today_spend_summary}%` : <Skeleton />}
                   </div>
                 </div>
                 <div
