@@ -7,7 +7,7 @@ import { Password } from "primereact/password";
 import { TitleContext } from "../../context/TitleContext";
 import { login } from "../../utilities/api";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "../../context/userContext";
+import { UserContext } from "../../context/UserContext";
 
 export default function Login() {
   const [emailValue, setEmailValue] = useState("");

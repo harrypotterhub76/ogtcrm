@@ -2,7 +2,7 @@ import { Ripple } from "primereact/Ripple";
 import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { SidebarContext } from "../context/SidebarContext";
-import { UserContext } from "../context/userContext";
+import { UserContext } from "../context/UserContext";
 
 function SidebarLink({ handleHide, link }) {
   const { sidebarModel, setSidebarModel } = useContext(SidebarContext);

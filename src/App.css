@@ -136,6 +136,12 @@ td > div,
   margin: 0  auto;
 }
 
+.statistics-card .p-card-content {
+  display: flex;
+  gap: 10px ;
+  flex-wrap: wrap;
+}
+
 @media (max-width: 1439px) {
   .dashboard-card.p-card .p-card-body {
     padding: 0.5rem;

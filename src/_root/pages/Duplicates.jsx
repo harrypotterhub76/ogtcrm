@@ -27,7 +27,7 @@ import { Card } from "primereact/card";
 import { Paginator } from "primereact/paginator";
 
 import { Skeleton } from "primereact/skeleton";
-import { UserContext } from "../../context/userContext";
+import { UserContext } from "../../context/UserContext";
 
 function Leads() {
   // Стейты

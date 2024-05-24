@@ -206,14 +206,8 @@ function Sources() {
       <div style={{ margin: "0 auto" }}>
         <DataTable
           value={sources}
-          paginator
-          rows={20}
-          rowsPerPageOptions={[20, 50, 100]}
           showGridlines
           tableStyle={{ minWidth: "50rem" }}
-          paginatorPosition="both"
-          dataKey="id"
-          filters={filters}
           loading={loading}
           header={renderHeader()}
           emptyMessage="Источник не найден."

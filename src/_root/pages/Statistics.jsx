@@ -48,6 +48,9 @@ function Statistics() {
 
   useEffect(() => {
     formatDatesState(dates);
+    setLoadingLeads(true);
+    setLoadingOffers(true);
+    setLoadingFunnels(true);
   }, [dates]);
 
   useEffect(() => {
@@ -215,40 +218,35 @@ function Statistics() {
         className="flex justify-content-between my-2"
         style={{ width: "90%" }}
       >
-        <Card className=" flex">
+        <Card className="flex statistics-card">
           <Button
             onClick={() => {
               handleDateButtonClick("today");
             }}
-            className="mr-2"
             label="Сегодня"
           ></Button>
           <Button
             onClick={() => {
               handleDateButtonClick("current week");
             }}
-            className="mx-2"
             label="Текущая неделя"
           ></Button>
           <Button
             onClick={() => {
               handleDateButtonClick("last week");
             }}
-            className="mx-2"
             label="Прошлая неделя"
           ></Button>
           <Button
             onClick={() => {
               handleDateButtonClick("current month");
             }}
-            className="mx-2"
             label="Текущий месяц"
           ></Button>
           <Button
             onClick={() => {
               handleDateButtonClick("last month");
             }}
-            className="ml-2"
             label="Прошлый месяц"
           ></Button>
         </Card>
@@ -291,7 +289,6 @@ function Statistics() {
         <DataTable
           value={loadingOffers ? offersSkeletonData : offersStats}
           rows={10}
-          // showGridlines
           className="mb-5 w-full"
           style={{ maxWidth: "90%" }}
           emptyMessage="Нет данных"
@@ -308,7 +305,6 @@ function Statistics() {
         <DataTable
           value={loadingFunnels ? funnelsSkeletonData : funnelsStats}
           rows={10}
-          // showGridlines
           className="mb-5 w-full"
           style={{ maxWidth: "90%" }}
           emptyMessage="Нет данных"

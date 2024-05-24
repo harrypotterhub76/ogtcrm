@@ -1,8 +1,7 @@
-import { useState, useEffect, useRef, useReducer, useContext } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
-import { FilterMatchMode } from "primereact/api";
 import { Toast } from "primereact/toast";
 import {
   addLead,
@@ -16,7 +15,6 @@ import {
   postOfferForLead,
   getSources,
   getFilteredLeads,
-  // getLeadsPaginationData,
 } from "../../utilities/api";
 import { deleteLead } from "../../utilities/api";
 import { ConfirmPopup } from "primereact/confirmpopup";
@@ -28,7 +26,7 @@ import { Card } from "primereact/card";
 import { TitleContext } from "../../context/TitleContext";
 
 import FiltersStyled from "../../components/FiltersComponent";
-import { UserContext } from "../../context/userContext";
+import { UserContext } from "../../context/UserContext";
 import { Skeleton } from "primereact/skeleton";
 import { Paginator } from "primereact/paginator";
 
@@ -186,12 +184,12 @@ function Leads() {
   }, [selectedSource]);
 
   useEffect(() => {
-    getCountriesData();
-    getFunnelsData();
-    getOffersData();
-    getStatusesCRMData();
-    getUsersData();
-    getSourcesData();
+    // getCountriesData();
+    // getFunnelsData();
+    // getOffersData();
+    // getStatusesCRMData();
+    // getUsersData();
+    // getSourcesData();
     setTitleModel("Лиды");
   }, []);
 
@@ -477,8 +475,10 @@ function Leads() {
     })
       .then((response) => {
         console.log(response);
-        const updatedOffers = response.data.map(({ name }) => name);
-        setActiveOffersOptions(updatedOffers);
+        if (response.data.message !== "Нет активных офферов") {
+          const updatedOffers = response.data.map(({ name }) => name);
+          setActiveOffersOptions(updatedOffers);
+        }
       })
       .catch((error) => {
         console.log(error);

@@ -29,7 +29,7 @@ import {
 import RootLayout from "./_root/RootLayout";
 import "./App.css";
 import { useContext, useState } from "react";
-import { UserContext } from "./context/userContext";
+import { UserContext } from "./context/UserContext";
 
 function ProtectedRoute({ user, children }) {
   if (!user) {

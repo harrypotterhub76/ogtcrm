@@ -6,7 +6,7 @@ import { Calendar } from "primereact/calendar";
 import { MultiSelect } from "primereact/multiselect";
 import { useEffect, useState, useRef, useContext } from "react";
 import { InputSwitch } from "primereact/inputswitch";
-import { UserContext } from "../context/userContext";
+import { UserContext } from "../context/UserContext";
 
 function FiltersStyled({
   visible,

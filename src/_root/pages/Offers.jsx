@@ -57,8 +57,8 @@ function Offers() {
     cap: "",
     funnels: [],
     geo: [],
-    offer_start: "",
-    offer_end: "",
+    offer_start: "00:00",
+    offer_end: "00:00",
     source: [],
   });
 
@@ -423,8 +423,8 @@ function Offers() {
       cap: "",
       funnels: [],
       geo: [],
-      offer_start: "",
-      offer_end: "",
+      offer_start: "00:00",
+      offer_end: "00:00",
       source: [],
     });
   };

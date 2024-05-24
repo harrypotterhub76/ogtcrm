@@ -7,7 +7,7 @@ import { useRef } from "react";
 import { Chart } from "primereact/chart";
 import { TitleContext } from "../../context/TitleContext";
 import { Card } from "primereact/card";
-import { UserContext } from "../../context/userContext";
+import { UserContext } from "../../context/UserContext";
 
 function Dashboard() {
   const [value, setValue] = useState(10);

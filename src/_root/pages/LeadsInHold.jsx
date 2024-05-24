@@ -26,7 +26,7 @@ import { Card } from "primereact/card";
 import { TitleContext } from "../../context/TitleContext";
 import FiltersStyled from "../../components/FiltersComponent";
 import { Skeleton } from "primereact/skeleton";
-import { UserContext } from "../../context/userContext";
+import { UserContext } from "../../context/UserContext";
 import { Paginator } from "primereact/paginator";
 
 function LeadsInHold() {
