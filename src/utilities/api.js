@@ -193,11 +193,11 @@ export const editStatusBroker = (dialogInputObject, id) =>
     status_id: dialogInputObject.status_id,
   });
 
-export const getLeadsForChart = () =>
-  axios.get(`http://25.18.88.64:8000/api/leads-chart`);
+export const getLeadsForChart = (obj) =>
+  axios.post(`http://25.18.88.64:8000/api/leads-chart`, obj);
 
-export const getStats = () =>
-  axios.get(`http://25.18.88.64:8000/api/leads-stats`);
+export const getStats = (obj) =>
+  axios.post(`http://25.18.88.64:8000/api/leads-stats`, obj);
 
 export const postLeadsStats = (postDates) =>
   axios.post(`http://25.18.88.64:8000/api/leads/leads-stats`, postDates);

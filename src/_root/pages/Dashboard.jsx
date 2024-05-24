@@ -7,6 +7,7 @@ import { useRef } from "react";
 import { Chart } from "primereact/chart";
 import { TitleContext } from "../../context/TitleContext";
 import { Card } from "primereact/card";
+import { UserContext } from "../../context/userContext";
 
 function Dashboard() {
   const [value, setValue] = useState(10);
@@ -23,6 +24,9 @@ function Dashboard() {
   const ref = useRef(0);
 
   const { setTitleModel } = useContext(TitleContext);
+  const { user } = useContext(UserContext);
+
+  console.log(JSON.parse(user).user);
 
   const showToast = (severity, text) => {
     toast.current.show({
@@ -34,7 +38,7 @@ function Dashboard() {
 
   useEffect(() => {
     console.log("offers:", offers);
-  }, [offers])
+  }, [offers]);
 
   const renderOffers = () => {
     getOffers()
@@ -49,7 +53,10 @@ function Dashboard() {
   };
 
   const renderStats = () => {
-    getStats()
+    getStats({
+      role: JSON.parse(user).user.role,
+      user_id: JSON.parse(user).user.id,
+    })
       .then((response) => {
         setStats(response.data);
         setLoading(false);
@@ -61,7 +68,10 @@ function Dashboard() {
   };
 
   const renderLeads = () => {
-    getLeadsForChart()
+    getLeadsForChart({
+      role: JSON.parse(user).user.role,
+      user_id: JSON.parse(user).user.id,
+    })
       .then((response) => {
         setLeads(
           response.data.map((lead) =>
@@ -175,9 +185,7 @@ function Dashboard() {
         <h2 className="m-0">Дашборд</h2>
       </div>
       <div className="flex justify-content-between items-center mb-5">
-        <h2 className="m-0">
-          Добро пожаловать, {username}
-        </h2>
+        <h2 className="m-0">Добро пожаловать, {username}</h2>
       </div>
       <div className="" style={{ maxWidth: "100%", margin: "0 auto" }}>
         <Toast ref={toast} />
@@ -302,25 +310,26 @@ function Dashboard() {
           </div>
         </div>
         <div className="flex flex-wrap gap-4">
-          {offers.map((offer) => {
-            if (offer.active) {
-              return (
-                <div
-                  className="flex flex-column align-items-center"
-                  key={offer.id}
-                >
-                  <h3>{offer.name}</h3>
-                  <Knob
-                    value={offer.current_cap}
-                    max={offer.cap}
-                    readOnly
-                    size={100}
-                    valueTemplate={`${offer.current_cap}/${offer.cap}`}
-                  />
-                </div>
-              );
-            }
-          })}
+          {JSON.parse(user).user.role === "Admin" &&
+            offers.map((offer) => {
+              if (offer.active) {
+                return (
+                  <div
+                    className="flex flex-column align-items-center"
+                    key={offer.id}
+                  >
+                    <h3>{offer.name}</h3>
+                    <Knob
+                      value={offer.current_cap}
+                      max={offer.cap}
+                      readOnly
+                      size={100}
+                      valueTemplate={`${offer.current_cap}/${offer.cap}`}
+                    />
+                  </div>
+                );
+              }
+            })}
         </div>
 
         <div className="card">

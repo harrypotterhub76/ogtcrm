@@ -4,8 +4,9 @@ import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
 import { MultiSelect } from "primereact/multiselect";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import { InputSwitch } from "primereact/inputswitch";
+import { UserContext } from "../context/userContext";
 
 function FiltersStyled({
   visible,
@@ -21,6 +22,10 @@ function FiltersStyled({
   const [dates, setDates] = useState([]);
   const [datesSent, setDatesSent] = useState([]);
   const [datesDep, setDatesDep] = useState([]);
+
+  const { user } = useContext(UserContext);
+
+  console.log(JSON.parse(user).user);
 
   useEffect(() => {
     if (Object.keys(dates).length) {
@@ -114,6 +119,12 @@ function FiltersStyled({
   }, [rows, page]);
 
   useEffect(() => {
+    handleFilterChange("role", JSON.parse(user).user.role);
+    handleFilterChange("user_id", JSON.parse(user).user.id);
+  }, [user]);
+
+  useEffect(() => {
+    console.log("huy");
     if (ref.current) {
       renderData(filtersObject);
     }
@@ -123,7 +134,12 @@ function FiltersStyled({
   }, [filtersObject]);
 
   const handleClear = () => {
-    setFiltersObject({ perPage: rows, page: page + 1 });
+    setFiltersObject({
+      perPage: rows,
+      page: page + 1,
+      role: JSON.parse(user).user.role,
+      user_id: JSON.parse(user).user.id,
+    });
     setDates({});
     setDatesSent({});
     setDatesDep({});
