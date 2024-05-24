@@ -21,7 +21,7 @@ function SidebarLink({ handleHide, link }) {
     navigate(`${link.to}`);
   };
 
-  if (user.user.role === "Buyer" && link.adminOnly) {
+  if (JSON.parse(user).user.role === "Buyer" && link.adminOnly) {
     return "";
   }
   
