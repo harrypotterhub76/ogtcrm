@@ -12,6 +12,7 @@ import {
   deleteSpend,
   editSpend,
   getCountries,
+  getSpendsPaginationData,
 } from "../../utilities/api";
 import { ConfirmPopup } from "primereact/confirmpopup";
 import { confirmPopup } from "primereact/confirmpopup";
@@ -20,6 +21,8 @@ import { Chip } from "primereact/chip";
 
 import FiltersStyled from "../../components/FiltersComponent";
 import { TitleContext } from "../../context/TitleContext";
+import { Skeleton } from "primereact/skeleton";
+import { Paginator } from "primereact/paginator";
 
 function Spends() {
   // Стейты
@@ -32,9 +35,18 @@ function Spends() {
   const [isEditDialogVisible, setIsEditDialogVisible] = useState(false);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
   const [users, setUsers] = useState([]);
+
+  const [first, setFirst] = useState(0);
+  const [rows, setRows] = useState(5);
+  const [page, setPage] = useState(0);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [filtersObjectForRefresh, setFiltersObjectForRefresh] = useState({});
+
+
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
+  const [loading, setLoading] = useState(true);
   const [sidebarVisible, setSidebarVisible] = useState(false);
 
   const dialogInputObjectInitialState = {
@@ -63,7 +75,7 @@ function Spends() {
   // useEffect'ы для рендера, вывода логов
   useEffect(() => {
     getUsersArray();
-    renderSpends();
+    // renderSpends();
     getCountriesData();
     setTitleModel("Расходы");
   }, []);
@@ -107,8 +119,8 @@ function Spends() {
     },
     {
       label: "Дата",
-      key: "date",
-      type: "calendar",
+      key: "created_at",
+      type: "calendar-creation",
       placeholder: "Выберите дату",
     },
   ];
@@ -174,10 +186,18 @@ function Spends() {
   ];
 
   // Функции подтягиваний данных с бека
-  const renderSpends = () => {
-    getSpends().then(function (response) {
-      setSpends(response.data);
-    });
+  const renderSpends = async (obj) => {
+    getSpendsPaginationData(obj)
+      .then((response) => {
+        console.log(response);
+        setSpends(response.data.data);
+        setTotalRecords(response.data.total);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        showToast("error", "Ошибка при загрузке доменов");
+      });
   };
 
   const getUsersArray = () => {
@@ -325,27 +345,53 @@ function Spends() {
     }
   };
 
+  const onPageChange = (event) => {
+    setFirst(event.first);
+    setRows(event.rows);
+    setPage(event.page);
+    setLoading(true);
+  };
+
+  const refreshData = () => {
+    setLoading(true);
+    renderSpends(filtersObjectForRefresh);
+  };
+
   // Шаблоны для DataTable
   const headerTemplate = () => {
     return (
-      <div className="flex justify-content-end gap-5">
+      <div className="flex justify-content-between align-items-center">
+        <Button
+          icon="pi pi-refresh"
+          label=""
+          loading={loading}
+          onClick={refreshData}
+        ></Button>
+
+        <Paginator
+          first={first}
+          rows={rows}
+          totalRecords={totalRecords}
+          rowsPerPageOptions={[1, 2, 5, 10]}
+          onPageChange={onPageChange}
+        />
+
         <span className="p-input-icon-left">
-          <i className="pi pi-search" />
-          <InputText
-            value={globalFilterValue}
-            onChange={onGlobalFilterChange}
-            placeholder="Поиск"
+          <Button icon="pi pi-filter" onClick={() => setSidebarVisible(true)} />
+          <FiltersStyled
+            visible={sidebarVisible}
+            setVisible={setSidebarVisible}
+            filtersArray={filtersArray}
+            renderData={renderSpends}
+            setFiltersObjectForRefresh={setFiltersObjectForRefresh}
+            formatCalendarDate={formatCalendarDate}
+            setFilteredData={setSpends}
+            type="spends"
+            first={first}
+            rows={rows}
+            page={page}
           />
         </span>
-        <Button icon="pi pi-filter" onClick={() => setSidebarVisible(true)} />
-        <FiltersStyled
-          visible={sidebarVisible}
-          setVisible={setSidebarVisible}
-          filtersArray={filtersArray}
-          formatCalendarDate={formatCalendarDate}
-          setFilteredData={setSpends}
-          type="spends"
-        />
       </div>
     );
   };
@@ -414,6 +460,15 @@ function Spends() {
     return formattedDateString;
   };
 
+  const actionSkeletonTemplate = () => {
+    return (
+      <div className="flex gap-3">
+        <Skeleton size="3rem" />
+        <Skeleton size="3rem" />
+      </div>
+    );
+  };
+
   return (
     <>
       <Toast ref={toast} />
@@ -458,8 +513,7 @@ function Spends() {
           />
         </div>
         <DataTable
-          value={spends}
-          paginator
+          value={loading ? skeletonData : spends}
           header={headerTemplate}
           rows={10}
           showGridlines
@@ -474,12 +528,18 @@ function Spends() {
           <Column
             field="geo_spend"
             header="Гео"
-            body={geoSpendTemplate}
+            body={loading ? <Skeleton /> : geoSpendTemplate}
           ></Column>
-          <Column field="date" header="Дата" body={dateTemplate}></Column>
+          <Column
+            field="date"
+            header="Дата"
+            body={loading ? <Skeleton /> : dateTemplate}
+          ></Column>
           <Column
             header="Действия"
-            body={(spends) => actionButtonsTemplate(spends)}
+            body={
+              loading ? actionSkeletonTemplate : actionButtonsTemplate(spends)
+            }
           ></Column>
         </DataTable>
       </div>
@@ -488,3 +548,36 @@ function Spends() {
 }
 
 export default Spends;
+
+const skeletonData = [
+  {
+    id: <Skeleton />,
+    name: <Skeleton />,
+    summary: <Skeleton />,
+    date: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    name: <Skeleton />,
+    summary: <Skeleton />,
+    date: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    name: <Skeleton />,
+    summary: <Skeleton />,
+    date: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    name: <Skeleton />,
+    summary: <Skeleton />,
+    date: <Skeleton />,
+  },
+  {
+    id: <Skeleton />,
+    name: <Skeleton />,
+    summary: <Skeleton />,
+    date: <Skeleton />,
+  },
+];

@@ -62,6 +62,9 @@ export const editDomain = (dialogInputObject, id) =>
 
 export const getSpends = () => axios.get(`http://25.18.88.64:8000/api/spends`);
 
+export const getSpendsPaginationData = (parametersObject) =>
+  axios.post(`http://25.18.88.64:8000/api/spends/filtersForSpend`, parametersObject);
+
 export const addSpend = (dialogInputObject) =>
   axios.post(`http://25.18.88.64:8000/api/spends/store`, dialogInputObject);
 
