@@ -27,9 +27,7 @@ function SidebarStyled({ visible, setVisible, theme }) {
       content={({ closeIconRef, hide }) => (
         <div className="flex flex-column h-full">
           <div className="flex align-items-center justify-content-center px-3 py-5 flex-shrink-0">
-            <span className="inline-flex align-items-center gap-2">
-              <img src="/assets/images/logo.svg" width={200} />
-            </span>
+            <img src="/assets/images/logo.svg" width={200} />
           </div>
           <div className="overflow-y-auto">
             <ul className="list-none p-0 m-0">

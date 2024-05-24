@@ -3,6 +3,7 @@ import { Calendar } from "primereact/calendar";
 import { getLogs } from "../../utilities/api";
 import { InputTextarea } from "primereact/inputtextarea";
 import { TitleContext } from "../../context/TitleContext";
+import { Card } from "primereact/card";
 
 function Logs() {
   const [date, setDate] = useState(null);
@@ -70,7 +71,9 @@ function Logs() {
           className="mb-3"
         />
       </div>
-      <InputTextarea rows={35} cols={150} value={logs} />
+      <Card>
+        <InputTextarea className="w-full" rows={35} cols={150} value={logs} />
+      </Card>
     </div>
   );
 }

@@ -193,7 +193,7 @@ function Dashboard() {
         <Toast ref={toast} />
         <div className="flex flex-wrap gap-0 align-items-center justify-content-between">
           <div className="col-12 md:col-6 lg:col-2">
-            <Card className="dashboard-card">
+            <Card className="dashboard-card p-2">
               <div className="flex justify-content-between mb-3">
                 <div>
                   <span className="block text-500 font-medium mb-3">Лиды</span>
@@ -211,7 +211,7 @@ function Dashboard() {
             </Card>
           </div>
           <div className="col-12 md:col-6 lg:col-2">
-            <Card className="dashboard-card">
+            <Card className="dashboard-card p-2">
               <div className="flex justify-content-between mb-3">
                 <div>
                   <span className="block text-500 font-medium mb-3">
@@ -231,7 +231,7 @@ function Dashboard() {
             </Card>
           </div>
           <div className="col-12 md:col-6 lg:col-2">
-            <Card className="dashboard-card">
+            <Card className="dashboard-card p-2">
               <div className="flex justify-content-between mb-3">
                 <div>
                   <span className="block text-500 font-medium mb-3">
@@ -251,7 +251,7 @@ function Dashboard() {
             </Card>
           </div>
           <div className="col-12 md:col-6 lg:col-2">
-            <Card className="dashboard-card">
+            <Card className="dashboard-card p-2">
               <div className="flex justify-content-between mb-3">
                 <div>
                   <span className="block text-500 font-medium mb-3">FTD</span>
@@ -274,7 +274,7 @@ function Dashboard() {
           </div>
 
           <div className="col-12 md:col-6 lg:col-2">
-            <Card className="dashboard-card">
+            <Card className="dashboard-card p-2">
               <div className="flex justify-content-between mb-3">
                 <div>
                   <span className="block text-500 font-medium mb-3">CR</span>
@@ -292,14 +292,14 @@ function Dashboard() {
             </Card>
           </div>
           <div className="col-12 md:col-6 lg:col-2">
-            <Card className="dashboard-card">
+            <Card className="dashboard-card p-2">
               <div className="flex justify-content-between mb-3">
                 <div>
                   <span className="block text-500 font-medium mb-3">
                     Затраты
                   </span>
                   <div className="text-900 font-medium text-xl">
-                  {"today_spend_summary" in stats ? `${stats.today_spend_summary}%` : <Skeleton />}
+                  {"today_spend_summary" in stats ? `${stats.today_spend_summary}$` : <Skeleton />}
                   </div>
                 </div>
                 <div

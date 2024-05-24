@@ -559,7 +559,7 @@ function LeadsInHold() {
           setIsLeadDialogVisible(false);
           setIsSendLeadDialogVisible(false);
           showToast("success", response.data.message);
-          refreshData();
+          renderLeadsInHold(filtersObjectForRefresh);
         })
         .catch(function (error) {
           console.log(error);
@@ -578,7 +578,7 @@ function LeadsInHold() {
         console.log(postLeadDialogInputObject);
         showToast("success", response.data.message);
         setLeadDialogType("post-lead");
-        refreshData();
+        renderLeadsInHold(filtersObjectForRefresh);
       })
       .catch(function (error) {
         console.log(error);
@@ -590,7 +590,7 @@ function LeadsInHold() {
     deleteLead(selectedLeadID)
       .then(function (response) {
         showToast("success", response.data.message);
-        refreshData();
+        renderLeadsInHold(filtersObjectForRefresh);
       })
       .catch(function (error) {
         showToast("error", response.data.message);

@@ -421,7 +421,7 @@ function Statuses() {
             rowsPerPageOptions={[20, 50, 100]}
             showGridlines
             tableStyle={{ minWidth: "50rem" }}
-            paginatorPosition="both"
+            paginatorPosition="top"
             dataKey="id"
             filters={filters}
             loading={loading}
@@ -447,7 +447,7 @@ function Statuses() {
             rowsPerPageOptions={[20, 50, 100]}
             showGridlines
             tableStyle={{ minWidth: "50rem" }}
-            paginatorPosition="both"
+            paginatorPosition="top"
             dataKey="id"
             filters={filters}
             loading={loading}

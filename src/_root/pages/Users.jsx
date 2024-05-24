@@ -371,22 +371,21 @@ function Users() {
             onClick={() => setIsAddDialogVisible(true)}
           />
         </div>
-        <Card style={{ width: "90%" }}>
-          <DataTable
-            value={loading ? skeletonData : users}
-            header={headerTemplate}
-            showGridlines
-          >
-            <Column field="id" header="ID"></Column>
-            <Column field="name" header="Имя"></Column>
-            <Column field="email" header="Почта"></Column>
-            <Column field="role" header="Роль"></Column>
-            <Column
-              header="Действия"
-              body={loading ? <Skeleton /> : actionButtonsTemplate}
-            ></Column>
-          </DataTable>
-        </Card>
+        <DataTable
+          style={{ width: "90%" }}
+          value={loading ? skeletonData : users}
+          header={headerTemplate}
+          showGridlines
+        >
+          <Column field="id" header="ID"></Column>
+          <Column field="name" header="Имя"></Column>
+          <Column field="email" header="Почта"></Column>
+          <Column field="role" header="Роль"></Column>
+          <Column
+            header="Действия"
+            body={loading ? <Skeleton /> : actionButtonsTemplate}
+          ></Column>
+        </DataTable>
       </div>
     </>
   );

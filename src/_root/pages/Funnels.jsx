@@ -339,14 +339,14 @@ function Funnels() {
           header={renderHeader()}
           emptyMessage="Воронка не найдена."
         >
-          <Column field="id" header="ID" style={{ width: "30%" }}></Column>
+          <Column field="id" header="ID" ></Column>
           <Column field="name" header="Воронка"></Column>
           <Column field="link" header="Превью" body={linkTemplate}></Column>
           <Column
             field="category"
             header="Действие"
             body={loading ? actionSkeletonTemplate : actionButtonsTemplate}
-            style={{ width: "30%" }}
+
           ></Column>
         </DataTable>
       </div>
