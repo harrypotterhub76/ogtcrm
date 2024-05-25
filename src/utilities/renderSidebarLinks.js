@@ -24,11 +24,11 @@ export const sidebarLinks = [
         icon: "pi-home",
         name: "Системные дубликаты",
       },
-      {
-        to: "/import-history",
-        icon: "pi-chart-pie",
-        name: "История импортов",
-      },
+      // {
+      //   to: "/import-history",
+      //   icon: "pi-chart-pie",
+      //   name: "История импортов",
+      // },
     ],
   },
   {

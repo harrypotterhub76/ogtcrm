@@ -6,13 +6,13 @@ import { UserContext } from "../context/UserContext";
 
 function SidebarLink({ handleHide, link }) {
   const { sidebarModel, setSidebarModel } = useContext(SidebarContext);
-  const { user, setUser } = useContext(UserContext);
+  const { userData, setUserData } = useContext(UserContext);
   const navigate = useNavigate();
 
   const handleLinkClick = (link) => {
     if (link.to === "/login") {
-      setUser(null);
-      localStorage.removeItem("loginData");
+      setUserData(null);
+      localStorage.removeItem("accessToken");
     }
 
     console.log(link);
@@ -21,10 +21,10 @@ function SidebarLink({ handleHide, link }) {
     navigate(`${link.to}`);
   };
 
-  if (JSON.parse(user).user.role === "Buyer" && link.adminOnly) {
+  if (userData.role === "Buyer" && link.adminOnly) {
     return "";
   }
-  
+
   return (
     <li>
       <div

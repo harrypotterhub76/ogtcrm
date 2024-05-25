@@ -395,14 +395,14 @@ function Leads() {
       funnel: postLeadDialogInputObject.funnel,
       geo: postLeadDialogInputObject.geo,
     }).then((response) => {
-      const updatedOffers = response.data.map(({ name }) => name);
+      const updatedOffers = response.data.data.map(({ name }) => name);
       setOffersOptions(updatedOffers);
     });
   };
 
   const getFunnelsData = () => {
     getFunnels().then((response) => {
-      const updatedFunnels = response.data.map(({ name }) => name);
+      const updatedFunnels = response.data.data.map(({ name }) => name);
       setFunnels(response.data);
       setFunnelsOptions(updatedFunnels);
     });
@@ -410,7 +410,7 @@ function Leads() {
 
   const getCountriesData = () => {
     getCountries().then((response) => {
-      const updatedGeos = response.data.map(({ iso }) => iso);
+      const updatedGeos = response.data.data.map(({ iso }) => iso);
       setGeosOptions(updatedGeos);
     });
   };
@@ -418,13 +418,13 @@ function Leads() {
   const getUsersData = () => {
     getUsers().then((response) => {
       setUsers(response.data);
-      setUsersOptions(response.data.map(({ name }) => name));
+      setUsersOptions(response.data.data.map(({ name }) => name));
     });
   };
 
   const getStatusesCRMData = () => {
     getStatusesCRM().then((response) => {
-      const updatedStatusesCRM = response.data.map(
+      const updatedStatusesCRM = response.data.data.map(
         ({ crm_status }) => crm_status
       );
       setStatusesCRMOptions(updatedStatusesCRM);

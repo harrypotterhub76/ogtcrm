@@ -64,21 +64,24 @@ function Statistics() {
 
   const getLeadsStatsData = () => {
     postLeadsStats(postDates).then((response) => {
-      setLeadsStats(response.data);
+      console.log("leadsStats", response);
+      setLeadsStats(response.data.data);
       setLoadingLeads(false);
     });
   };
 
   const getOffersStatsData = () => {
     postOffersStats(postDates).then((response) => {
-      setOffersStats(response.data);
+      console.log("offersStats", response);
+      setOffersStats(response.data.data);
       setLoadingOffers(false);
     });
   };
 
   const getFunnelsStatsData = () => {
     postFunnelsStats(postDates).then((response) => {
-      setFunnelsStats(response.data);
+      console.log("funnelsStats", response);
+      setFunnelsStats(response.data.data);
       setLoadingFunnels(false);
     });
   };

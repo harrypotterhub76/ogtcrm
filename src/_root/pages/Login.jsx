@@ -15,13 +15,13 @@ export default function Login() {
   const [errorText, setErrorText] = useState("");
   const [loading, setLoading] = useState(false);
   const { setTitleModel } = useContext(TitleContext);
-  const { user, setUser } = useContext(UserContext);
+  const { userData, setUserData } = useContext(UserContext);
 
   const navigate = useNavigate();
 
-  if (user) {
-    navigate("/dashboard");
-  }
+  // if (user.userData) {
+  //   navigate("/dashboard");
+  // }
 
   useEffect(() => {
     setTitleModel("Логин");
@@ -31,20 +31,23 @@ export default function Login() {
     setLoading(true);
     login({ email: emailValue, password: passwordValue })
       .then((response) => {
-        console.log(response.data);
-        const accessTokenStorage = localStorage.getItem("access_token");
+        console.log(response);
+        const accessTokenStorage = localStorage.getItem("userData");
         if (!accessTokenStorage) {
-          localStorage.setItem("loginData", JSON.stringify(response.data));
+          localStorage.setItem(
+            "userData",
+            JSON.stringify(response.data)
+          );
         }
-        if (response.data.message === "success") {
-          setUser(response.data);
+        if (response.status === 200) {
+          setUserData(response.data);
           setErrorText("");
           navigate("/dashboard");
         }
       })
       .catch((err) => {
         console.log(err);
-        setErrorText(err.response.data.error);
+        setErrorText(err.response.data.message);
         setLoading(false);
       });
   };

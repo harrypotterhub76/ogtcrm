@@ -136,8 +136,8 @@ function Domains() {
 
     getUsers()
       .then((response) => {
-        setUsers(response.data);
-        setUsersOptions(response.data.map(({ name }) => name));
+        setUsers(response.data.data);
+        setUsersOptions(response.data.data.map(({ name }) => name));
       })
       .catch((error) => {
         console.log(error);
@@ -145,7 +145,7 @@ function Domains() {
       });
 
     getDomains().then((response) => {
-      setDomainsOptions(response.data.map(({ domain }) => domain));
+      setDomainsOptions(response.data.data.map(({ domain }) => domain));
     });
   }, []);
 
@@ -221,7 +221,8 @@ function Domains() {
   const editCurrentDomain = () => {
     editDomain(dialogInputObject, currentRowData)
       .then(function (response) {
-        showToast("success", response.data.message);
+        console.log("ahah response", response);
+        showToast("success", response.data.data.message);
         setIsEditDialogVisible(false);
         clearDialogInputObject();
         renderDomains();

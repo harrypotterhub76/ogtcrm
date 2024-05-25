@@ -205,7 +205,7 @@ function Users() {
           first={first}
           rows={rows}
           totalRecords={totalRecords}
-          rowsPerPageOptions={[20, 50, 100]}
+          rowsPerPageOptions={[2, 5, 10]}
           onPageChange={onPageChange}
         />
       </div>

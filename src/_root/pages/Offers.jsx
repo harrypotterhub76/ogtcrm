@@ -89,15 +89,15 @@ function Offers() {
 
     getFunnels().then((response) => {
       console.log(response);
-      const updatedFunnels = response.data.map(({ name }) => name);
+      const updatedFunnels = response.data.data.map(({ name }) => name);
       setFunnelsOptions(updatedFunnels);
     });
     getCountries().then((response) => {
-      const updatedGeos = response.data.map(({ iso }) => iso);
+      const updatedGeos = response.data.data.map(({ iso }) => iso);
       setGeosOptions(updatedGeos);
     });
     getSources().then((response) => {
-      const updatedSources = response.data.map(({ name }) => name);
+      const updatedSources = response.data.data.map(({ name }) => name);
       setSourceOptions(updatedSources);
     });
 
@@ -335,8 +335,7 @@ function Offers() {
           renderOffers();
         })
         .catch(function (error) {
-          console.log(error);
-          showToast("error", response.data.message);
+          showToast("error", "Ошибка создания оффера");
         });
     } else {
       showToast("info", "Заполните все поля");
@@ -363,7 +362,7 @@ function Offers() {
     ) {
       editOffer(dialogInputObject, selectedOfferID)
         .then(function (response) {
-          showToast("success", response.data.message);
+          showToast("success", response.data.data.message);
           setIsEditDialogVisible(false);
           renderOffers();
         })
@@ -380,7 +379,7 @@ function Offers() {
     deleteOffer(selectedOfferID)
       .then(function (response) {
         console.log(response);
-        showToast("success", response.data.message);
+        showToast("success", response.data.data.message);
         renderOffers();
       })
       .catch(function (error) {
@@ -392,7 +391,7 @@ function Offers() {
   const handleEditActivity = (id, active) => {
     editActivity(id, active)
       .then((response) => {
-        showToast("success", response.data.message);
+        showToast("success", response.data.data.message);
         console.log(response);
       })
       .catch((err) => {
@@ -406,7 +405,7 @@ function Offers() {
   const handleEditCapControl = (id, cap_control) => {
     editCapControl(id, cap_control)
       .then((response) => {
-        showToast("success", response.data.message);
+        showToast("success", response.data.data.message);
         renderOffers();
         console.log(response);
       })

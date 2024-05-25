@@ -88,7 +88,8 @@ function Funnels() {
     // renderFunnels();
     setTitleModel("Воронки");
     getFunnels().then((response) => {
-      setFunnelsNames(response.data.map(({ name }) => name));
+      console.log(response);
+      setFunnelsNames(response.data.data.map(({ name }) => name));
     });
     console.log("funnels", funnels);
   }, []);
@@ -138,7 +139,7 @@ function Funnels() {
     if (currentRowData) {
       deleteFunnel(currentRowData.id)
         .then(function (response) {
-          showToast("success", response.data.message);
+          showToast("success", response.data.data.message);
           renderFunnels();
         })
         .catch(function (error) {
@@ -151,13 +152,13 @@ function Funnels() {
   const handleAddFunnel = () => {
     addFunnel(addDialogInputObject)
       .then(function (response) {
-        showToast("success", response.data.message);
+        showToast("success", response.data.data.message);
         setIsAddDialogVisible(false);
         setAddDialogInputObject(dialogInputObjectInitialState);
         renderFunnels();
       })
       .catch(function (error) {
-        showToast("error", error.response.data.message);
+        // showToast("error", error.response.message);
         setAddDialogInputObject(dialogInputObjectInitialState);
       });
   };
@@ -165,7 +166,7 @@ function Funnels() {
   const handleEditFunnel = () => {
     editFunnel(editDialogInputObject, selectedFunnelID)
       .then(function (response) {
-        showToast("success", response.data.message);
+        showToast("success", response.data.data.message);
         setIsEditDialogVisible(false);
         setEditDialogInputObject(dialogInputObjectInitialState);
         renderFunnels();

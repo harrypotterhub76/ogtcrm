@@ -23,9 +23,9 @@ function FiltersStyled({
   const [datesSent, setDatesSent] = useState([]);
   const [datesDep, setDatesDep] = useState([]);
 
-  const { user } = useContext(UserContext);
+  const { userData } = useContext(UserContext);
 
-  console.log(JSON.parse(user).user);
+  // console.log(JSON.parse(user).user);
 
   useEffect(() => {
     if (Object.keys(dates).length) {
@@ -118,13 +118,12 @@ function FiltersStyled({
     handleFilterChange("page", page + 1);
   }, [rows, page]);
 
-  useEffect(() => {
-    handleFilterChange("role", JSON.parse(user).user.role);
-    handleFilterChange("user_id", JSON.parse(user).user.id);
-  }, [user]);
+  // useEffect(() => {
+  //   handleFilterChange("role", userData.role);
+  //   handleFilterChange("user_id", userData.id);
+  // }, [userData]);
 
   useEffect(() => {
-    console.log("huy");
     if (ref.current) {
       renderData(filtersObject);
     }
@@ -137,8 +136,8 @@ function FiltersStyled({
     setFiltersObject({
       perPage: rows,
       page: page + 1,
-      role: JSON.parse(user).user.role,
-      user_id: JSON.parse(user).user.id,
+      role: userData.role,
+      user_id: userData.id,
     });
     setDates({});
     setDatesSent({});

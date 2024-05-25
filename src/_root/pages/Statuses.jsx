@@ -134,7 +134,7 @@ function Statuses() {
   const renderStatuses = () => {
     getStatuses()
       .then((response) => {
-        const renamedData = response.data.map((item) => ({
+        const renamedData = response.data.data.map((item) => ({
           ...item,
           name: item.name,
         }));
@@ -148,16 +148,16 @@ function Statuses() {
     getStatusesCRM()
       .then((response) => {
         const validityArray = [];
-        response.data.forEach((obj) => {
+        response.data.data.forEach((obj) => {
           validityArray.push({
             id: obj.id,
             is_valid: obj.is_valid === 1,
           });
         });
-        const updatedStatusesCRMOptions = response.data.map(
+        const updatedStatusesCRMOptions = response.data.data.map(
           ({ crm_status }) => crm_status
         );
-        setStatusesCRM(response.data);
+        setStatusesCRM(response.data.data);
         setStatusesCRMOptions(updatedStatusesCRMOptions);
         setValidityChecked(validityArray);
       })

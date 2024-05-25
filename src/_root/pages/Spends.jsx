@@ -202,20 +202,21 @@ function Spends() {
 
   const getUsersArray = () => {
     getUsers().then((response) => {
-      setUsers(response.data);
-      setUsersOptions(response.data.map(({ name }) => name));
+      setUsers(response.data.data);
+      setUsersOptions(response.data.data.map(({ name }) => name));
     });
   };
 
   const getCountriesData = () => {
     getCountries().then((response) => {
-      const updatedGeos = response.data.map(({ iso }) => iso);
+      const updatedGeos = response.data.data.map(({ iso }) => iso);
       setGeosOptions(updatedGeos);
     });
   };
 
   // Обработчики для actionButtonsTemplate
   const handleEditActionClick = (rowData) => {
+    console.log("AAAAAAAA", rowData);
     setSelectedUser(rowData.name);
     setDialogInputObject({
       summary: rowData.summary,
@@ -538,7 +539,7 @@ function Spends() {
           <Column
             header="Действия"
             body={
-              loading ? actionSkeletonTemplate : actionButtonsTemplate(spends)
+              loading ? actionSkeletonTemplate : actionButtonsTemplate
             }
           ></Column>
         </DataTable>

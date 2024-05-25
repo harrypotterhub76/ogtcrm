@@ -25,9 +25,7 @@ function Dashboard() {
   const ref = useRef(0);
 
   const { setTitleModel } = useContext(TitleContext);
-  const { user } = useContext(UserContext);
-
-  console.log(JSON.parse(user).user);
+  const { userData } = useContext(UserContext);
 
   const showToast = (severity, text) => {
     toast.current.show({
@@ -37,14 +35,15 @@ function Dashboard() {
     });
   };
 
-  useEffect(() => {
-    console.log("offers:", offers);
-    console.log("stats:", stats);
-  }, [offers, stats]);
+  // useEffect(() => {
+  //   console.log("offers:", offers);
+  //   console.log("stats:", stats);
+  // }, [offers, stats]);
 
   const renderOffers = () => {
     getOffers()
       .then((response) => {
+        console.log(response);
         setOffers(response.data.data);
         setLoading(false);
       })
@@ -56,10 +55,11 @@ function Dashboard() {
 
   const renderStats = () => {
     getStats({
-      role: JSON.parse(user).user.role,
-      user_id: JSON.parse(user).user.id,
+      role: userData.role,
+      user_id: userData.id,
     })
       .then((response) => {
+        console.log(response);
         setStats(response.data);
         setLoading(false);
       })
@@ -71,12 +71,13 @@ function Dashboard() {
 
   const renderLeads = () => {
     getLeadsForChart({
-      role: JSON.parse(user).user.role,
-      user_id: JSON.parse(user).user.id,
+      role: userData.role,
+      user_id: userData.id,
     })
       .then((response) => {
+        console.log(response);
         setLeads(
-          response.data.map((lead) =>
+          response.data.lead_counts.map((lead) =>
             lead.count !== undefined ? lead.count : 0
           )
         );
@@ -94,9 +95,9 @@ function Dashboard() {
     renderStats();
     renderLeads();
     setTitleModel("Дашборд");
-    setUsername(JSON.parse(localStorage.getItem("loginData")).user.name);
+    // setUsername(JSON.parse(localStorage.getItem("loginData")).user.name);
 
-    console.log(JSON.parse(localStorage.getItem("loginData")).user.name);
+    // console.log(JSON.parse(localStorage.getItem("loginData")).user.name);
   }, []);
 
   useEffect(() => {
@@ -185,9 +186,6 @@ function Dashboard() {
     <div className="dashboard-container">
       <div className="flex justify-content-between items-center mb-5">
         <h2 className="m-0">Дашборд</h2>
-      </div>
-      <div className="flex justify-content-between items-center mb-5">
-        <h2 className="m-0">Добро пожаловать, {username}</h2>
       </div>
       <div className="" style={{ maxWidth: "100%", margin: "0 auto" }}>
         <Toast ref={toast} />
@@ -299,7 +297,11 @@ function Dashboard() {
                     Затраты
                   </span>
                   <div className="text-900 font-medium text-xl">
-                  {"today_spend_summary" in stats ? `${stats.today_spend_summary}$` : <Skeleton />}
+                    {"today_spend_summary" in stats ? (
+                      `${stats.today_spend_summary}$`
+                    ) : (
+                      <Skeleton />
+                    )}
                   </div>
                 </div>
                 <div
@@ -313,7 +315,7 @@ function Dashboard() {
           </div>
         </div>
         <div className="flex flex-wrap gap-4">
-          {JSON.parse(user).user.role === "Admin" &&
+          {userData.role === "Admin" &&
             offers.map((offer) => {
               if (offer.active) {
                 return (

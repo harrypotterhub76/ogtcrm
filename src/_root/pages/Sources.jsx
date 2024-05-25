@@ -53,7 +53,7 @@ function Sources() {
   const renderSources = () => {
     getSources()
       .then((response) => {
-        setSources(response.data);
+        setSources(response.data.data);
         setLoading(false);
       })
       .catch((error) => {

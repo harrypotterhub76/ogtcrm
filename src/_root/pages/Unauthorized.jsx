@@ -41,10 +41,10 @@ export default function Unauthorized() {
       </svg>
 
       <div className="h-full flex flex-column justify-content-center align-items-center z-5 relative">
-        <p className="text-900 font-bold text-6xl m-0 text-center">
+        <p className="text-900 font-bold text-6xl m-0 mb-5 text-center">
           401 | Доступ запрещен
         </p>
-        <Button onClick={() => navigate("/login")} label="Логин" />
+        {/* <Button onClick={() => navigate(-1)} label="Перейти обратно" /> */}
       </div>
     </div>
   );

@@ -31,30 +31,30 @@ import "./App.css";
 import { useContext, useState } from "react";
 import { UserContext } from "./context/UserContext";
 
-function ProtectedRoute({ user, children }) {
-  if (!user) {
+function ProtectedRoute({ userData, children }) {
+  if (!userData) {
     return <Navigate to="/unathorized" replace />;
   }
   return children ? children : <Outlet />;
 }
 
-function ProtectedAdminRoute({ user, children }) {
-  if (JSON.parse(user).user.role === "Buyer") {
+function ProtectedAdminRoute({ userData, children }) {
+  if (userData && userData.role === "Buyer") {
     return <Navigate to="/unathorized" replace />;
   }
   return children ? children : <Outlet />;
 }
 
 function App() {
-  const { user, setUser } = useContext(UserContext);
+  const { userData, setUserData } = useContext(UserContext);
 
   return (
     <>
       <Routes>
         <Route element={<RootLayout />}>
-          <Route element={<ProtectedRoute user={user} />}>
+          <Route element={<ProtectedRoute userData={userData} />}>
             <Route path="/" element={<Login />} />
-            <Route element={<ProtectedAdminRoute user={user} />}>
+            <Route element={<ProtectedAdminRoute userData={userData} />}>
               <Route path="/domains" element={<Domains />} />
               <Route path="/spends" element={<Spends />} />
               <Route path="/offers" element={<Offers />} />
@@ -73,10 +73,7 @@ function App() {
             <Route path="/import-history" element={<ImportHistory />} />
           </Route>
         </Route>
-        <Route
-          path="/login"
-          element={<Login user={user} setUser={setUser} />}
-        />
+        <Route path="/login" element={<Login />} />
         <Route path="/unathorized" element={<Unauthorized />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

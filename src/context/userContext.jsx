@@ -3,10 +3,14 @@ import { createContext, useState } from "react";
 export const UserContext = createContext(null);
 
 export function UserArea({ children }) {
-  const [user, setUser] = useState(localStorage.getItem("loginData"));
+  const [userData, setUserData] = useState(
+    JSON.parse(localStorage.getItem("userData"))
+  );
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider
+      value={{ userData, setUserData }}
+    >
       {children}
     </UserContext.Provider>
   );

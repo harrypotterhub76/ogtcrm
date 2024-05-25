@@ -72,7 +72,7 @@ function LeadsInHold() {
   const [loading, setLoading] = useState(true);
 
   const { setTitleModel } = useContext(TitleContext);
-  const { user } = useContext(UserContext);
+  const { userData } = useContext(UserContext);
 
   const addLeadDialogInitialState = {
     full_name: "",
@@ -423,7 +423,7 @@ function LeadsInHold() {
       .then((response) => {
         console.log(response);
         if (response.data.message !== "Нет активных офферов") {
-          const updatedOffers = response.data.map(({ name }) => name);
+          const updatedOffers = response.data.data.map(({ name }) => name);
           setActiveOffersOptions(updatedOffers);
         }
       })
@@ -435,7 +435,7 @@ function LeadsInHold() {
   const getFunnelsData = () => {
     getFunnels()
       .then((response) => {
-        const updatedFunnels = response.data.map(({ name }) => name);
+        const updatedFunnels = response.data.data.map(({ name }) => name);
         setFunnels(response.data);
         setFunnelsOptions(updatedFunnels);
       })
@@ -448,7 +448,7 @@ function LeadsInHold() {
   const getCountriesData = () => {
     getCountries()
       .then((response) => {
-        const updatedGeos = response.data.map(({ iso }) => iso);
+        const updatedGeos = response.data.data.map(({ iso }) => iso);
         setGeosOptions(updatedGeos);
       })
       .catch((error) => {
@@ -461,7 +461,7 @@ function LeadsInHold() {
     getUsers()
       .then((response) => {
         setUsers(response.data);
-        setUsersOptions(response.data.map(({ name }) => name));
+        setUsersOptions(response.data.data.map(({ name }) => name));
       })
       .catch((error) => {
         console.log(error);
@@ -472,7 +472,7 @@ function LeadsInHold() {
   const getStatusesCRMData = () => {
     getStatusesCRM()
       .then((response) => {
-        const updatedStatusesCRM = response.data.map(
+        const updatedStatusesCRM = response.data.data.map(
           ({ crm_status }) => crm_status
         );
         setStatusesCRMOptions(updatedStatusesCRM);
@@ -487,7 +487,7 @@ function LeadsInHold() {
     getSources()
       .then((response) => {
         setSources(response.data);
-        setSourcesOptions(response.data.map(({ name }) => name));
+        setSourcesOptions(response.data.data.map(({ name }) => name));
       })
       .catch((error) => {
         console.log(error);
@@ -842,7 +842,7 @@ function LeadsInHold() {
     );
   };
 
-  const phoneTemplate = (rowData) => {
+  const IDTemplate = (rowData) => {
     return (
       <div
         style={{
@@ -963,16 +963,13 @@ function LeadsInHold() {
             value={loading ? skeletonData : leadsInHold}
             header={headerTemplate}
           >
-            <Column field="id" header="ID" body={phoneTemplate}></Column>
-            {/* {JSON.parse(user).user.role === "Admin" && (
-              <Column field="offer" header="Оффер"></Column>
-            )} */}
-            {JSON.parse(user).user.role === "Admin" && (
+            <Column field="id" header="ID" body={IDTemplate}></Column>
+            {userData.role === "Admin" && (
               <Column field="phone" header="Номер телефона"></Column>
             )}
 
             <Column field="full_name" header="Имя / Фамилия"></Column>
-            {JSON.parse(user).user.role === "Admin" && (
+            {userData.role === "Admin" && (
               <Column field="email" header="Почта"></Column>
             )}
 
@@ -985,11 +982,6 @@ function LeadsInHold() {
               header="Статус"
               body={loading ? <Skeleton /> : statusTemplate}
             ></Column>
-            {/* <Column
-              field="is_fraud"
-              header="Shave"
-              body={loading ? <Skeleton /> : fraudTemplate}
-            ></Column> */}
             <Column
               field="is_deposited"
               header="Депозит"
@@ -1006,18 +998,6 @@ function LeadsInHold() {
               header="Лид создан"
               body={loading ? <Skeleton /> : createdAtTemplate}
             ></Column>
-            {/* {JSON.parse(user).user.role === "Admin" && (
-              <Column
-                field="lead_sent"
-                header="Лид отправлен"
-                body={loading ? <Skeleton /> : leadSentTemplate}
-              ></Column>
-            )} */}
-            {/* <Column
-              field="date_deposited"
-              header="Дата депозита"
-              body={loading ? <Skeleton /> : dateDepositedTemplate}
-            ></Column> */}
             <Column
               field="category"
               header="Действие"
