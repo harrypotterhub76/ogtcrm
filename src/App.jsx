@@ -53,7 +53,6 @@ function App() {
       <Routes>
         <Route element={<RootLayout />}>
           <Route element={<ProtectedRoute userData={userData} />}>
-            <Route path="/" element={<Login />} />
             <Route element={<ProtectedAdminRoute userData={userData} />}>
               <Route path="/domains" element={<Domains />} />
               <Route path="/spends" element={<Spends />} />
@@ -73,6 +72,7 @@ function App() {
             <Route path="/import-history" element={<ImportHistory />} />
           </Route>
         </Route>
+        <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
         <Route path="/unathorized" element={<Unauthorized />} />
         <Route path="*" element={<NotFound />} />

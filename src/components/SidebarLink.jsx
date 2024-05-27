@@ -12,10 +12,10 @@ function SidebarLink({ handleHide, link }) {
   const handleLinkClick = (link) => {
     if (link.to === "/login") {
       setUserData(null);
-      localStorage.removeItem("accessToken");
+      localStorage.removeItem("userData");
     }
 
-    console.log(link);
+    
     handleHide();
     setSidebarModel(link);
     navigate(`${link.to}`);

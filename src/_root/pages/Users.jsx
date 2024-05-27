@@ -133,10 +133,6 @@ function Users() {
   }, []);
 
   useEffect(() => {
-    console.log(dialogInputObject);
-  }, [dialogInputObject]);
-
-  useEffect(() => {
     renderUsers();
   }, [page, rows]);
 
@@ -147,7 +143,7 @@ function Users() {
       setUsers(response.data.data);
       setTotalRecords(response.data.total);
       setLoading(false);
-      console.log(response);
+      
     });
   };
 
@@ -166,7 +162,7 @@ function Users() {
   };
 
   useEffect(() => {
-    console.log(selectedUserID);
+    
   }, [selectedUserID]);
 
   const handleConfirmPopUpButtonClick = (option, hide) => {
@@ -232,8 +228,8 @@ function Users() {
           showToast("error", "Ошибка добавления пользователя");
         });
     } else {
-      console.log("Fill all fields");
-      console.log(confirmedPassword, dialogInputObject.password);
+      
+      
       showToast("info", "Заполните все поля правильно");
     }
   };
@@ -247,24 +243,24 @@ function Users() {
           renderUsers();
         })
         .catch(function (error) {
-          console.log(error);
+          
           showToast("error", "Ошибка редактирования пользователя");
         });
     } else {
-      console.log("Fill all fields");
+      
       showToast("info", "Заполните все поля");
     }
   };
 
   const handleDeleteUser = () => {
-    console.log(dialogInputObject, selectedUserID);
+    
     deleteUser(selectedUserID)
       .then(function (response) {
         showToast("success", "Пользователь успешно удален");
         renderUsers();
       })
       .catch(function (error) {
-        console.log(error);
+        
         showToast("error", "Ошибка удаления пользователя");
       });
   };
@@ -376,6 +372,7 @@ function Users() {
           value={loading ? skeletonData : users}
           header={headerTemplate}
           showGridlines
+          emptyMessage="Нет данных"
         >
           <Column field="id" header="ID"></Column>
           <Column field="name" header="Имя"></Column>

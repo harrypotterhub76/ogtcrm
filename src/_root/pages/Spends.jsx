@@ -90,15 +90,6 @@ function Spends() {
     }
   }, [selectedUser]);
 
-  useEffect(() => {
-    console.log("_________________________________________");
-    console.log("dialogInputObject: ", dialogInputObject);
-    console.log("users: ", users);
-    console.log("spends: ", spends);
-    console.log("usersOptions: ", usersOptions);
-    console.log("selectedUser", selectedUser);
-    console.log("_________________________________________");
-  }, [dialogInputObject, users, usersOptions, selectedUser, spends]);
 
   //фильтры для FitersComponent
 
@@ -189,13 +180,13 @@ function Spends() {
   const renderSpends = async (obj) => {
     getSpendsPaginationData(obj)
       .then((response) => {
-        console.log(response);
+        
         setSpends(response.data.data);
         setTotalRecords(response.data.total);
         setLoading(false);
       })
       .catch((error) => {
-        console.log(error);
+        
         showToast("error", "Ошибка при загрузке доменов");
       });
   };
@@ -216,7 +207,7 @@ function Spends() {
 
   // Обработчики для actionButtonsTemplate
   const handleEditActionClick = (rowData) => {
-    console.log("AAAAAAAA", rowData);
+    
     setSelectedUser(rowData.name);
     setDialogInputObject({
       summary: rowData.summary,
@@ -263,11 +254,11 @@ function Spends() {
           clearDialogInputObject();
         })
         .catch(function (error) {
-          console.log(error);
+          
           showToast("error", "Ошибка добавления расхода");
         });
     } else {
-      console.log("Fill all fields");
+      
       showToast("info", "Заполните все поля");
     }
   };
@@ -281,24 +272,24 @@ function Spends() {
           renderSpends();
         })
         .catch(function (error) {
-          console.log(error);
+          
           showToast("error", "Ошибка редактирования расхода");
         });
     } else {
-      console.log("Fill all fields");
+      
       showToast("info", "Заполните все поля");
     }
   };
 
   const handleDeleteSpend = () => {
-    console.log(dialogInputObject, selectedSpendID);
+    
     deleteSpend(selectedSpendID)
       .then(function (response) {
         showToast("success", "Расход успешно удалён");
         renderSpends();
       })
       .catch(function (error) {
-        console.log(error);
+        
         showToast("error", "Ошибка удаления расхода");
       });
   };
@@ -522,6 +513,7 @@ function Spends() {
           paginatorPosition="top"
           filters={filters}
           style={{ width: "90%" }}
+          emptyMessage="Нет данных"
         >
           <Column field="id" header="ID"></Column>
           <Column field="name" header="Имя"></Column>

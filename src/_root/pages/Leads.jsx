@@ -120,25 +120,7 @@ function Leads() {
   };
 
   // useEffect'ы для рендера, вывода логов
-  useEffect(() => {
-    console.log("addLeadDialogInputObject: ", addLeadDialogInputObject);
-    console.log("postLeadDialogInputObject: ", postLeadDialogInputObject);
-    console.log("leadDialogType: ", leadDialogType);
-    console.log("statusesOptions: ", statusesCRMOptions);
-    console.log("funnels: ", funnels);
-    console.log("leads: ", leads);
-    console.log("offers:", offers);
-    console.log("offersOptions:", offersOptions);
-    console.log("activeOffersOptions:", activeOffersOptions);
-  }, [
-    addLeadDialogInputObject,
-    postLeadDialogInputObject,
-    leadDialogType,
-    statusesCRMOptions,
-    funnels,
-    leads,
-    offers
-  ]);
+
 
   useEffect(() => {
     if (selectedFunnelDialog) {
@@ -148,7 +130,7 @@ function Leads() {
         funnel_id: getSelectedFunnelID(selectedFunnelDialog),
       }));
     }
-    console.log("selectedFunnelDialog", selectedFunnelDialog);
+    
   }, [selectedFunnelDialog]);
 
   useEffect(() => {
@@ -159,7 +141,7 @@ function Leads() {
         offer_id: getSelectedOfferID(selectedOfferDialog),
       }));
     }
-    console.log("selectedOfferDialog", selectedOfferDialog);
+    
   }, [selectedOfferDialog]);
 
   useEffect(() => {
@@ -170,7 +152,7 @@ function Leads() {
         user_id: getSelectedUserID(selectedUserDialog),
       }));
     }
-    console.log("selectedFunnelDialog", selectedUserDialog);
+    
   }, [selectedUserDialog]);
 
   useEffect(() => {
@@ -181,7 +163,7 @@ function Leads() {
         source_id: getSelectedSourceID(selectedSource),
       }));
     }
-    console.log("selectedSource", selectedSource);
+    
   }, [selectedSource]);
 
   useEffect(() => {
@@ -443,24 +425,24 @@ function Leads() {
   // Функции подтягиваний данных с бека
   const renderLeads = async (obj) => {
     getFilteredLeads(obj).then(function (response) {
-      console.log(response); //тут правильно
+      
       setLeads(response.data.data);
       setTotalRecords(response.data.total);
       setLoading(false);
-      console.log("leads", response.data.data);
+      
     });
   };
 
   const getOffersData = () => {
     getOffers()
       .then((response) => {
-        console.log("ahahsdhashd", response);
+        
         const updatedOffers = response.data.data.map(({ name }) => name);
         setOffers(response.data.data);
         setOffersOptions(updatedOffers);
       })
       .catch((error) => {
-        console.log(error);
+        
         showToast("error", "Ошибка при загрузке офферов");
       });
   };
@@ -470,14 +452,14 @@ function Leads() {
       geo: postLeadDialogInputObject.geo,
     })
       .then((response) => {
-        console.log(response);
+        
         if (response.data.message !== "Нет активных офферов") {
           const updatedOffers = response.data.data.map(({ name }) => name);
           setActiveOffersOptions(updatedOffers);
         }
       })
       .catch((error) => {
-        console.log(error);
+        
         showToast("error", "Ошибка при загрузке активных офферов");
       });
   };
@@ -489,7 +471,7 @@ function Leads() {
         setFunnelsOptions(updatedFunnels);
       })
       .catch((error) => {
-        console.log(error);
+        
         showToast("error", "Ошибка при загрузке воронок");
       });
   };
@@ -501,7 +483,7 @@ function Leads() {
         setGeosOptions(updatedGeos);
       })
       .catch((error) => {
-        console.log(error);
+        
         showToast("error", "Ошибка при загрузке гео");
       });
   };
@@ -513,7 +495,7 @@ function Leads() {
         setUsersOptions(response.data.data.map(({ name }) => name));
       })
       .catch((error) => {
-        console.log(error);
+        
         showToast("error", "Ошибка при загрузке пользователей");
       });
   };
@@ -527,7 +509,7 @@ function Leads() {
         setStatusesCRMOptions(updatedStatusesCRM);
       })
       .catch((error) => {
-        console.log(error);
+        
         showToast("error", "Ошибка при загрузке статусов");
       });
   };
@@ -539,7 +521,7 @@ function Leads() {
         setSourcesOptions(response.data.data.map(({ name }) => name));
       })
       .catch((error) => {
-        console.log(error);
+        
         showToast("error", "Ошибка при загрузке источников");
       });
   };
@@ -601,7 +583,7 @@ function Leads() {
 
   // Обработчики взаимодействия фронта с беком
   const handleAddLead = () => {
-    if (isAllFieldsFilled(addLeadDialogInputObject)) {
+    if (addLeadDialogInputObject) {
       addLead(addLeadDialogInputObject)
         .then(function (response) {
           if (response.data.message === "Dublicate System") {
@@ -613,8 +595,8 @@ function Leads() {
           renderLeads(filtersObjectForRefresh);
         })
         .catch(function (error) {
-          console.log(error);
-          showToast("error", response.data.message);
+          
+          showToast("error", error.response.data.data.message);
         });
     } else {
       showToast("error", "Пожалуйста, введите все поля");
@@ -622,17 +604,17 @@ function Leads() {
   };
 
   const handlePostLead = () => {
-    if (isAllFieldsFilled(postLeadDialogInputObject)) {
+    if (postLeadDialogInputObject) {
       sendLead(postLeadDialogInputObject)
         .then(function (response) {
           setIsLeadDialogVisible(false);
           setIsSendLeadDialogVisible(false);
-          showToast("success", response.data.message);
+          showToast("success", "Лид успешно отправлен");
           renderLeads(filtersObjectForRefresh);
         })
         .catch(function (error) {
-          console.log(error);
-          showToast("error", error.response.data.message);
+          
+          showToast("error", error.response.data.data.message);
         });
     } else {
       showToast("error", "Пожалуйста, введите все поля");
@@ -640,30 +622,30 @@ function Leads() {
   };
 
   const handleEditLead = () => {
-    console.log(postLeadDialogInputObject);
+    
     editLead(postLeadDialogInputObject, selectedLeadID)
       .then(function (response) {
-        console.log(response);
-        console.log(postLeadDialogInputObject);
-        showToast("success", response.data.message);
+        
+        
+        showToast("success", response.data.data.message);
         setLeadDialogType("post-lead");
         renderLeads(filtersObjectForRefresh);
       })
       .catch(function (error) {
-        console.log(error);
-        showToast("error", error.response.data.message);
+        
+        showToast("error", error.response.data.data.message);
       });
   };
 
   const handleDeleteLead = () => {
     deleteLead(selectedLeadID)
       .then(function (response) {
-        showToast("success", response.data.message);
+        showToast("success", response.data.data.message);
         renderLeads(filtersObjectForRefresh);
       })
       .catch(function (error) {
-        showToast("error", response.data.message);
-        console.log(error);
+        showToast("error", response.data.data.message);
+        
       });
   };
 
@@ -854,6 +836,10 @@ function Leads() {
   };
 
   const URLParamsTemplate = (rowData) => {
+    if (!rowData.url_params) {
+      return [];
+    }
+
     const splittedURLParams = rowData.url_params.split("&");
     const selectedURLParamsArray = splittedURLParams.map((param) => {
       const [parameter, value] = param.split("=");
@@ -941,17 +927,20 @@ function Leads() {
   };
 
   const IDTemplate = (rowData) => {
-    return (
-      <div
-        style={{
+    const isUserAdmin = userData.role === "Admin";
+    const style = isUserAdmin
+      ? {
           cursor: "pointer",
           color: "#34d399",
           textDecoration: "underline",
           textUnderlineOffset: "5px",
-        }}
-        onClick={() => {
-          handleIdClick(rowData);
-        }}
+        }
+      : {};
+
+    return (
+      <div
+        style={style}
+        onClick={isUserAdmin ? () => handleIdClick(rowData) : undefined}
       >
         {rowData.id}
       </div>
@@ -1001,7 +990,7 @@ function Leads() {
           setIsStatusDialogVisible(false);
         }}
       >
-        <DataTable value={selectedStatuses} showGridlines>
+        <DataTable value={selectedStatuses} showGridlines emptyMessage="Нет данных">
           <Column field="time" header="Время"></Column>
           <Column field="status" header="Статус"></Column>
         </DataTable>
@@ -1051,7 +1040,7 @@ function Leads() {
         setDialogInputObject={setAddLeadDialogInputObject}
         formatCalendarDate={formatCalendarDate}
         inputs={addLeadDialogInputs}
-        handleAdd={handleAddLead}
+        // handleAdd={handleAddLead}
         clearDialogInputObject={clearDialogInputObject}
       />
 
@@ -1072,10 +1061,11 @@ function Leads() {
           <DataTable
             value={loading ? skeletonData : leads}
             header={headerTemplate}
+            emptyMessage="Нет данных"
           >
             <Column field="id" header="ID" body={IDTemplate}></Column>
             {userData.role === "Admin" && (
-            <Column field="offer" header="Оффер"></Column>
+              <Column field="offer" header="Оффер"></Column>
             )}
             {userData.role === "Admin" && (
               <Column field="phone" header="Номер телефона"></Column>
@@ -1128,11 +1118,13 @@ function Leads() {
               header="Дата депозита"
               body={loading ? <Skeleton /> : dateDepositedTemplate}
             ></Column>
-            <Column
-              field="category"
-              header="Действие"
-              body={loading ? <Skeleton /> : actionButtonsTemplate}
-            ></Column>
+            {userData.role === "Admin" && (
+              <Column
+                field="category"
+                header="Действие"
+                body={loading ? <Skeleton /> : actionButtonsTemplate}
+              ></Column>
+            )}
           </DataTable>
         </Card>
       </div>

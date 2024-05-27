@@ -40,6 +40,7 @@ export const sidebarLinks = [
     to: "/users",
     icon: "pi-users",
     name: "Пользователи",
+    adminOnly: true,
   },
   {
     to: "/domains",
@@ -51,6 +52,7 @@ export const sidebarLinks = [
     to: "/funnels",
     icon: "pi-list",
     name: "Воронки",
+    adminOnly: true,
   },
   {
     to: "/offers",
@@ -62,12 +64,12 @@ export const sidebarLinks = [
     to: "/finances",
     icon: "pi-cog",
     name: "Финансы",
+    adminOnly: true,
     links: [
       {
         to: "/spends",
         icon: "pi-dollar",
         name: "Расходы",
-        adminOnly: true,
       },
     ],
   },
@@ -75,6 +77,7 @@ export const sidebarLinks = [
     to: "/settings",
     icon: "pi-cog",
     name: "Инструменты",
+    adminOnly: true,
     links: [
       {
         to: "/sources",
@@ -85,7 +88,6 @@ export const sidebarLinks = [
         to: "/logs",
         icon: "pi-chart-pie",
         name: "Логи брокеров",
-        adminOnly: true,
       },
       {
         to: "/statuses",

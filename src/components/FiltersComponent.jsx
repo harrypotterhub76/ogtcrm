@@ -25,8 +25,6 @@ function FiltersStyled({
 
   const { userData } = useContext(UserContext);
 
-  // console.log(JSON.parse(user).user);
-
   useEffect(() => {
     if (Object.keys(dates).length) {
       formatDatesState(dates, "create");
@@ -56,7 +54,7 @@ function FiltersStyled({
         }
       });
 
-      console.log("formattedPostDates: ", formattedPostDates);
+      
       if (formattedPostDates[0] !== "" && formattedPostDates[1] !== "")
         handleFilterChange("start_filter", formattedPostDates[0]);
       handleFilterChange("end_filter", formattedPostDates[1]);
@@ -73,7 +71,7 @@ function FiltersStyled({
         }
       });
 
-      console.log("formattedPostDates: ", formattedPostDates);
+      
       if (formattedPostDates[0] !== "" && formattedPostDates[1] !== "")
         handleFilterChange("start_send_filter", formattedPostDates[0]);
       handleFilterChange("end_send_filter", formattedPostDates[1]);
@@ -90,7 +88,7 @@ function FiltersStyled({
         }
       });
 
-      console.log("formattedPostDates: ", formattedPostDates);
+      
       if (formattedPostDates[0] !== "" && formattedPostDates[1] !== "")
         handleFilterChange("start_ftd_filter", formattedPostDates[0]);
       handleFilterChange("end_ftd_filter", formattedPostDates[1]);
@@ -106,11 +104,11 @@ function FiltersStyled({
       ...prevState,
       [field]: value,
     }));
-    console.log(field, value, rows, page);
+    
   };
 
   useEffect(() => {
-    console.log("filtersArray", filtersObject);
+    
   }, [filtersObject]);
 
   useEffect(() => {
@@ -174,7 +172,7 @@ function FiltersStyled({
                         <InputText
                           value={filtersObject[filter.key] || ""}
                           onChange={(e) => {
-                            console.log(e.target.value);
+                            
                             handleFilterChange(filter.key, e.target.value);
                           }}
                           style={{ width: "85%", maxWidth: "85%" }}
@@ -190,7 +188,7 @@ function FiltersStyled({
                               : []
                           }
                           onChange={(e) => {
-                            console.log(e.value);
+                            
                             handleFilterChange(filter.key, e.value.toString());
                           }}
                           options={filter.options}
@@ -204,7 +202,7 @@ function FiltersStyled({
                           dateFormat="dd-mm-yy"
                           value={dates}
                           onChange={(e) => {
-                            console.log(e.value);
+                            
                             setDates(e.value);
                           }}
                           selectionMode="range"
@@ -218,7 +216,7 @@ function FiltersStyled({
                           dateFormat="dd-mm-yy"
                           value={datesSent}
                           onChange={(e) => {
-                            console.log(e.value);
+                            
                             setDatesSent(e.value);
                           }}
                           selectionMode="range"
@@ -232,7 +230,7 @@ function FiltersStyled({
                           dateFormat="dd-mm-yy"
                           value={datesDep}
                           onChange={(e) => {
-                            console.log(e.value);
+                            
                             setDatesDep(e.value);
                           }}
                           selectionMode="range"

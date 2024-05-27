@@ -14,7 +14,7 @@ function SidebarStyled({ visible, setVisible, theme }) {
   const btnRef3 = useRef(null);
   const { sidebarModel, setSidebarModel } = useContext(SidebarContext); // Access active link from context
 
-  const { user } = useContext(UserContext);
+  const { userData } = useContext(UserContext);
 
   const handleHide = () => {
     setVisible(false);
@@ -32,10 +32,13 @@ function SidebarStyled({ visible, setVisible, theme }) {
           <div className="overflow-y-auto">
             <ul className="list-none p-0 m-0">
               {sidebarLinks.map((link, index) => {
+                if (link.adminOnly && userData.role === "Buyer") {
+                  return "";
+                }
                 if ("links" in link) {
                   const isOpen =
                     sidebarModel && link.links.some((l) => l === sidebarModel); // Check if active link is within dropdown
-                  console.log(isOpen);
+
                   return (
                     <li key={index} className="w-full">
                       <StyleClass

@@ -36,19 +36,19 @@ function Dashboard() {
   };
 
   // useEffect(() => {
-  //   console.log("offers:", offers);
-  //   console.log("stats:", stats);
+  //   
+  //   
   // }, [offers, stats]);
 
   const renderOffers = () => {
     getOffers()
       .then((response) => {
-        console.log(response);
+        
         setOffers(response.data.data);
         setLoading(false);
       })
       .catch((error) => {
-        console.log(error);
+        
         showToast("error", "Ошибка при загрузке оферов");
       });
   };
@@ -59,12 +59,12 @@ function Dashboard() {
       user_id: userData.id,
     })
       .then((response) => {
-        console.log(response);
+        
         setStats(response.data);
         setLoading(false);
       })
       .catch((error) => {
-        console.log(error);
+        
         showToast("error", "Ошибка при загрузке статистики");
       });
   };
@@ -75,7 +75,7 @@ function Dashboard() {
       user_id: userData.id,
     })
       .then((response) => {
-        console.log(response);
+        
         setLeads(
           response.data.lead_counts.map((lead) =>
             lead.count !== undefined ? lead.count : 0
@@ -85,7 +85,7 @@ function Dashboard() {
         setLoading(false);
       })
       .catch((error) => {
-        console.log(error);
+        
         showToast("error", "Ошибка при загрузке лидов");
       });
   };
@@ -97,7 +97,7 @@ function Dashboard() {
     setTitleModel("Дашборд");
     // setUsername(JSON.parse(localStorage.getItem("loginData")).user.name);
 
-    // console.log(JSON.parse(localStorage.getItem("loginData")).user.name);
+    // 
   }, []);
 
   useEffect(() => {
@@ -184,7 +184,7 @@ function Dashboard() {
 
   return (
     <div className="dashboard-container">
-      <div className="flex justify-content-between items-center mb-5">
+      <div className="flex justify-content-between items-center my-5">
         <h2 className="m-0">Дашборд</h2>
       </div>
       <div className="" style={{ maxWidth: "100%", margin: "0 auto" }}>

@@ -18,9 +18,6 @@ function ImportHistory() {
   const { setTitleModel } = useContext(TitleContext);
 
   // useEffect'ы для рендера, вывода логов
-  useEffect(() => {
-    console.log("importedLeads: ", importedLeads);
-  }, [importedLeads]);
 
   useEffect(() => {
     setTitleModel("История импортов");

@@ -100,21 +100,6 @@ function Statuses() {
     },
   ];
 
-  useEffect(() => {
-    console.log("addDialogInputObject", addStatusDialogInputObject);
-    console.log("editDialogInputObject", editStatusDialogInputObject);
-    console.log("statusesCRM: ", statusesCRM);
-    console.log("selectedStatusCRM: ", selectedStatusCRM);
-    console.log("statusesCRMOptions: ", statusesCRMOptions);
-    console.log("validityChecked: ", validityChecked);
-  }, [
-    addStatusDialogInputObject,
-    editStatusDialogInputObject,
-    statusesCRM,
-    selectedStatusCRM,
-    statusesCRMOptions,
-    validityChecked,
-  ]);
 
   useEffect(() => {
     if (selectedStatusCRM) {
@@ -142,7 +127,7 @@ function Statuses() {
         setLoading(false);
       })
       .catch((error) => {
-        console.log(error);
+        
         showToast("error", "Ошибка при загрузке статусов");
       });
     getStatusesCRM()
@@ -162,7 +147,7 @@ function Statuses() {
         setValidityChecked(validityArray);
       })
       .catch((error) => {
-        console.log(error);
+        
         showToast("error", "Ошибка при загрузке статусов CRM");
       });
   };
@@ -213,7 +198,7 @@ function Statuses() {
           renderStatuses();
         })
         .catch(function (error) {
-          console.log(error);
+          
           showToast("error", "Ошибка удаления статуса");
         });
     }
@@ -228,7 +213,7 @@ function Statuses() {
         renderStatuses();
       })
       .catch(function (error) {
-        console.log(error);
+        
         showToast("error", "Ошибка добавления статуса");
       });
   };
@@ -259,11 +244,11 @@ function Statuses() {
     editStatusCRMValidity(id, value)
       .then((response) => {
         showToast("success", response.data.message);
-        console.log(response);
+        
       })
       .catch((err) => {
         showToast("error", response.data.message);
-        console.log(err);
+        
       });
   };
 
@@ -426,18 +411,18 @@ function Statuses() {
             filters={filters}
             loading={loading}
             header={renderHeader()}
-            emptyMessage="Статус не найден."
+            emptyMessage="Нет данных"
           >
             <Column field="id" header="ID" style={{ width: "20%" }}></Column>
             <Column field="broker_status" header="Статус брокера"></Column>
             <Column field="crm_status" header="Статус CRM"></Column>
             <Column field="broker_name" header="Брокер"></Column>
-            <Column
+            {/* <Column
               field="category"
               header="Действие"
               body={statusesActionBodyTemplate}
               style={{ width: "20%" }}
-            ></Column>
+            ></Column> */}
           </DataTable>
         ) : (
           <DataTable
@@ -452,7 +437,7 @@ function Statuses() {
             filters={filters}
             loading={loading}
             header={renderHeader()}
-            emptyMessage="Статус не найден."
+            emptyMessage="Нет данных"
           >
             <Column field="id" header="ID" style={{ width: "20%" }}></Column>
             <Column field="crm_status" header="Статус CRM"></Column>

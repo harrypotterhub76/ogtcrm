@@ -88,22 +88,22 @@ function Funnels() {
     // renderFunnels();
     setTitleModel("Воронки");
     getFunnels().then((response) => {
-      console.log(response);
+      
       setFunnelsNames(response.data.data.map(({ name }) => name));
     });
-    console.log("funnels", funnels);
+    
   }, []);
 
   const renderFunnels = async (obj) => {
     getFunnelsPaginationData(obj)
       .then((response) => {
-        console.log(response);
+        
         setFunnels(response.data.data);
         setTotalRecords(response.data.total);
         setLoading(false);
       })
       .catch((error) => {
-        console.log(error);
+        
         showToast("error", "Ошибка при загрузке воронок");
       });
   };
@@ -143,8 +143,8 @@ function Funnels() {
           renderFunnels();
         })
         .catch(function (error) {
-          console.log(error);
-          showToast("error", error.response.data.message);
+          
+          showToast("error", error.response.data.data.message);
         });
     }
   };
@@ -172,7 +172,7 @@ function Funnels() {
         renderFunnels();
       })
       .catch(function (error) {
-        showToast("error", error.response.data.message);
+        showToast("error", error.response.data.data.message);
         setEditDialogInputObject(dialogInputObjectInitialState);
       });
   };
@@ -338,7 +338,7 @@ function Funnels() {
           showGridlines
           tableStyle={{ minWidth: "50rem" }}
           header={renderHeader()}
-          emptyMessage="Воронка не найдена."
+          emptyMessage="Нет данных"
         >
           <Column field="id" header="ID" ></Column>
           <Column field="name" header="Воронка"></Column>

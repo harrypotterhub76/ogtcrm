@@ -24,7 +24,7 @@ export default function PaginatorComponent({
     setPage(event.page);
     setLoading(true);
   };
-  console.log(totalRecords);
+  
   return (
     <div className="card">
       <Paginator

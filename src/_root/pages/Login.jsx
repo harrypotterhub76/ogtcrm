@@ -31,7 +31,7 @@ export default function Login() {
     setLoading(true);
     login({ email: emailValue, password: passwordValue })
       .then((response) => {
-        console.log(response);
+        
         const accessTokenStorage = localStorage.getItem("userData");
         if (!accessTokenStorage) {
           localStorage.setItem(
@@ -46,7 +46,7 @@ export default function Login() {
         }
       })
       .catch((err) => {
-        console.log(err);
+        
         setErrorText(err.response.data.message);
         setLoading(false);
       });

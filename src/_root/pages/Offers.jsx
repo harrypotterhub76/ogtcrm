@@ -76,19 +76,16 @@ function Offers() {
   };
 
   // useEffect'ы для рендера, вывода логов
-  useEffect(() => {
-    console.log("dialogInputObject: ", dialogInputObject);
-  }, [dialogInputObject]);
 
   useEffect(() => {
     getOffers().then((response) => {
-      console.log(response);
+      
       const updatedOffers = response.data.data.map(({ name }) => name);
       setOffersOptions(updatedOffers);
     });
 
     getFunnels().then((response) => {
-      console.log(response);
+      
       const updatedFunnels = response.data.data.map(({ name }) => name);
       setFunnelsOptions(updatedFunnels);
     });
@@ -239,7 +236,7 @@ function Offers() {
     getOffersPaginationData(obj).then(function (response) {
       const offerActiveArray = [];
       const offerCapControlArray = [];
-      console.log(response);
+      
       response.data.data.forEach((obj) => {
         offerActiveArray.push({
           id: obj.id,
@@ -367,24 +364,24 @@ function Offers() {
           renderOffers();
         })
         .catch(function (error) {
-          console.log(error);
+          
           showToast("error", response.data.message);
         });
     } else {
-      console.log("Заполните все поля");
+      
     }
   };
 
   const handleDeleteOffer = () => {
     deleteOffer(selectedOfferID)
       .then(function (response) {
-        console.log(response);
+        
         showToast("success", response.data.data.message);
         renderOffers();
       })
       .catch(function (error) {
         showToast("error", response.data.message);
-        console.log(error);
+        
       });
   };
 
@@ -392,7 +389,7 @@ function Offers() {
     editActivity(id, active)
       .then((response) => {
         showToast("success", response.data.data.message);
-        console.log(response);
+        
       })
       .catch((err) => {
         if (err.response.status === 400) {
@@ -407,11 +404,11 @@ function Offers() {
       .then((response) => {
         showToast("success", response.data.data.message);
         renderOffers();
-        console.log(response);
+        
       })
       .catch((err) => {
         showToast("error", err.response.data.message);
-        console.log("err", err);
+        
       });
   };
 
@@ -595,7 +592,7 @@ function Offers() {
 
   const sourcesTemplate = (object) => {
     const sourcesArray = JSON.parse(object.source);
-    console.log(sourcesArray);
+    
     return (
       <div className="flex flex-wrap max-w-30rem gap-2">
         {sourcesArray.map((item) => (
@@ -685,6 +682,7 @@ function Offers() {
             value={loading ? skeletonData : offers}
             header={headerTemplate}
             showGridlines
+            emptyMessage="Нет данных"
           >
             <Column field="id" header="ID"></Column>
             <Column field="name" header="Оффер"></Column>

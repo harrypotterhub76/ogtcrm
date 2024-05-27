@@ -56,7 +56,7 @@ function Domains() {
         user_id: getSelectedUserID(selectedUser),
       }));
     }
-    console.log("selectedUser", selectedUser);
+    
   }, [selectedUser]);
 
   const showToast = (severity, text) => {
@@ -123,14 +123,6 @@ function Domains() {
   ];
 
   useEffect(() => {
-    console.log("dialogInputObject", dialogInputObject);
-    console.log("users", users);
-    console.log("selectedUser", selectedUser);
-    console.log("usersArray", usersOptions);
-    console.log("domains", domainsOptions);
-  }, [dialogInputObject, users, selectedUser, usersOptions, domainsOptions]);
-
-  useEffect(() => {
     // renderDomains();
     setTitleModel("Домены");
 
@@ -140,7 +132,7 @@ function Domains() {
         setUsersOptions(response.data.data.map(({ name }) => name));
       })
       .catch((error) => {
-        console.log(error);
+        
         showToast("error", "Ошибка при загрузке пользователей");
       });
 
@@ -152,14 +144,14 @@ function Domains() {
   const renderDomains = async (obj) => {
     getDomainsPaginationData(obj)
       .then((response) => {
-        console.log(response);
+        
         setDomains(response.data.data);
         setDomainsUsers(response.data.data.map((funnel) => funnel.name));
         setTotalRecords(response.data.total);
         setLoading(false);
       })
       .catch((error) => {
-        console.log(error);
+        
         showToast("error", "Ошибка при загрузке доменов");
       });
   };
@@ -189,7 +181,7 @@ function Domains() {
           renderDomains();
         })
         .catch(function (error) {
-          console.log(error);
+          
           showToast("error", "Ошибка удаления домена");
         });
     }
@@ -204,8 +196,8 @@ function Domains() {
         renderDomains();
       })
       .catch(function (error) {
-        console.log(error);
-        showToast("error", error.response.data.message);
+        
+        showToast("error", error.response.data.data.message);
       });
   };
 
@@ -221,7 +213,7 @@ function Domains() {
   const editCurrentDomain = () => {
     editDomain(dialogInputObject, currentRowData)
       .then(function (response) {
-        console.log("ahah response", response);
+        
         showToast("success", response.data.data.message);
         setIsEditDialogVisible(false);
         clearDialogInputObject();
@@ -389,6 +381,7 @@ function Domains() {
           showGridlines
           tableStyle={{ minWidth: "50rem" }}
           header={renderHeader()}
+          emptyMessage="Нет данных"
         >
           <Column field="id" header="ID" style={{ width: "20%" }}></Column>
           <Column field="domain" header="Домен"></Column>

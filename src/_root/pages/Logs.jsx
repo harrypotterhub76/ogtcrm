@@ -24,19 +24,19 @@ function Logs() {
       var month = ("0" + (dateObject.getMonth() + 1)).slice(-2);
       var day = ("0" + dateObject.getDate()).slice(-2);
       let formattedDate = year + "-" + month + "-" + day;
-      console.log(formattedDate);
+      
       getLogs(formattedDate)
         .then((response) => {
-          console.log(response.data);
+          
           const formattedLogs = response.data.message
             ? response.data.message
             : response.data.map((log) => log.response_text).join("\n\n");
-          console.log("logs:", formattedLogs);
+          
 
           setLogs(formattedLogs);
         })
         .catch((error) => {
-          console.log(error);
+          
         });
     } else {
       hasRendered.current = true;

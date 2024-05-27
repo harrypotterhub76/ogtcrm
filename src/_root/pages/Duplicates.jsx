@@ -73,7 +73,7 @@ function Leads() {
   const isMounted = useRef(false);
   const { setTitleModel } = useContext(TitleContext);
 
-  const { user } = useContext(UserContext);
+  const { userData } = useContext(UserContext);
 
   const addLeadDialogInitialState = {
     full_name: "",
@@ -119,21 +119,6 @@ function Leads() {
   };
 
   // useEffect'ы для рендера, вывода логов
-  useEffect(() => {
-    console.log("addLeadDialogInputObject: ", addLeadDialogInputObject);
-    console.log("postLeadDialogInputObject: ", postLeadDialogInputObject);
-    console.log("leadDialogType: ", leadDialogType);
-    console.log("statusesOptions: ", statusesCRMOptions);
-    console.log("funnels: ", funnels);
-    console.log("duplicateLeads: ", duplicateLeads);
-  }, [
-    addLeadDialogInputObject,
-    postLeadDialogInputObject,
-    leadDialogType,
-    statusesCRMOptions,
-    funnels,
-    duplicateLeads
-  ]);
 
   useEffect(() => {
     if (selectedFunnelDialog) {
@@ -143,7 +128,7 @@ function Leads() {
         funnel_id: getSelectedFunnelID(selectedFunnelDialog),
       }));
     }
-    console.log("selectedFunnelDialog", selectedFunnelDialog);
+    
   }, [selectedFunnelDialog]);
 
   useEffect(() => {
@@ -154,7 +139,7 @@ function Leads() {
         offer_id: getSelectedOfferID(selectedOfferDialog),
       }));
     }
-    console.log("selectedOfferDialog", selectedOfferDialog);
+    
   }, [selectedOfferDialog]);
 
   useEffect(() => {
@@ -165,7 +150,7 @@ function Leads() {
         user_id: getSelectedUserID(selectedUserDialog),
       }));
     }
-    console.log("selectedFunnelDialog", selectedUserDialog);
+    
   }, [selectedUserDialog]);
 
   useEffect(() => {
@@ -375,7 +360,7 @@ function Leads() {
   // Функции подтягиваний данных с бека
   const renderDuplicateLeads = async (obj) => {
     getDuplicateLeads(obj).then(function (response) {
-      console.log(response);
+      
       setDuplicateLeads(response.data.data);
       setTotalRecords(response.data.total);
       setLoading(false);
@@ -482,7 +467,7 @@ function Leads() {
 
   // Обработчики взаимодействия фронта с беком
   const handleAddLead = () => {
-    console.log(isAllFieldsFilled(addLeadDialogInputObject));
+    
     if (isAllFieldsFilled(addLeadDialogInputObject)) {
       addLead(addLeadDialogInputObject)
         .then(function (response) {
@@ -495,7 +480,7 @@ function Leads() {
           renderDuplicateLeads();
         })
         .catch(function (error) {
-          console.log(error);
+          
           showToast("error", response.data.message);
         });
     } else {
@@ -504,7 +489,7 @@ function Leads() {
   };
 
   const handlePostLead = () => {
-    console.log(isAllFieldsFilled(postLeadDialogInputObject));
+    
     if (isAllFieldsFilled(postLeadDialogInputObject)) {
       sendLead(postLeadDialogInputObject)
         .then(function (response) {
@@ -513,8 +498,8 @@ function Leads() {
           renderDuplicateLeads();
         })
         .catch(function (error) {
-          console.log(error);
-          showToast("error", error.response.data.message);
+          
+          showToast("error", error.response.data.data.message);
         });
     } else {
       showToast("error", "Пожалуйста, введите все поля");
@@ -529,8 +514,8 @@ function Leads() {
         renderDuplicateLeads();
       })
       .catch(function (error) {
-        console.log(error);
-        showToast("error", error.response.data.message);
+        
+        showToast("error", error.response.data.data.message);
       });
   };
 
@@ -542,7 +527,7 @@ function Leads() {
       })
       .catch(function (error) {
         showToast("error", response.data.message);
-        console.log(error);
+        
       });
   };
 
@@ -722,6 +707,9 @@ function Leads() {
   };
 
   const URLParamsTemplate = (rowData) => {
+    if (!rowData.url_params) {
+      return [];
+    }
     const splittedURLParams = rowData.url_params.split("&");
     const selectedURLParamsArray = splittedURLParams.map((param) => {
       const [parameter, value] = param.split("=");
@@ -787,17 +775,20 @@ function Leads() {
   };
 
   const IDTemplate = (rowData) => {
-    return (
-      <div
-        style={{
+    const isUserAdmin = userData.role === "Admin";
+    const style = isUserAdmin
+      ? {
           cursor: "pointer",
           color: "#34d399",
           textDecoration: "underline",
           textUnderlineOffset: "5px",
-        }}
-        onClick={() => {
-          handleIDClick(rowData);
-        }}
+        }
+      : {};
+
+    return (
+      <div
+        style={style}
+        onClick={isUserAdmin ? () => handleIdClick(rowData) : undefined}
       >
         {rowData.id}
       </div>
@@ -830,7 +821,11 @@ function Leads() {
           setIsParameterDialogVisible(false);
         }}
       >
-        <DataTable value={selectedURLParams} showGridlines>
+        <DataTable
+          value={selectedURLParams}
+          showGridlines
+          emptyMessage="Нет данных"
+        >
           <Column field="parameter" header="Параметр"></Column>
           <Column field="value" header="Значение"></Column>
         </DataTable>
@@ -847,7 +842,11 @@ function Leads() {
           setIsStatusDialogVisible(false);
         }}
       >
-        <DataTable value={selectedStatuses}  showGridlines>
+        <DataTable
+          value={selectedStatuses}
+          showGridlines
+          emptyMessage="Нет данных"
+        >
           <Column field="time" header="Время"></Column>
           <Column field="status" header="Статус"></Column>
         </DataTable>
@@ -886,23 +885,22 @@ function Leads() {
       <ConfirmPopup group="headless" content={popUpContentTemplate} />
 
       <div className="flex flex-column align-items-center justify-content-center">
-        <div
-          className="flex justify-content-between my-5"
+      <div
+          className="flex justify-content-between my-5 mb-0"
           style={{ width: "90%" }}
         >
           <h2 className="m-0">Системные дубликаты</h2>
-          {/* <Button
-            label="Добавить"
-            icon="pi pi-plus"
-            onClick={() => setIsAddDialogVisible(true)}
-          /> */}
         </div>
+        <p className="" style={{ width: "90%" }}>
+          Общее количество: {totalRecords}
+        </p>
         <Card style={{ width: "90%" }}>
           <DataTable
             value={loading ? skeletonData : duplicateLeads}
             header={headerTemplate}
             rows={10}
             filters={filters}
+            emptyMessage="Нет данных"
           >
             <Column field="id" header="ID" body={IDTemplate}></Column>
             <Column field="phone" header="Номер телефона"></Column>
@@ -928,11 +926,13 @@ function Leads() {
               header="Лид создан"
               body={loading ? <Skeleton /> : createdAtTemplate}
             ></Column>
-            <Column
-              field="category"
-              header="Действие"
-              body={loading ? <Skeleton /> : actionButtonsTemplate}
-            ></Column>
+            {userData.role === "Admin" && (
+              <Column
+                field="category"
+                header="Действие"
+                body={loading ? <Skeleton /> : actionButtonsTemplate}
+              ></Column>
+            )}
           </DataTable>
         </Card>
       </div>
@@ -941,7 +941,6 @@ function Leads() {
 }
 
 export default Leads;
-
 
 const skeletonData = [
   {

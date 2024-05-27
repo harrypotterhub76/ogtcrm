@@ -38,13 +38,6 @@ function Statistics() {
   const [loadingFunnels, setLoadingFunnels] = useState(true);
 
   // useEffect'ы для рендера, вывода логов
-  useEffect(() => {
-    console.log("dates: ", dates);
-    console.log("postDates: ", postDates);
-    console.log("leadsStats: ", leadsStats);
-    console.log("offersStats: ", offersStats);
-    console.log("funnelsStats: ", funnelsStats);
-  }, [leadsStats, offersStats, funnelsStats]);
 
   useEffect(() => {
     formatDatesState(dates);
@@ -64,7 +57,7 @@ function Statistics() {
 
   const getLeadsStatsData = () => {
     postLeadsStats(postDates).then((response) => {
-      console.log("leadsStats", response);
+      
       setLeadsStats(response.data.data);
       setLoadingLeads(false);
     });
@@ -72,7 +65,7 @@ function Statistics() {
 
   const getOffersStatsData = () => {
     postOffersStats(postDates).then((response) => {
-      console.log("offersStats", response);
+      
       setOffersStats(response.data.data);
       setLoadingOffers(false);
     });
@@ -80,7 +73,7 @@ function Statistics() {
 
   const getFunnelsStatsData = () => {
     postFunnelsStats(postDates).then((response) => {
-      console.log("funnelsStats", response);
+      
       setFunnelsStats(response.data.data);
       setLoadingFunnels(false);
     });
@@ -122,7 +115,7 @@ function Statistics() {
         return "";
       }
     });
-    console.log("formattedPostDates: ", formattedPostDates);
+    
     if (formattedPostDates[0] !== "" && formattedPostDates[1] !== "")
       setPostDates({
         stat_start: formattedPostDates[0],
@@ -195,7 +188,7 @@ function Statistics() {
     return (
       <>
         <h4 className="my-3">Статистика по {data.name}</h4>
-        <DataTable value={data.geo_stats} className="statistics-inner">
+        <DataTable value={data.geo_stats} className="statistics-inner" emptyMessage="Нет данных">
           <Column field="geo" header="Гео"></Column>
           <Column field="total_leads_count" header="Тотал"></Column>
           <Column field="valid_leads_count" header="Валид"></Column>

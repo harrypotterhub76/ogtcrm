@@ -121,24 +121,6 @@ function LeadsInHold() {
   };
 
   // useEffect'ы для рендера, вывода логов
-  useEffect(() => {
-    console.log("addLeadDialogInputObject: ", addLeadDialogInputObject);
-    console.log("postLeadDialogInputObject: ", postLeadDialogInputObject);
-    console.log("leadDialogType: ", leadDialogType);
-    console.log("statusesOptions: ", statusesCRMOptions);
-    console.log("funnels: ", funnels);
-    console.log("leads: ", leadsInHold);
-    console.log("offers:", offers);
-    console.log("offersOptions:", offersOptions);
-    console.log("activeOffersOptions:", activeOffersOptions);
-  }, [
-    addLeadDialogInputObject,
-    postLeadDialogInputObject,
-    leadDialogType,
-    statusesCRMOptions,
-    funnels,
-    leadsInHold,
-  ]);
 
   useEffect(() => {
     if (selectedFunnelDialog) {
@@ -148,7 +130,7 @@ function LeadsInHold() {
         funnel_id: getSelectedFunnelID(selectedFunnelDialog),
       }));
     }
-    console.log("selectedFunnelDialog", selectedFunnelDialog);
+    
   }, [selectedFunnelDialog]);
 
   useEffect(() => {
@@ -159,7 +141,7 @@ function LeadsInHold() {
         offer_id: getSelectedOfferID(selectedOfferDialog),
       }));
     }
-    console.log("selectedOfferDialog", selectedOfferDialog);
+    
   }, [selectedOfferDialog]);
 
   useEffect(() => {
@@ -170,7 +152,7 @@ function LeadsInHold() {
         user_id: getSelectedUserID(selectedUserDialog),
       }));
     }
-    console.log("selectedFunnelDialog", selectedUserDialog);
+    
   }, [selectedUserDialog]);
 
   useEffect(() => {
@@ -181,7 +163,7 @@ function LeadsInHold() {
         source_id: getSelectedSourceID(selectedSource),
       }));
     }
-    console.log("selectedSource", selectedSource);
+    
   }, [selectedSource]);
 
   useEffect(() => {
@@ -411,7 +393,7 @@ function LeadsInHold() {
         setOffersOptions(updatedOffers);
       })
       .catch((error) => {
-        console.log(error);
+        
         showToast("error", "Ошибка при загрузке офферов");
       });
   };
@@ -421,14 +403,14 @@ function LeadsInHold() {
       geo: postLeadDialogInputObject.geo,
     })
       .then((response) => {
-        console.log(response);
+        
         if (response.data.message !== "Нет активных офферов") {
           const updatedOffers = response.data.data.map(({ name }) => name);
           setActiveOffersOptions(updatedOffers);
         }
       })
       .catch((error) => {
-        console.log(error);
+        
         showToast("error", "Ошибка при загрузке активных офферов");
       });
   };
@@ -436,11 +418,11 @@ function LeadsInHold() {
     getFunnels()
       .then((response) => {
         const updatedFunnels = response.data.data.map(({ name }) => name);
-        setFunnels(response.data);
+        setFunnels(response.data.data);
         setFunnelsOptions(updatedFunnels);
       })
       .catch((error) => {
-        console.log(error);
+        
         showToast("error", "Ошибка при загрузке воронок");
       });
   };
@@ -452,7 +434,7 @@ function LeadsInHold() {
         setGeosOptions(updatedGeos);
       })
       .catch((error) => {
-        console.log(error);
+        
         showToast("error", "Ошибка при загрузке гео");
       });
   };
@@ -460,11 +442,11 @@ function LeadsInHold() {
   const getUsersData = () => {
     getUsers()
       .then((response) => {
-        setUsers(response.data);
+        setUsers(response.data.data);
         setUsersOptions(response.data.data.map(({ name }) => name));
       })
       .catch((error) => {
-        console.log(error);
+        
         showToast("error", "Ошибка при загрузке пользователей");
       });
   };
@@ -478,7 +460,7 @@ function LeadsInHold() {
         setStatusesCRMOptions(updatedStatusesCRM);
       })
       .catch((error) => {
-        console.log(error);
+        
         showToast("error", "Ошибка при загрузке статусов");
       });
   };
@@ -486,11 +468,11 @@ function LeadsInHold() {
   const getSourcesData = () => {
     getSources()
       .then((response) => {
-        setSources(response.data);
+        setSources(response.data.data);
         setSourcesOptions(response.data.data.map(({ name }) => name));
       })
       .catch((error) => {
-        console.log(error);
+        
         showToast("error", "Ошибка при загрузке источников");
       });
   };
@@ -562,8 +544,8 @@ function LeadsInHold() {
           renderLeadsInHold(filtersObjectForRefresh);
         })
         .catch(function (error) {
-          console.log(error);
-          showToast("error", error.response.data.message);
+          
+          showToast("error", error.response.data.data.message);
         });
     } else {
       showToast("error", "Пожалуйста, введите все поля");
@@ -571,18 +553,18 @@ function LeadsInHold() {
   };
 
   const handleEditLead = () => {
-    console.log(postLeadDialogInputObject);
+    
     editLead(postLeadDialogInputObject, selectedLeadID)
       .then(function (response) {
-        console.log(response);
-        console.log(postLeadDialogInputObject);
-        showToast("success", response.data.message);
+        
+        
+        showToast("success", response.data.data.message);
         setLeadDialogType("post-lead");
         renderLeadsInHold(filtersObjectForRefresh);
       })
       .catch(function (error) {
-        console.log(error);
-        showToast("error", error.response.data.message);
+        
+        showToast("error", error.response.data.data.message);
       });
   };
 
@@ -594,7 +576,7 @@ function LeadsInHold() {
       })
       .catch(function (error) {
         showToast("error", response.data.message);
-        console.log(error);
+        
       });
   };
 
@@ -785,6 +767,10 @@ function LeadsInHold() {
   };
 
   const URLParamsTemplate = (rowData) => {
+    if (!rowData.url_params) {
+      return [];
+    }
+
     const splittedURLParams = rowData.url_params.split("&");
     const selectedURLParamsArray = splittedURLParams.map((param) => {
       const [parameter, value] = param.split("=");
@@ -843,17 +829,20 @@ function LeadsInHold() {
   };
 
   const IDTemplate = (rowData) => {
-    return (
-      <div
-        style={{
+    const isUserAdmin = userData.role === "Admin";
+    const style = isUserAdmin
+      ? {
           cursor: "pointer",
           color: "#34d399",
           textDecoration: "underline",
           textUnderlineOffset: "5px",
-        }}
-        onClick={() => {
-          handleIdClick(rowData);
-        }}
+        }
+      : {};
+
+    return (
+      <div
+        style={style}
+        onClick={isUserAdmin ? () => handleIdClick(rowData) : undefined}
       >
         {rowData.id}
       </div>
@@ -886,7 +875,7 @@ function LeadsInHold() {
           setIsParameterDialogVisible(false);
         }}
       >
-        <DataTable value={selectedURLParams} showGridlines>
+        <DataTable value={selectedURLParams} showGridlines emptyMessage="Нет данных">
           <Column field="parameter" header="Параметр"></Column>
           <Column field="value" header="Значение"></Column>
         </DataTable>
@@ -903,7 +892,7 @@ function LeadsInHold() {
           setIsStatusDialogVisible(false);
         }}
       >
-        <DataTable value={selectedStatuses} showGridlines>
+        <DataTable value={selectedStatuses} showGridlines emptyMessage="Нет данных">
           <Column field="time" header="Время"></Column>
           <Column field="status" header="Статус"></Column>
         </DataTable>
@@ -962,6 +951,7 @@ function LeadsInHold() {
           <DataTable
             value={loading ? skeletonData : leadsInHold}
             header={headerTemplate}
+            emptyMessage="Нет данных"
           >
             <Column field="id" header="ID" body={IDTemplate}></Column>
             {userData.role === "Admin" && (
@@ -998,11 +988,13 @@ function LeadsInHold() {
               header="Лид создан"
               body={loading ? <Skeleton /> : createdAtTemplate}
             ></Column>
-            <Column
-              field="category"
-              header="Действие"
-              body={loading ? <Skeleton /> : actionButtonsTemplate}
-            ></Column>
+            {userData.role === "Admin" && (
+              <Column
+                field="category"
+                header="Действие"
+                body={loading ? <Skeleton /> : actionButtonsTemplate}
+              ></Column>
+            )}
           </DataTable>
         </Card>
       </div>

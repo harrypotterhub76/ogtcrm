@@ -8,14 +8,14 @@ const getToken = () => {
 };
 
 export const getFunnels = () =>
-  axios.get(`http://25.22.142.48:8000/api/funnels`, {
+  axios.get(`https://mediax-crm.com/v1/api/funnels`, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
   });
 
 export const getFunnelsPaginationData = (parametersObject) => {
-  return axios.post("http://25.22.142.48:8000/api/funnels", parametersObject, {
+  return axios.post("https://mediax-crm.com/v1/api/funnels", parametersObject, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
@@ -23,14 +23,14 @@ export const getFunnelsPaginationData = (parametersObject) => {
 };
 
 export const deleteFunnel = (id) =>
-  axios.delete(`http://25.22.142.48:8000/api/funnels/${id}`, {
+  axios.delete(`https://mediax-crm.com/v1/api/funnels/${id}`, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
   });
 
 export const addFunnel = (dialogInputObject) =>
-  axios.post(`http://25.22.142.48:8000/api/funnels/store`, dialogInputObject, {
+  axios.post(`https://mediax-crm.com/v1/api/funnels/store`, dialogInputObject, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
@@ -38,7 +38,7 @@ export const addFunnel = (dialogInputObject) =>
 
 export const editFunnel = (dialogInputObject, id) =>
   axios.put(
-    `http://25.22.142.48:8000/api/funnels/update/${id}`,
+    `https://mediax-crm.com/v1/api/funnels/update/${id}`,
     dialogInputObject,
     {
       headers: {
@@ -48,21 +48,21 @@ export const editFunnel = (dialogInputObject, id) =>
   );
 
 export const getUsers = () =>
-  axios.get(`http://25.22.142.48:8000/api/users`, {
+  axios.get(`https://mediax-crm.com/v1/api/users`, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
   });
 
 export const getUsersPaginationData = (parametersObject) =>
-  axios.post(`http://25.22.142.48:8000/api/users`, parametersObject, {
+  axios.post(`https://mediax-crm.com/v1/api/users`, parametersObject, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
   });
 
 export const addUser = (dialogInputObject) =>
-  axios.post(`http://25.22.142.48:8000/api/users/store`, dialogInputObject, {
+  axios.post(`https://mediax-crm.com/v1/api/users/store`, dialogInputObject, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
@@ -70,7 +70,7 @@ export const addUser = (dialogInputObject) =>
 
 export const editUser = (dialogInputObject, id) =>
   axios.put(
-    `http://25.22.142.48:8000/api/users/update/${id}`,
+    `https://mediax-crm.com/v1/api/users/update/${id}`,
     {
       name: dialogInputObject.name,
       email: dialogInputObject.email,
@@ -84,28 +84,28 @@ export const editUser = (dialogInputObject, id) =>
   );
 
 export const deleteUser = (id) =>
-  axios.delete(`http://25.22.142.48:8000/api/users/${id}`, {
+  axios.delete(`https://mediax-crm.com/v1/api/users/${id}`, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
   });
 
 export const getDomains = () =>
-  axios.get(`http://25.22.142.48:8000/api/domains`, {
+  axios.get(`https://mediax-crm.com/v1/api/domains`, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
   });
 
 export const getDomainsPaginationData = (parametersObject) =>
-  axios.post(`http://25.22.142.48:8000/api/domains`, parametersObject, {
+  axios.post(`https://mediax-crm.com/v1/api/domains`, parametersObject, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
   });
 
 export const deleteDomain = (id) =>
-  axios.delete(`http://25.22.142.48:8000/api/domains/${id}`, {
+  axios.delete(`https://mediax-crm.com/v1/api/domains/${id}`, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
@@ -113,7 +113,7 @@ export const deleteDomain = (id) =>
 
 export const addDomain = (dialogInputObject) =>
   axios.post(
-    `http://25.22.142.48:8000/api/domains/store`,
+    `https://mediax-crm.com/v1/api/domains/store`,
     {
       domain: dialogInputObject.name,
       name: dialogInputObject.user,
@@ -128,7 +128,7 @@ export const addDomain = (dialogInputObject) =>
 
 export const editDomain = (dialogInputObject, id) =>
   axios.put(
-    `http://25.22.142.48:8000/api/domains/update/${id}`,
+    `https://mediax-crm.com/v1/api/domains/update/${id}`,
     {
       domain: dialogInputObject.name,
       name: dialogInputObject.user,
@@ -142,7 +142,7 @@ export const editDomain = (dialogInputObject, id) =>
   );
 
 export const getSpends = () =>
-  axios.get(`http://25.22.142.48:8000/api/spends`, {
+  axios.get(`https://mediax-crm.com/v1/api/spends`, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
@@ -150,7 +150,7 @@ export const getSpends = () =>
 
 export const getSpendsPaginationData = (parametersObject) =>
   axios.post(
-    `http://25.22.142.48:8000/api/spends/filtersForSpend`,
+    `https://mediax-crm.com/v1/api/spends/filtersForSpend`,
     parametersObject,
     {
       headers: {
@@ -160,14 +160,14 @@ export const getSpendsPaginationData = (parametersObject) =>
   );
 
 export const addSpend = (dialogInputObject) =>
-  axios.post(`http://25.22.142.48:8000/api/spends/store`, dialogInputObject, {
+  axios.post(`https://mediax-crm.com/v1/api/spends/store`, dialogInputObject, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
   });
 
 export const deleteSpend = (id) =>
-  axios.delete(`http://25.22.142.48:8000/api/spends/${id}`, {
+  axios.delete(`https://mediax-crm.com/v1/api/spends/${id}`, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
@@ -175,7 +175,7 @@ export const deleteSpend = (id) =>
 
 export const editSpend = (dialogInputObject, id) =>
   axios.put(
-    `http://25.22.142.48:8000/api/spends/update/${id}`,
+    `https://mediax-crm.com/v1/api/spends/update/${id}`,
     dialogInputObject,
     {
       headers: {
@@ -185,21 +185,21 @@ export const editSpend = (dialogInputObject, id) =>
   );
 
 export const getOffers = () =>
-  axios.get(`http://25.22.142.48:8000/api/offers`, {
+  axios.get(`https://mediax-crm.com/v1/api/offers`, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
   });
 
 export const getOffersPaginationData = (parametersObject) =>
-  axios.post(`http://25.22.142.48:8000/api/offers`, parametersObject, {
+  axios.post(`https://mediax-crm.com/v1/api/offers`, parametersObject, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
   });
 
 export const getCountries = () =>
-  axios.get(`http://25.22.142.48:8000/api/country`, {
+  axios.get(`https://mediax-crm.com/v1/api/country`, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
@@ -207,7 +207,7 @@ export const getCountries = () =>
 
 export const addOffer = (dialogInputObject) =>
   axios.post(
-    `http://25.22.142.48:8000/api/offers/store`,
+    `https://mediax-crm.com/v1/api/offers/store`,
     {
       name: dialogInputObject.name,
       cap: dialogInputObject.cap,
@@ -226,7 +226,7 @@ export const addOffer = (dialogInputObject) =>
 
 export const editOffer = (dialogInputObject, id) =>
   axios.put(
-    `http://25.22.142.48:8000/api/offers/update/${id}`,
+    `https://mediax-crm.com/v1/api/offers/update/${id}`,
     {
       name: dialogInputObject.name,
       cap: dialogInputObject.cap,
@@ -244,7 +244,7 @@ export const editOffer = (dialogInputObject, id) =>
   );
 
 export const deleteOffer = (id) =>
-  axios.delete(`http://25.22.142.48:8000/api/offers/${id}`, {
+  axios.delete(`https://mediax-crm.com/v1/api/offers/${id}`, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
@@ -252,7 +252,7 @@ export const deleteOffer = (id) =>
 
 export const editActivity = (id, active) =>
   axios.put(
-    `http://25.22.142.48:8000/api/offers/activity`,
+    `https://mediax-crm.com/v1/api/offers/activity`,
     {
       id,
       active,
@@ -266,7 +266,7 @@ export const editActivity = (id, active) =>
 
 export const editCapControl = (id, cap_control) =>
   axios.put(
-    `http://25.22.142.48:8000/api/offers/cap_control`,
+    `https://mediax-crm.com/v1/api/offers/cap_control`,
     {
       id,
       cap_control,
@@ -279,14 +279,14 @@ export const editCapControl = (id, cap_control) =>
   );
 
 export const getSources = () =>
-  axios.get(`http://25.22.142.48:8000/api/sources`, {
+  axios.get(`https://mediax-crm.com/v1/api/sources`, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
   });
 
 export const deleteSource = (id) =>
-  axios.delete(`http://25.22.142.48:8000/api/sources/${id}`, {
+  axios.delete(`https://mediax-crm.com/v1/api/sources/${id}`, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
@@ -294,7 +294,7 @@ export const deleteSource = (id) =>
 
 export const addSource = (sourceName) =>
   axios.post(
-    `http://25.22.142.48:8000/api/sources/store`,
+    `https://mediax-crm.com/v1/api/sources/store`,
     {
       name: sourceName,
     },
@@ -306,18 +306,18 @@ export const addSource = (sourceName) =>
   );
 
 export const getLeads = () =>
-  axios.get(`http://25.22.142.48:8000/api/leads`, {
+  axios.get(`https://mediax-crm.com/v1/api/leads`, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
   });
 
 // export const getLeadsPaginationData = (parametersObject) =>
-//   axios.post(`http://25.22.142.48:8000/api/leads`, parametersObject);
+//   axios.post(`https://mediax-crm.com/v1/api/leads`, parametersObject);
 
 export const sendLead = (dialogInputObject) =>
   axios.post(
-    `http://25.22.142.48:8000/api/offer/control-send`,
+    `https://mediax-crm.com/v1/api/offer/control-send`,
     dialogInputObject,
     {
       headers: {
@@ -327,14 +327,14 @@ export const sendLead = (dialogInputObject) =>
   );
 
 export const postLead = (parametersObject) =>
-  axios.post(`http://25.22.142.48:8000/api/leads`, parametersObject, {
+  axios.post(`https://mediax-crm.com/v1/api/leads`, parametersObject, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
   });
 
 export const addLead = (dialogInputObject) =>
-  axios.post(`http://25.22.142.48:8000/api/leads/store`, dialogInputObject, {
+  axios.post(`https://mediax-crm.com/v1/api/leads/store`, dialogInputObject, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
@@ -342,7 +342,7 @@ export const addLead = (dialogInputObject) =>
 
 export const editLead = (dialogInputObject, id) =>
   axios.put(
-    `http://25.22.142.48:8000/api/leads/update/${id}`,
+    `https://mediax-crm.com/v1/api/leads/update/${id}`,
     dialogInputObject,
     {
       headers: {
@@ -352,14 +352,14 @@ export const editLead = (dialogInputObject, id) =>
   );
 
 export const deleteLead = (id) =>
-  axios.delete(`http://25.22.142.48:8000/api/leads/${id}`, {
+  axios.delete(`https://mediax-crm.com/v1/api/leads/${id}`, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
   });
 
 export const getLeadStatus = () => {
-  axios.get(`http://25.22.142.48:8000/api/offers/leadsStatus`, {
+  axios.get(`https://mediax-crm.com/v1/api/offers/leadsStatus`, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
@@ -368,7 +368,7 @@ export const getLeadStatus = () => {
 
 export const getLogs = (date) =>
   axios.post(
-    `http://25.22.142.48:8000/api/logs`,
+    `https://mediax-crm.com/v1/api/logs`,
     { created_at: date },
     {
       headers: {
@@ -378,14 +378,14 @@ export const getLogs = (date) =>
   );
 
 export const getStatuses = () =>
-  axios.get(`http://25.22.142.48:8000/api/status`, {
+  axios.get(`https://mediax-crm.com/v1/api/status`, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
   });
 
 export const getStatusesCRM = () =>
-  axios.get(`http://25.22.142.48:8000/api/status-crm`, {
+  axios.get(`https://mediax-crm.com/v1/api/status-crm`, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
@@ -393,7 +393,7 @@ export const getStatusesCRM = () =>
 
 export const editStatusCRMValidity = (id, is_valid) =>
   axios.put(
-    `http://25.22.142.48:8000/api/status-crm/validity`,
+    `https://mediax-crm.com/v1/api/status-crm/validity`,
     {
       id,
       is_valid,
@@ -406,14 +406,14 @@ export const editStatusCRMValidity = (id, is_valid) =>
   );
 
 export const addStatus = (dialogInputObject) =>
-  axios.post(`http://25.22.142.48:8000/api/status/store`, dialogInputObject, {
+  axios.post(`https://mediax-crm.com/v1/api/status/store`, dialogInputObject, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
   });
 
 export const deleteStatus = (id) =>
-  axios.delete(`http://25.22.142.48:8000/api/status/${id}`, {
+  axios.delete(`https://mediax-crm.com/v1/api/status/${id}`, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
@@ -421,7 +421,7 @@ export const deleteStatus = (id) =>
 
 export const editStatus = (dialogInputObject, id) =>
   axios.put(
-    `http://25.22.142.48:8000/api/status/update/${id}`,
+    `https://mediax-crm.com/v1/api/status/update/${id}`,
     dialogInputObject,
     {
       headers: {
@@ -432,7 +432,7 @@ export const editStatus = (dialogInputObject, id) =>
 
 export const editStatusBroker = (dialogInputObject, id) =>
   axios.put(
-    `http://25.22.142.48:8000/api/status-brokers/update/${id}`,
+    `https://mediax-crm.com/v1/api/status-brokers/update/${id}`,
     {
       crm_status: dialogInputObject.crm_status,
       status_id: dialogInputObject.status_id,
@@ -445,42 +445,42 @@ export const editStatusBroker = (dialogInputObject, id) =>
   );
 
 export const getLeadsForChart = (obj) =>
-  axios.post(`http://25.22.142.48:8000/api/leads-chart`, obj, {
+  axios.post(`https://mediax-crm.com/v1/api/leads-chart`, obj, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
   });
 
 export const getStats = (obj) =>
-  axios.post(`http://25.22.142.48:8000/api/leads-stats`, obj, {
+  axios.post(`https://mediax-crm.com/v1/api/leads-stats`, obj, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
   });
 
 export const postLeadsStats = (postDates) =>
-  axios.post(`http://25.22.142.48:8000/api/leads/leads-stats`, postDates, {
+  axios.post(`https://mediax-crm.com/v1/api/leads/leads-stats`, postDates, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
   });
 
 export const postOffersStats = (postDates) =>
-  axios.post(`http://25.22.142.48:8000/api/leads/offer-stats`, postDates, {
+  axios.post(`https://mediax-crm.com/v1/api/leads/offer-stats`, postDates, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
   });
 
 export const postFunnelsStats = (postDates) =>
-  axios.post(`http://25.22.142.48:8000/api/leads/funnel-stats`, postDates, {
+  axios.post(`https://mediax-crm.com/v1/api/leads/funnel-stats`, postDates, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
   });
 
 export const getDuplicateLeads = (parametersObject) =>
-  axios.post(`http://25.22.142.48:8000/api/duplicate-leads`, parametersObject, {
+  axios.post(`https://mediax-crm.com/v1/api/duplicate-leads`, parametersObject, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
@@ -488,7 +488,7 @@ export const getDuplicateLeads = (parametersObject) =>
 
 export const getFilteredSpends = (filtersObject) =>
   axios.post(
-    `http://25.22.142.48:8000/api/spends/filtersForSpend`,
+    `https://mediax-crm.com/v1/api/spends/filtersForSpend`,
     filtersObject,
     {
       headers: {
@@ -498,7 +498,7 @@ export const getFilteredSpends = (filtersObject) =>
   );
 
 export const getFilteredOffers = (filtersObject) =>
-  axios.post(`http://25.22.142.48:8000/api/offer/filtersOffer`, filtersObject, {
+  axios.post(`https://mediax-crm.com/v1/api/offer/filtersOffer`, filtersObject, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
@@ -506,7 +506,7 @@ export const getFilteredOffers = (filtersObject) =>
 
 export const getFilteredFunnels = (filtersObject) =>
   axios.post(
-    `http://25.22.142.48:8000/api/funnels/filtersFunnel`,
+    `https://mediax-crm.com/v1/api/funnels/filtersFunnel`,
     filtersObject,
     {
       headers: {
@@ -517,7 +517,7 @@ export const getFilteredFunnels = (filtersObject) =>
 
 export const getFilteredDomains = (filtersObject) =>
   axios.post(
-    `http://25.22.142.48:8000/api/domains/filtersDomains`,
+    `https://mediax-crm.com/v1/api/domains/filtersDomains`,
     filtersObject,
     {
       headers: {
@@ -528,7 +528,7 @@ export const getFilteredDomains = (filtersObject) =>
 
 export const postOfferForLead = (dialogInputObject) =>
   axios.post(
-    `http://25.22.142.48:8000/api/offers/offerforlead`,
+    `https://mediax-crm.com/v1/api/offers/offerforlead`,
     dialogInputObject,
     {
       headers: {
@@ -546,28 +546,28 @@ export const generatePassword = () =>
   });
 
 export const getLeadsInHoldPaginationData = (parametersObject) =>
-  axios.post(`http://25.22.142.48:8000/api/nosend-leads`, parametersObject, {
+  axios.post(`https://mediax-crm.com/v1/api/nosend-leads`, parametersObject, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
   });
 
 export const getImportedLeads = () =>
-  axios.get(`http://25.22.142.48:8000/api/imported-leads`, {
+  axios.get(`https://mediax-crm.com/v1/api/imported-leads`, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
   });
 
 export const getFilteredLeads = (filtersObject) =>
-  axios.post(`http://25.22.142.48:8000/api/leads`, filtersObject, {
+  axios.post(`https://mediax-crm.com/v1/api/leads`, filtersObject, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
   });
 
 export const login = (loginObject) =>
-  axios.post(`http://25.22.142.48:8000/api/login`, loginObject, {
+  axios.post(`https://mediax-crm.com/v1/api/login`, loginObject, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },

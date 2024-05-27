@@ -57,7 +57,7 @@ function Sources() {
         setLoading(false);
       })
       .catch((error) => {
-        console.log(error);
+        
         showToast("error", "Ошибка при загрузке источников");
       });
   };
@@ -97,7 +97,7 @@ function Sources() {
           renderSources();
         })
         .catch(function (error) {
-          console.log(error);
+          
           showToast("error", "Ошибка удаления источника");
         });
     }
@@ -210,7 +210,7 @@ function Sources() {
           tableStyle={{ minWidth: "50rem" }}
           loading={loading}
           header={renderHeader()}
-          emptyMessage="Источник не найден."
+          emptyMessage="Нет данных"
         >
           <Column
             field="id"
