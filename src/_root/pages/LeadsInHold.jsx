@@ -65,7 +65,7 @@ function LeadsInHold() {
   const [sidebarVisible, setSidebarVisible] = useState(false);
 
   const [first, setFirst] = useState(0);
-  const [rows, setRows] = useState(5);
+  const [rows, setRows] = useState(20);
   const [page, setPage] = useState(0);
   const [totalRecords, setTotalRecords] = useState(0);
   const [filtersObjectForRefresh, setFiltersObjectForRefresh] = useState({});
@@ -130,7 +130,6 @@ function LeadsInHold() {
         funnel_id: getSelectedFunnelID(selectedFunnelDialog),
       }));
     }
-    
   }, [selectedFunnelDialog]);
 
   useEffect(() => {
@@ -141,7 +140,6 @@ function LeadsInHold() {
         offer_id: getSelectedOfferID(selectedOfferDialog),
       }));
     }
-    
   }, [selectedOfferDialog]);
 
   useEffect(() => {
@@ -152,7 +150,6 @@ function LeadsInHold() {
         user_id: getSelectedUserID(selectedUserDialog),
       }));
     }
-    
   }, [selectedUserDialog]);
 
   useEffect(() => {
@@ -163,7 +160,6 @@ function LeadsInHold() {
         source_id: getSelectedSourceID(selectedSource),
       }));
     }
-    
   }, [selectedSource]);
 
   useEffect(() => {
@@ -393,7 +389,6 @@ function LeadsInHold() {
         setOffersOptions(updatedOffers);
       })
       .catch((error) => {
-        
         showToast("error", "Ошибка при загрузке офферов");
       });
   };
@@ -403,14 +398,12 @@ function LeadsInHold() {
       geo: postLeadDialogInputObject.geo,
     })
       .then((response) => {
-        
         if (response.data.message !== "Нет активных офферов") {
           const updatedOffers = response.data.data.map(({ name }) => name);
           setActiveOffersOptions(updatedOffers);
         }
       })
       .catch((error) => {
-        
         showToast("error", "Ошибка при загрузке активных офферов");
       });
   };
@@ -422,7 +415,6 @@ function LeadsInHold() {
         setFunnelsOptions(updatedFunnels);
       })
       .catch((error) => {
-        
         showToast("error", "Ошибка при загрузке воронок");
       });
   };
@@ -434,7 +426,6 @@ function LeadsInHold() {
         setGeosOptions(updatedGeos);
       })
       .catch((error) => {
-        
         showToast("error", "Ошибка при загрузке гео");
       });
   };
@@ -446,7 +437,6 @@ function LeadsInHold() {
         setUsersOptions(response.data.data.map(({ name }) => name));
       })
       .catch((error) => {
-        
         showToast("error", "Ошибка при загрузке пользователей");
       });
   };
@@ -460,7 +450,6 @@ function LeadsInHold() {
         setStatusesCRMOptions(updatedStatusesCRM);
       })
       .catch((error) => {
-        
         showToast("error", "Ошибка при загрузке статусов");
       });
   };
@@ -472,7 +461,6 @@ function LeadsInHold() {
         setSourcesOptions(response.data.data.map(({ name }) => name));
       })
       .catch((error) => {
-        
         showToast("error", "Ошибка при загрузке источников");
       });
   };
@@ -544,7 +532,6 @@ function LeadsInHold() {
           renderLeadsInHold(filtersObjectForRefresh);
         })
         .catch(function (error) {
-          
           showToast("error", error.response.data.data.message);
         });
     } else {
@@ -553,17 +540,13 @@ function LeadsInHold() {
   };
 
   const handleEditLead = () => {
-    
     editLead(postLeadDialogInputObject, selectedLeadID)
       .then(function (response) {
-        
-        
         showToast("success", response.data.data.message);
         setLeadDialogType("post-lead");
         renderLeadsInHold(filtersObjectForRefresh);
       })
       .catch(function (error) {
-        
         showToast("error", error.response.data.data.message);
       });
   };
@@ -571,12 +554,11 @@ function LeadsInHold() {
   const handleDeleteLead = () => {
     deleteLead(selectedLeadID)
       .then(function (response) {
-        showToast("success", response.data.message);
+        showToast("success", response.data.data.message);
         renderLeadsInHold(filtersObjectForRefresh);
       })
       .catch(function (error) {
         showToast("error", response.data.message);
-        
       });
   };
 
@@ -628,6 +610,8 @@ function LeadsInHold() {
 
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
+
+    date.setUTCHours(date.getUTCHours() + 3);
 
     const year = date.getUTCFullYear();
     const month = String(date.getUTCMonth() + 1).padStart(2, "0");
@@ -708,7 +692,7 @@ function LeadsInHold() {
           first={first}
           rows={rows}
           totalRecords={totalRecords}
-          rowsPerPageOptions={[1, 2, 5, 10]}
+          rowsPerPageOptions={[20, 50, 100]}
           onPageChange={onPageChange}
         />
 
@@ -797,7 +781,11 @@ function LeadsInHold() {
     return (
       <div style={style} onClick={handleClick}>
         {splittedURLParams.length > 1
-          ? splittedURLParams[0] + ` (+${splittedURLParams.length - 1})`
+          ? (splittedURLParams[0].length > 20
+              ? splittedURLParams[0].substring(0, 20) + "..."
+              : splittedURLParams[0]) + ` (+${splittedURLParams.length - 1})`
+          : splittedURLParams[0].length > 20
+          ? splittedURLParams[0].substring(0, 20) + "..."
           : splittedURLParams[0]}
       </div>
     );
@@ -875,7 +863,11 @@ function LeadsInHold() {
           setIsParameterDialogVisible(false);
         }}
       >
-        <DataTable value={selectedURLParams} showGridlines emptyMessage="Нет данных">
+        <DataTable
+          value={selectedURLParams}
+          showGridlines
+          emptyMessage="Нет данных"
+        >
           <Column field="parameter" header="Параметр"></Column>
           <Column field="value" header="Значение"></Column>
         </DataTable>
@@ -892,7 +884,11 @@ function LeadsInHold() {
           setIsStatusDialogVisible(false);
         }}
       >
-        <DataTable value={selectedStatuses} showGridlines emptyMessage="Нет данных">
+        <DataTable
+          value={selectedStatuses}
+          showGridlines
+          emptyMessage="Нет данных"
+        >
           <Column field="time" header="Время"></Column>
           <Column field="status" header="Статус"></Column>
         </DataTable>

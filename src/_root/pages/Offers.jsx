@@ -47,7 +47,7 @@ function Offers() {
   const [isEditDialogVisible, setIsEditDialogVisible] = useState(false);
 
   const [first, setFirst] = useState(0);
-  const [rows, setRows] = useState(5);
+  const [rows, setRows] = useState(20);
   const [page, setPage] = useState(0);
   const [totalRecords, setTotalRecords] = useState(0);
 
@@ -79,7 +79,6 @@ function Offers() {
 
   useEffect(() => {
     getOffers().then((response) => {
-      
       const updatedOffers = response.data.data.map(({ name }) => name);
       setOffersOptions(updatedOffers);
     });
@@ -511,7 +510,7 @@ function Offers() {
           first={first}
           rows={rows}
           totalRecords={totalRecords}
-          rowsPerPageOptions={[1, 2, 5, 10]}
+          rowsPerPageOptions={[20, 50, 100]}
           onPageChange={onPageChange}
         />
 
@@ -571,7 +570,7 @@ function Offers() {
   const funnelsTemplate = (object) => {
     const funnelsArray = JSON.parse(object.funnels);
     return (
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         {funnelsArray.map((item) => (
           <Chip key={item} label={item} />
         ))}
@@ -677,8 +676,8 @@ function Offers() {
             onClick={() => setIsAddDialogVisible(true)}
           />
         </div>
-        <Card style={{ width: "90%" }}>
           <DataTable
+           style={{ width: "90%" }}
             value={loading ? skeletonData : offers}
             header={headerTemplate}
             showGridlines
@@ -721,7 +720,6 @@ function Offers() {
               body={loading ? <Skeleton /> : actionButtonsTemplate}
             ></Column>
           </DataTable>
-        </Card>
       </div>
     </>
   );

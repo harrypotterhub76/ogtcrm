@@ -69,7 +69,7 @@ body {
 }
 
 .pi-filter.pi {
-  color:#111417;
+  color: #111417;
   font-size: 1.2rem;
 }
 
@@ -133,13 +133,18 @@ td > div,
 
 .dashboard-container {
   max-width: 90%;
-  margin: 0  auto;
+  margin: 0 auto;
 }
 
 .statistics-card .p-card-content {
   display: flex;
-  gap: 10px ;
+  gap: 10px;
   flex-wrap: wrap;
+}
+
+.params-dialog tr td:nth-child(2) {
+  word-break: break-all !important;
+  white-space: normal !important;
 }
 
 @media (max-width: 1439px) {

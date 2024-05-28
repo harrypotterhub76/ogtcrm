@@ -480,11 +480,15 @@ export const postFunnelsStats = (postDates) =>
   });
 
 export const getDuplicateLeads = (parametersObject) =>
-  axios.post(`https://mediax-crm.com/v1/api/duplicate-leads`, parametersObject, {
-    headers: {
-      Authorization: `Bearer ${getToken()}`,
-    },
-  });
+  axios.post(
+    `https://mediax-crm.com/v1/api/duplicate-leads`,
+    parametersObject,
+    {
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
+    }
+  );
 
 export const getFilteredSpends = (filtersObject) =>
   axios.post(
@@ -498,11 +502,15 @@ export const getFilteredSpends = (filtersObject) =>
   );
 
 export const getFilteredOffers = (filtersObject) =>
-  axios.post(`https://mediax-crm.com/v1/api/offer/filtersOffer`, filtersObject, {
-    headers: {
-      Authorization: `Bearer ${getToken()}`,
-    },
-  });
+  axios.post(
+    `https://mediax-crm.com/v1/api/offer/filtersOffer`,
+    filtersObject,
+    {
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
+    }
+  );
 
 export const getFilteredFunnels = (filtersObject) =>
   axios.post(

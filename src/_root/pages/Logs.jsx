@@ -7,13 +7,14 @@ import { Card } from "primereact/card";
 
 function Logs() {
   const [date, setDate] = useState(null);
-  const [logs, setLogs] = useState(null);
+  const [logs, setLogs] = useState("");
   const hasRendered = useRef(false);
   const { setTitleModel } = useContext(TitleContext);
 
   useEffect(() => {
     initStartDate();
     setTitleModel("Логи брокеров");
+    console.log("logs", logs)
   }, []);
 
   useEffect(() => {
@@ -27,10 +28,10 @@ function Logs() {
       
       getLogs(formattedDate)
         .then((response) => {
-          
+          console.log(response)
           const formattedLogs = response.data.message
             ? response.data.message
-            : response.data.map((log) => log.response_text).join("\n\n");
+            : response.data.data.map((log) => log.response_text).join("\n\n");
           
 
           setLogs(formattedLogs);

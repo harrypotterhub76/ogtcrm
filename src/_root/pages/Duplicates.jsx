@@ -60,7 +60,7 @@ function Leads() {
   const [sidebarVisible, setSidebarVisible] = useState(false);
 
   const [first, setFirst] = useState(0);
-  const [rows, setRows] = useState(5);
+  const [rows, setRows] = useState(20);
   const [page, setPage] = useState(0);
   const [totalRecords, setTotalRecords] = useState(0);
   const [filtersObjectForRefresh, setFiltersObjectForRefresh] = useState({});
@@ -128,7 +128,6 @@ function Leads() {
         funnel_id: getSelectedFunnelID(selectedFunnelDialog),
       }));
     }
-    
   }, [selectedFunnelDialog]);
 
   useEffect(() => {
@@ -139,7 +138,6 @@ function Leads() {
         offer_id: getSelectedOfferID(selectedOfferDialog),
       }));
     }
-    
   }, [selectedOfferDialog]);
 
   useEffect(() => {
@@ -150,7 +148,6 @@ function Leads() {
         user_id: getSelectedUserID(selectedUserDialog),
       }));
     }
-    
   }, [selectedUserDialog]);
 
   useEffect(() => {
@@ -360,7 +357,6 @@ function Leads() {
   // Функции подтягиваний данных с бека
   const renderDuplicateLeads = async (obj) => {
     getDuplicateLeads(obj).then(function (response) {
-      
       setDuplicateLeads(response.data.data);
       setTotalRecords(response.data.total);
       setLoading(false);
@@ -467,7 +463,6 @@ function Leads() {
 
   // Обработчики взаимодействия фронта с беком
   const handleAddLead = () => {
-    
     if (isAllFieldsFilled(addLeadDialogInputObject)) {
       addLead(addLeadDialogInputObject)
         .then(function (response) {
@@ -480,7 +475,6 @@ function Leads() {
           renderDuplicateLeads();
         })
         .catch(function (error) {
-          
           showToast("error", response.data.message);
         });
     } else {
@@ -489,7 +483,6 @@ function Leads() {
   };
 
   const handlePostLead = () => {
-    
     if (isAllFieldsFilled(postLeadDialogInputObject)) {
       sendLead(postLeadDialogInputObject)
         .then(function (response) {
@@ -498,7 +491,6 @@ function Leads() {
           renderDuplicateLeads();
         })
         .catch(function (error) {
-          
           showToast("error", error.response.data.data.message);
         });
     } else {
@@ -514,7 +506,6 @@ function Leads() {
         renderDuplicateLeads();
       })
       .catch(function (error) {
-        
         showToast("error", error.response.data.data.message);
       });
   };
@@ -527,7 +518,6 @@ function Leads() {
       })
       .catch(function (error) {
         showToast("error", response.data.message);
-        
       });
   };
 
@@ -569,6 +559,8 @@ function Leads() {
 
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
+
+    date.setUTCHours(date.getUTCHours() + 3);
 
     const year = date.getUTCFullYear();
     const month = String(date.getUTCMonth() + 1).padStart(2, "0");
@@ -649,7 +641,7 @@ function Leads() {
           first={first}
           rows={rows}
           totalRecords={totalRecords}
-          rowsPerPageOptions={[1, 2, 5, 10]}
+          rowsPerPageOptions={[20, 50, 100]}
           onPageChange={onPageChange}
         />
 
@@ -736,7 +728,11 @@ function Leads() {
     return (
       <div style={style} onClick={handleClick}>
         {splittedURLParams.length > 1
-          ? splittedURLParams[0] + ` (+${splittedURLParams.length - 1})`
+          ? (splittedURLParams[0].length > 20
+              ? splittedURLParams[0].substring(0, 20) + "..."
+              : splittedURLParams[0]) + ` (+${splittedURLParams.length - 1})`
+          : splittedURLParams[0].length > 20
+          ? splittedURLParams[0].substring(0, 20) + "..."
           : splittedURLParams[0]}
       </div>
     );
@@ -885,7 +881,7 @@ function Leads() {
       <ConfirmPopup group="headless" content={popUpContentTemplate} />
 
       <div className="flex flex-column align-items-center justify-content-center">
-      <div
+        <div
           className="flex justify-content-between my-5 mb-0"
           style={{ width: "90%" }}
         >

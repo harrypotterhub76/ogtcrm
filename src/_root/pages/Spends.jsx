@@ -37,7 +37,7 @@ function Spends() {
   const [users, setUsers] = useState([]);
 
   const [first, setFirst] = useState(0);
-  const [rows, setRows] = useState(5);
+  const [rows, setRows] = useState(20);
   const [page, setPage] = useState(0);
   const [totalRecords, setTotalRecords] = useState(0);
   const [filtersObjectForRefresh, setFiltersObjectForRefresh] = useState({});
@@ -364,7 +364,7 @@ function Spends() {
           first={first}
           rows={rows}
           totalRecords={totalRecords}
-          rowsPerPageOptions={[1, 2, 5, 10]}
+          rowsPerPageOptions={[20, 50, 100]}
           onPageChange={onPageChange}
         />
 

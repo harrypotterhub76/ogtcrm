@@ -417,12 +417,12 @@ function Statuses() {
             <Column field="broker_status" header="Статус брокера"></Column>
             <Column field="crm_status" header="Статус CRM"></Column>
             <Column field="broker_name" header="Брокер"></Column>
-            {/* <Column
+            <Column
               field="category"
               header="Действие"
               body={statusesActionBodyTemplate}
               style={{ width: "20%" }}
-            ></Column> */}
+            ></Column>
           </DataTable>
         ) : (
           <DataTable
@@ -446,12 +446,12 @@ function Statuses() {
               header="Валидность"
               body={validityTemplate}
             ></Column>
-            <Column
+            {/* <Column
               field="category"
               header="Действие"
               body={statusesCRMActionBodyTemplate}
               style={{ width: "20%" }}
-            ></Column>
+            ></Column> */}
           </DataTable>
         )}
       </div>
